@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
+import { LOGO_VARIANTS, LogoGlyphs, logoTimeline } from "./fx/LogoMark";
 import { ArrowRight } from "./icons";
 
 const links = [
@@ -22,6 +23,15 @@ export default function Header() {
   const [active, setActive] = useState("home");
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
+  const logo = useRef<HTMLAnchorElement>(null);
+  const logoTl = useRef<gsap.core.Timeline | null>(null);
+  const logoTake = useRef(0);
+
+  const playLogo = () => {
+    if (!logo.current || logoTl.current?.isActive()) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    logoTl.current = logoTimeline(logo.current, LOGO_VARIANTS[logoTake.current++ % LOGO_VARIANTS.length], 1.1);
+  };
 
   useGSAP(
     () => {
@@ -90,8 +100,16 @@ export default function Header() {
     <>
       <header ref={root} className="header" data-intro-header>
         <div className="container header__inner">
-          <a href="#home" className="logo" aria-label="На главную" onClick={() => setOpen(false)}>
-            A<span>/</span>
+          <a
+            ref={logo}
+            href="#home"
+            className="logo lm"
+            data-tilt="-27"
+            aria-label="На главную"
+            onClick={() => setOpen(false)}
+            onPointerEnter={playLogo}
+          >
+            <LogoGlyphs />
           </a>
           <nav className="nav" aria-label="Основная навигация">
             {links.map((l) => (
@@ -138,12 +156,7 @@ export default function Header() {
             </a>
           ))}
         </nav>
-        <a
-          href="#contacts"
-          className="lnk menu__cta"
-          tabIndex={open ? 0 : -1}
-          onClick={() => setOpen(false)}
-        >
+        <a href="#contacts" className="lnk menu__cta" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>
           <span className="lnk__text">Обсудить проект</span>
           <span className="lnk__icon">
             <ArrowRight />

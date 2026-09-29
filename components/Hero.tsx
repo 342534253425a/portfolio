@@ -90,7 +90,18 @@ export default function Hero() {
             enableProximity();
           },
         });
-        tl.from(q(".hero__media-inner"), { scale: 1.25, autoAlpha: 0, duration: 2.4, ease: "power3.out" }, 0)
+        tl.from(
+          q(".hero__media-inner"),
+          {
+            scale: 1.25,
+            autoAlpha: 0,
+            duration: 2.4,
+            ease: "power3.out",
+            clearProps: "transform",
+            onComplete: () => gsap.set(q(".hero__media-inner"), { willChange: "auto" }),
+          },
+          0,
+        )
           .from(q(".hero__glow"), { autoAlpha: 0, scale: 0.4, duration: 2.4, ease: "power2.out" }, 0.1)
           .from(header, { yPercent: -100, autoAlpha: 0, duration: 1.4 }, 0.25)
           .from(q(".hero .label"), { x: -30, autoAlpha: 0, duration: 1.2 }, 0.35)
@@ -133,8 +144,6 @@ export default function Hero() {
       const content = q(".hero__content-inner")[0];
       const mx = gsap.quickTo(media, "x", { duration: 1.4, ease: "power3.out" });
       const my = gsap.quickTo(media, "y", { duration: 1.4, ease: "power3.out" });
-      const mr = gsap.quickTo(media, "rotationY", { duration: 1.4, ease: "power3.out" });
-      const mrx = gsap.quickTo(media, "rotationX", { duration: 1.4, ease: "power3.out" });
       const gx = gsap.quickTo(glow, "x", { duration: 2, ease: "power3.out" });
       const gy = gsap.quickTo(glow, "y", { duration: 2, ease: "power3.out" });
       const cx = gsap.quickTo(content, "x", { duration: 1.6, ease: "power3.out" });
@@ -142,10 +151,8 @@ export default function Hero() {
       const move = (e: PointerEvent) => {
         const px = e.clientX / window.innerWidth - 0.5;
         const py = e.clientY / window.innerHeight - 0.5;
-        mx(-px * 50);
-        my(-py * 30);
-        mr(px * 6);
-        mrx(-py * 4);
+        mx(-px * 40);
+        my(-py * 24);
         gx(px * window.innerWidth * 0.5);
         gy(py * window.innerHeight * 0.5);
         cx(px * 14);
@@ -165,7 +172,7 @@ export default function Hero() {
       <div className="hero__media" aria-hidden>
         <div className="hero__depth">
           <div className="hero__media-inner" data-intro>
-            <Image src="/images/hero.png" alt="" fill sizes="100vw" loading="eager" fetchPriority="high" quality={95} />
+            <Image src="/images/hero.png" alt="" fill sizes="115vw" loading="eager" fetchPriority="high" quality={95} />
           </div>
         </div>
         <div className="hero__glow" data-intro />

@@ -67,54 +67,6 @@ html.has-cursor * {
   gap: 3rem;
 }
 
-.preloader__logo {
-  display: flex;
-  overflow: hidden;
-  font-size: max(12rem, 72px);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-
-.preloader__logo span {
-  display: block;
-  animation: logo-in 0.9s cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-
-.preloader__logo span + span {
-  animation-delay: 0.08s;
-}
-
-@keyframes logo-in {
-  from {
-    translate: 0 120%;
-  }
-  to {
-    translate: 0 0;
-  }
-}
-
-.preloader__logo .accent {
-  animation:
-    logo-in 0.9s 0.08s cubic-bezier(0.19, 1, 0.22, 1) both,
-    logo-glow 1.4s 0.9s ease-in-out infinite alternate;
-}
-
-@keyframes logo-glow {
-  to {
-    opacity: 0.55;
-  }
-}
-
-.preloader.is-ready .preloader__logo .accent {
-  animation: none;
-}
-
-.preloader__logo .accent {
-  color: var(--red);
-  text-shadow: 0 0 4rem var(--red);
-}
-
 .preloader__meta {
   display: flex;
   align-items: center;
@@ -170,7 +122,61 @@ html.has-cursor * {
   transform-origin: 0 50%;
 }
 
-/* ---------- Logo lab (temporary variants on the preloader) ---------- */
+/* ---------- Logo mark: A/ that unfolds into the name ---------- */
+
+.lm {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.lm__slash {
+  display: inline-block;
+  color: var(--red);
+  text-shadow: 0 0 0.4em rgba(255, 43, 61, 0.8);
+}
+
+.lm.is-caret .lm__slash {
+  animation: lm-blink 1s steps(1) infinite;
+}
+
+@keyframes lm-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.lm__blade,
+.lm__pen {
+  display: inline-flex;
+  overflow: hidden;
+  width: 0;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.lm__blade i,
+.lm__pen i {
+  display: inline-block;
+  font-style: normal;
+}
+
+.lm__pen {
+  margin-left: 0.03em;
+}
+
+.lm__pen i {
+  transform-origin: 0 100%;
+}
+
+.lm__text.is-noisy {
+  color: #ff8a94;
+  text-shadow:
+    -2px 0 rgba(255, 43, 61, 0.7),
+    2px 0 rgba(120, 200, 255, 0.35);
+}
+
+/* ---------- Preloader logos ---------- */
 
 .lab {
   display: grid;
@@ -179,80 +185,38 @@ html.has-cursor * {
 }
 
 .lab__cell {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.6rem;
   padding: 3.2rem 3.6rem;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 1.6rem;
   background: rgba(255, 255, 255, 0.015);
+  animation: logo-in 0.9s cubic-bezier(0.19, 1, 0.22, 1) both;
 }
 
-.lab__cell figcaption {
-  font-size: max(1.1rem, 10px);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
+.lab__cell:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.lab__cell:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.lab__cell:nth-child(4) {
+  animation-delay: 0.18s;
+}
+
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    translate: 0 3rem;
+  }
 }
 
 .lab__logo {
-  display: flex;
-  align-items: baseline;
   height: 1.1em;
   font-size: max(8rem, 44px);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.04em;
-  white-space: nowrap;
-}
-
-.lab__slash {
-  display: inline-block;
-  color: var(--red);
-  text-shadow: 0 0 3rem var(--red);
-  will-change: transform;
-}
-
-.lab__caret {
-  animation: lab-blink 1s steps(1) infinite;
-}
-
-@keyframes lab-blink {
-  50% {
-    opacity: 0.15;
-  }
-}
-
-.lab__wrap {
-  display: inline-flex;
-  overflow: hidden;
-  width: 0;
-  padding-bottom: 0.08em;
-}
-
-.lab__wrap i {
-  display: inline-block;
-  font-style: normal;
-}
-
-.lab--pen .lab__slash {
-  margin: 0 0.03em;
-}
-
-.lab--pen .lab__wrap i {
-  transform-origin: 0 100%;
-}
-
-.lab__code {
-  font-variant-numeric: tabular-nums;
-}
-
-.lab__code.is-noisy {
-  color: #ff8a94;
-  text-shadow:
-    -2px 0 rgba(255, 43, 61, 0.7),
-    2px 0 rgba(120, 200, 255, 0.35);
 }
 
 .preloader__hint {
@@ -266,7 +230,7 @@ html.has-cursor * {
 
 .preloader.is-waiting .preloader__hint {
   display: inline;
-  animation: lab-blink 1.6s ease-in-out infinite;
+  animation: lm-blink 1.6s ease-in-out infinite;
 }
 
 @media (max-width: 800px) {
@@ -406,7 +370,6 @@ html.has-cursor * {
 .hero__media-inner {
   will-change: transform, opacity;
 }
-
 .hero__glow {
   position: absolute;
   left: 55%;
@@ -451,10 +414,6 @@ html.has-cursor * {
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--muted);
-}
-
-.hero__media {
-  perspective: 1200px;
 }
 
 .hero__scroll-mouse {
