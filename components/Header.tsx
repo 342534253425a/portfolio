@@ -8,10 +8,9 @@ import { ArrowRight } from "./icons";
 
 const links = [
   { href: "#home", label: "Главная" },
-  { href: "#projects", label: "Проекты" },
   { href: "#stack", label: "Стек" },
+  { href: "#projects", label: "Проекты" },
   { href: "#process", label: "Процесс" },
-  { href: "#about", label: "Обо мне" },
   { href: "#contacts", label: "Контакты" },
 ];
 
@@ -118,7 +117,7 @@ export default function Header() {
             <span ref={bar} className="nav__bar" />
           </nav>
           <div className="header__right">
-            <a href="#contacts" className="lnk lnk--sm header__cta" data-magnetic="0.2">
+            <a href="#contacts" className="lnk lnk--sm header__cta">
               <span className="lnk__text">Связаться</span>
               <span className="lnk__icon">
                 <ArrowRight />

@@ -3,7 +3,7 @@
 import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 
-const MAGNETIC = "[data-magnetic], .nav a, .logo, .burger, .arrow, .social";
+const MAGNETIC = "[data-magnetic], .arrow, .social";
 const SCRAMBLE_HOVER = ".nav a > span, .footer a > span, .menu__nav a > span, .lnk > .lnk__text";
 const SCRAMBLE_CHARS = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯ01/<>_";
 
