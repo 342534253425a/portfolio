@@ -522,6 +522,20 @@ html.has-cursor * {
   z-index: 2;
 }
 
+.stack__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 3050;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(5, 5, 7, 0.82) 0%, rgba(5, 5, 7, 0.55) 30%, transparent 52%);
+}
+
+@media (max-width: 600px) {
+  .stack__shade {
+    background: linear-gradient(180deg, rgba(5, 5, 7, 0.85) 0%, rgba(5, 5, 7, 0.5) 34%, transparent 52%);
+  }
+}
+
 .sys__canvas,
 .sys__fx {
   position: absolute;

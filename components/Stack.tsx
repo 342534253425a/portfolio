@@ -88,17 +88,21 @@ const pace = (u: number) => 0.12 * u + 0.88 * (0.5 - 0.5 * Math.cos(Math.PI * cl
 const NEBULA = ["255, 43, 61", "214, 28, 92", "255, 104, 70", "150, 36, 120", "255, 70, 110"];
 const radii = planets.map((_, i) => R0 + DR * i);
 const phases = planets.map((_, i) => 0.6 + i * 2.39996);
-/** Per-planet camera elevation and swing (negative swing keeps the sun right of the planet, away from the text). */
-const SHOTS: [number, number][] = [
-  [0.2, -0.42],
-  [0.1, -0.16],
-  [0.3, -0.62],
-  [0.14, -0.28],
-  [0.24, -0.7],
-  [0.08, -0.12],
-  [0.28, -0.5],
-  [0.16, -0.34],
+/**
+ * Per-planet camera: elevation (negative is from below), swing around the planet (0 is outside the orbit,
+ * ±π is between planet and sun) and roll. Rolls accumulate, so a 2π step is a full barrel roll on that flight.
+ */
+const SHOTS: [number, number, number][] = [
+  [0.2, -0.45, 0.08],
+  [-0.5, 0.65, -0.22],
+  [0.68, -0.2, TAU + 0.16],
+  [0.06, 1.15, TAU - 0.28],
+  [-0.38, -1.05, TAU + 0.2],
+  [0.42, 2.45, 0.1],
+  [-0.62, 0.35, -0.2],
+  [0.3, -0.75, -TAU + 0.12],
 ];
+const ROLLS: V3[] = [[0, 0, 0], ...SHOTS.map(([, , r]): V3 => [r, 0, 0])];
 
 export default function Stack() {
   const root = useRef<HTMLElement>(null);
@@ -528,7 +532,7 @@ export default function Stack() {
         const cams = shots.map((s) => s[0]);
         const cam = spline(cams, T);
         const hop = Math.hypot(cams[i + 1][0] - cams[i][0], cams[i + 1][1] - cams[i][1], cams[i + 1][2] - cams[i][2]);
-        cam[1] += Math.sin(Math.PI * u) ** 2 * hop * 0.08;
+        cam[1] += Math.sin(Math.PI * u) ** 2 * hop * 0.08 * (i % 2 ? -1 : 1);
         const L = spline(
           shots.map((s) => s[1]),
           T + 0.22 * Math.sin(Math.PI * u),
@@ -541,7 +545,7 @@ export default function Stack() {
         const rl = Math.hypot(r[0], r[2]) || 1;
         r = [r[0] / rl, 0, r[2] / rl];
         let v: V3 = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
-        const roll = Math.sin(Math.PI * u) * 0.12 * (i % 2 ? 1 : -1) + (reduced ? 0 : Math.sin(time * 0.3) * 0.01);
+        const roll = spline(ROLLS, T)[0] + (reduced ? 0 : Math.sin(time * 0.3) * 0.01);
         const cr = Math.cos(roll);
         const sr = Math.sin(roll);
         [r, v] = [
@@ -1010,6 +1014,8 @@ export default function Stack() {
         <path />
         <circle r="4" />
       </svg>
+
+      <div className="stack__shade" aria-hidden />
 
       <div className="chapters">
         <div className="chapter chapter--intro">
