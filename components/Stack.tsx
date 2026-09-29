@@ -81,11 +81,10 @@ const NEAR = 40;
 const R0 = 1500;
 const DR = 560;
 const RMAX = R0 + DR * (N - 1);
-const PER_CHAPTER = 1.15;
+const PER_CHAPTER = 1.7;
 const clamp01 = gsap.utils.clamp(0, 1);
-const smoother = (x: number) => x * x * x * (x * (6 * x - 15) + 10);
 /** Pacing per chapter: a short settle at each planet, the longer middle part is the flight. */
-const pace = (u: number) => 0.08 * u + 0.92 * smoother(clamp01((u - 0.2) / 0.6));
+const pace = (u: number) => 0.12 * u + 0.88 * (0.5 - 0.5 * Math.cos(Math.PI * clamp01((u - 0.08) / 0.84)));
 const NEBULA = ["255, 43, 61", "214, 28, 92", "255, 104, 70", "150, 36, 120", "255, 70, 110"];
 const radii = planets.map((_, i) => R0 + DR * i);
 const phases = planets.map((_, i) => 0.6 + i * 2.39996);
@@ -380,12 +379,12 @@ export default function Stack() {
       };
 
       const render = (time = 0) => {
-        state.t += (state.target - state.t) * 0.12;
+        state.t += (state.target - state.t) * 0.07;
         const T = state.t;
         const i = Math.min(N - 1, Math.floor(T));
         const u = T - i;
-        const pu = smoother(u);
-        const lu = smoother(clamp01((u - 0.05) * 1.8));
+        const pu = u;
+        const lu = 0.5 - 0.5 * Math.cos(Math.PI * clamp01((u - 0.04) * 1.5));
         const [C0, L0] = shot(i, time);
         const [C1, L1] = shot(i + 1, time);
         const hop = Math.hypot(C1[0] - C0[0], C1[1] - C0[1], C1[2] - C0[2]);
@@ -664,7 +663,7 @@ export default function Stack() {
 
         chapters.forEach((c, k) => {
           const d = T - k;
-          const o = clamp01(1 - Math.abs(d) / 0.34);
+          const o = clamp01(1 - Math.abs(d) / 0.3);
           c.style.opacity = String(o * o * (3 - 2 * o));
           c.style.visibility = o < 0.01 ? "hidden" : "visible";
           c.style.transform = `translate3d(0, ${Math.round(-d * 70)}px, 0)`;
