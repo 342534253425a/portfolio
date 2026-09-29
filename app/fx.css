@@ -518,7 +518,12 @@ html.has-cursor * {
     radial-gradient(ellipse 60% 40% at 20% 90%, rgba(90, 10, 30, 0.2), transparent 70%);
 }
 
-.sys__canvas {
+.sys__fx {
+  z-index: 2;
+}
+
+.sys__canvas,
+.sys__fx {
   position: absolute;
   inset: 0;
   width: 100%;

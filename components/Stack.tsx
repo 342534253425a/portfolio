@@ -81,11 +81,12 @@ const NEAR = 40;
 const R0 = 1500;
 const DR = 560;
 const RMAX = R0 + DR * (N - 1);
-const PER_CHAPTER = 0.9;
+const PER_CHAPTER = 1.15;
 const clamp01 = gsap.utils.clamp(0, 1);
 const smoother = (x: number) => x * x * x * (x * (6 * x - 15) + 10);
-/** Cinematic pacing: nearly still while a title is on screen, fast between planets. */
-const pace = (u: number) => 0.08 * u + 0.92 * smoother(clamp01((u - 0.3) / 0.4));
+/** Pacing per chapter: a short settle at each planet, the longer middle part is the flight. */
+const pace = (u: number) => 0.08 * u + 0.92 * smoother(clamp01((u - 0.2) / 0.6));
+const NEBULA = ["255, 43, 61", "214, 28, 92", "255, 104, 70", "150, 36, 120", "255, 70, 110"];
 const radii = planets.map((_, i) => R0 + DR * i);
 const phases = planets.map((_, i) => 0.6 + i * 2.39996);
 /** Per-planet camera elevation and swing (negative swing keeps the sun right of the planet, away from the text). */
@@ -110,6 +111,8 @@ export default function Stack() {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const canvas = section.querySelector<HTMLCanvasElement>(".sys__canvas")!;
       const ctx = canvas.getContext("2d")!;
+      const fxCanvas = section.querySelector<HTMLCanvasElement>(".sys__fx")!;
+      const fx2 = fxCanvas.getContext("2d")!;
       const sun = section.querySelector<HTMLElement>(".sun")!;
       const nodes = gsap.utils.toArray<HTMLElement>(".planet", section);
       const tags = gsap.utils.toArray<HTMLElement>(".planet-tag", section);
@@ -133,11 +136,147 @@ export default function Stack() {
         const r = (radii[3] + radii[4]) / 2 + rnd(-0.3, 0.3) * DR;
         return [Math.cos(th) * r, rnd(-40, 40), Math.sin(th) * r];
       });
-      const points = [...dust, ...sky, ...belt];
-      const tint = points.map((_, i) => (i >= dust.length + sky.length ? 2 : Math.random() < 0.14 ? 1 : 0));
+      const SKY = RMAX * 30;
+      const norm = (v: V3): V3 => {
+        const l = Math.hypot(v[0], v[1], v[2]) || 1;
+        return [v[0] / l, v[1] / l, v[2] / l];
+      };
+      const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+      const bandN = norm([0.35, 1, 0.45]);
+      const bandU = norm([bandN[1], -bandN[0], 0]);
+      const bandV: V3 = [
+        bandN[1] * bandU[2] - bandN[2] * bandU[1],
+        bandN[2] * bandU[0] - bandN[0] * bandU[2],
+        bandN[0] * bandU[1] - bandN[1] * bandU[0],
+      ];
+      const onBand = (th: number, spread: number): V3 => {
+        const g = gauss() * spread;
+        const d = norm([
+          bandU[0] * Math.cos(th) + bandV[0] * Math.sin(th) + bandN[0] * g,
+          bandU[1] * Math.cos(th) + bandV[1] * Math.sin(th) + bandN[1] * g,
+          bandU[2] * Math.cos(th) + bandV[2] * Math.sin(th) + bandN[2] * g,
+        ]);
+        return [d[0] * SKY, d[1] * SKY, d[2] * SKY];
+      };
+      const band: V3[] = Array.from({ length: 700 }, () => onBand(Math.random() * TAU, 0.14));
+
+      const points = [...dust, ...sky, ...band, ...belt];
+      const farFrom = dust.length;
+      const farTo = dust.length + sky.length + band.length;
+      const tint = points.map((_, i) => (i >= farTo ? 2 : Math.random() < 0.14 ? 1 : 0));
+      const amp = points.map((_, i) => (i >= farFrom + sky.length && i < farTo ? 0.3 + Math.random() * 0.3 : 1));
       const prevX = new Float32Array(points.length);
       const prevY = new Float32Array(points.length);
       const prevOk = new Uint8Array(points.length);
+
+      const sprite = (size: number, draw: (g: CanvasRenderingContext2D, s: number) => void) => {
+        const c = document.createElement("canvas");
+        c.width = c.height = size;
+        draw(c.getContext("2d")!, size);
+        return c;
+      };
+      const radial = (stops: [number, string][]) =>
+        sprite(128, (g, s) => {
+          const gr = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+          stops.forEach(([o, c]) => gr.addColorStop(o, c));
+          g.fillStyle = gr;
+          g.fillRect(0, 0, s, s);
+        });
+      const glow = (rgb: string) =>
+        radial([
+          [0, `rgba(${rgb}, 1)`],
+          [0.2, `rgba(${rgb}, 0.42)`],
+          [0.55, `rgba(${rgb}, 0.1)`],
+          [1, `rgba(${rgb}, 0)`],
+        ]);
+      const soft = (rgb: string) =>
+        radial([
+          [0, `rgba(${rgb}, 0.9)`],
+          [0.45, `rgba(${rgb}, 0.32)`],
+          [1, `rgba(${rgb}, 0)`],
+        ]);
+      const glowRed = glow("255, 60, 70");
+      const glowWarm = glow("255, 170, 140");
+      const glowWhite = glow("255, 240, 235");
+      const ring = radial([
+        [0, "rgba(255, 80, 90, 0)"],
+        [0.74, "rgba(255, 80, 90, 0)"],
+        [0.86, "rgba(255, 110, 110, 0.55)"],
+        [0.95, "rgba(255, 80, 90, 0)"],
+      ]);
+      const blobs = NEBULA.map(soft);
+      const sparkle = sprite(128, (g, s) => {
+        g.drawImage(glowWhite, s * 0.3, s * 0.3, s * 0.4, s * 0.4);
+        g.globalCompositeOperation = "lighter";
+        for (const vertical of [false, true]) {
+          const gr = vertical ? g.createLinearGradient(0, 0, 0, s) : g.createLinearGradient(0, 0, s, 0);
+          gr.addColorStop(0, "rgba(255, 190, 190, 0)");
+          gr.addColorStop(0.5, "rgba(255, 245, 240, 0.95)");
+          gr.addColorStop(1, "rgba(255, 190, 190, 0)");
+          g.fillStyle = gr;
+          if (vertical) g.fillRect(s / 2 - 1, 0, 2, s);
+          else g.fillRect(0, s / 2 - 1, s, 2);
+        }
+      });
+      const galaxy = sprite(512, (g, s) => {
+        g.globalCompositeOperation = "lighter";
+        g.drawImage(glowWarm, s * 0.34, s * 0.34, s * 0.32, s * 0.32);
+        for (let k = 0; k < 3200; k++) {
+          const arm = k % 2;
+          const t = Math.pow(Math.random(), 0.75);
+          const a = arm * Math.PI + t * 3.4 * Math.PI + gauss() * 0.35;
+          const r = t * s * 0.46 + gauss() * s * 0.02;
+          const x = s / 2 + Math.cos(a) * r;
+          const y = s / 2 + Math.sin(a) * r;
+          g.fillStyle = t < 0.25 ? "#ffe2d6" : Math.random() < 0.6 ? "#ff5a66" : "#ffb0b0";
+          g.globalAlpha = 0.25 + Math.random() * 0.5 * (1 - t * 0.6);
+          const d = Math.random() < 0.08 ? 2.4 : 1.3;
+          g.fillRect(x, y, d, d);
+        }
+        g.globalAlpha = 0.5;
+        for (let k = 0; k < 40; k++) {
+          const t = Math.random();
+          const a = (k % 2) * Math.PI + t * 3.4 * Math.PI;
+          const r = t * s * 0.44;
+          const d = s * (0.06 + Math.random() * 0.06);
+          g.drawImage(blobs[k % 2 ? 0 : 1], s / 2 + Math.cos(a) * r - d / 2, s / 2 + Math.sin(a) * r - d / 2, d, d);
+        }
+      });
+
+      const clouds = Array.from({ length: 9 }, (_, k) => {
+        const th = (k / 9) * TAU + rnd(-0.3, 0.3);
+        const d = RMAX * rnd(1.4, 2.6);
+        const c: V3 = [Math.cos(th) * d, rnd(-0.5, 0.5) * RMAX, Math.sin(th) * d];
+        const r = RMAX * rnd(0.5, 0.9);
+        return Array.from({ length: 8 }, (_, b) => ({
+          p: [c[0] + gauss() * r, c[1] + gauss() * r * 0.4, c[2] + gauss() * r] as V3,
+          r: r * rnd(0.25, 0.7),
+          img: blobs[(k + (b % 3)) % blobs.length],
+          a: rnd(0.06, 0.13),
+        }));
+      }).flat();
+      const bandGlow = Array.from({ length: 16 }, (_, k) => ({ p: onBand((k / 16) * TAU, 0.05), img: blobs[k % 3 ? 0 : 4] }));
+      const galaxies = [
+        { p: norm([-0.7, 0.35, 0.6]), rot: 0.6, tilt: 0.42, size: 0.34 },
+        { p: norm([0.8, -0.1, -0.55]), rot: -0.9, tilt: 0.3, size: 0.2 },
+      ];
+      const glints = Array.from({ length: 36 }, () => ({
+        p: onBand(Math.random() * TAU, 0.9),
+        s: rnd(14, 34),
+        ph: Math.random() * TAU,
+        sp: rnd(0.8, 2.2),
+      }));
+      const comets = Array.from({ length: 3 }, (_, k) => ({
+        a: RMAX * rnd(0.9, 1.3),
+        b: RMAX * rnd(0.45, 0.7),
+        ph: rnd(0, TAU),
+        sp: rnd(0.035, 0.06) * (k % 2 ? 1 : -1),
+        rot: (k / 3) * TAU + rnd(-0.4, 0.4),
+        lift: rnd(-0.35, 0.35),
+      }));
+      const shoots: { x: number; y: number; vx: number; vy: number; t: number; d: number }[] = [];
+      let nextShoot = 1.5;
+      let last = 0;
 
       const state = { target: 0, t: 0, mx: 0, my: 0, enter: 0 };
       let w = 0;
@@ -150,6 +289,7 @@ export default function Stack() {
       let tb = 0;
       let phone = false;
       let widths: number[] = [];
+      let sunW = 200;
       let current = -1;
 
       let C: V3 = [0, 0, 0];
@@ -211,10 +351,16 @@ export default function Stack() {
         px0 = phone ? w * 0.5 : w * 0.66;
         py0 = phone ? h * 0.64 : h * 0.52;
         widths = nodes.map((n) => n.offsetWidth);
+        sunW = sun.offsetWidth;
         const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-        canvas.width = Math.round(w * dpr);
-        canvas.height = Math.round(h * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        for (const [cv, c2] of [
+          [canvas, ctx],
+          [fxCanvas, fx2],
+        ] as const) {
+          cv.width = Math.round(w * dpr);
+          cv.height = Math.round(h * dpr);
+          c2.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
         prevOk.fill(0);
         const head = section.querySelector<HTMLElement>(".chapters")!.getBoundingClientRect();
         const box = section.getBoundingClientRect();
@@ -271,7 +417,46 @@ export default function Stack() {
         rt = r;
         up = v;
 
+        const dt = Math.min(0.1, Math.max(0, time - last));
+        last = time;
         ctx.clearRect(0, 0, w, h);
+        ctx.globalCompositeOperation = "lighter";
+        const blit = (img: CanvasImageSource, x: number, y: number, r: number, a: number) => {
+          if (a < 0.004 || x + r < 0 || x - r > w || y + r < 0 || y - r > h) return;
+          ctx.globalAlpha = a;
+          ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+        };
+
+        for (const g of bandGlow) {
+          proj(g.p[0], g.p[1], g.p[2]);
+          if (PZ > 0) blit(g.img, PX, PY, F * 0.3, 0.07);
+        }
+        for (const g of galaxies) {
+          proj(g.p[0] * SKY, g.p[1] * SKY, g.p[2] * SKY);
+          if (PZ <= 0) continue;
+          const r = F * g.size;
+          if (PX + r < 0 || PX - r > w || PY + r < 0 || PY - r > h) continue;
+          ctx.save();
+          ctx.globalAlpha = 0.75;
+          ctx.translate(PX, PY);
+          ctx.rotate(g.rot);
+          ctx.scale(1, g.tilt);
+          ctx.drawImage(galaxy, -r, -r, r * 2, r * 2);
+          ctx.restore();
+        }
+        for (const c of clouds) {
+          proj(c.p[0], c.p[1], c.p[2]);
+          if (PZ < NEAR * 4) continue;
+          blit(c.img, PX, PY, Math.min(c.r * PS, 4000), c.a * clamp01((PZ - c.r * 0.5) / c.r));
+        }
+        for (const g of glints) {
+          proj(g.p[0], g.p[1], g.p[2]);
+          if (PZ <= 0) continue;
+          const tw = 0.55 + 0.45 * Math.sin(time * g.sp + g.ph);
+          blit(sparkle, PX, PY, g.s * (0.6 + 0.4 * tw), 0.35 + 0.55 * tw);
+        }
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = "source-over";
 
         ctx.lineWidth = 1;
         radii.forEach((R, j) => {
@@ -302,9 +487,9 @@ export default function Stack() {
             prevOk[k] = 0;
             continue;
           }
-          const far = k >= dust.length && k < dust.length + sky.length;
+          const far = k >= farFrom && k < farTo;
           const size = far ? 1.1 : Math.min(3.2, Math.max(0.7, PS * 5));
-          const a = far ? 0.55 : Math.min(0.85, 0.2 + PS * 3);
+          const a = far ? 0.55 * amp[k] : Math.min(0.85, 0.2 + PS * 3);
           ctx.globalAlpha = a;
           const dx = PX - prevX[k];
           const dy = PY - prevY[k];
@@ -327,8 +512,84 @@ export default function Stack() {
         }
         ctx.globalAlpha = 1;
 
+        ctx.globalCompositeOperation = "lighter";
+        for (const c of comets) {
+          const th = c.ph + (reduced ? 0 : time * c.sp);
+          const x0 = Math.cos(th) * c.a;
+          const z0 = Math.sin(th) * c.b;
+          const head: V3 = [x0 * Math.cos(c.rot) - z0 * Math.sin(c.rot), x0 * c.lift, x0 * Math.sin(c.rot) + z0 * Math.cos(c.rot)];
+          const away = norm(head);
+          const tail: V3 = [head[0] + away[0] * 1400, head[1] + away[1] * 1400, head[2] + away[2] * 1400];
+          proj(tail[0], tail[1], tail[2]);
+          if (PZ < NEAR * 2) continue;
+          const tx = PX;
+          const ty = PY;
+          proj(head[0], head[1], head[2]);
+          if (PZ < NEAR * 2) continue;
+          const lw = Math.min(10, Math.max(1, PS * 26));
+          const gr = ctx.createLinearGradient(PX, PY, tx, ty);
+          gr.addColorStop(0, "rgba(255, 225, 215, 0.9)");
+          gr.addColorStop(0.3, "rgba(255, 90, 100, 0.4)");
+          gr.addColorStop(1, "rgba(255, 43, 61, 0)");
+          ctx.strokeStyle = gr;
+          for (const [wd, al] of [
+            [lw * 4, 0.18],
+            [lw, 0.9],
+          ]) {
+            ctx.globalAlpha = al;
+            ctx.lineWidth = wd;
+            ctx.beginPath();
+            ctx.moveTo(PX, PY);
+            ctx.lineTo(tx, ty);
+            ctx.stroke();
+          }
+          blit(glowWhite, PX, PY, Math.min(70, Math.max(6, PS * 180)), 0.95);
+        }
+
+        if (!reduced && (nextShoot -= dt) <= 0) {
+          nextShoot = rnd(2.2, 5);
+          const ang = rnd(0.25, 0.6) * (Math.random() < 0.5 ? 1 : -1) + Math.PI / 2;
+          const v = rnd(900, 1500);
+          shoots.push({
+            x: rnd(0.1, 0.9) * w,
+            y: rnd(0, 0.35) * h,
+            vx: Math.cos(ang) * v,
+            vy: Math.sin(ang) * v * 0.6,
+            t: 0,
+            d: rnd(0.6, 1),
+          });
+        }
+        for (let k = shoots.length - 1; k >= 0; k--) {
+          const s = shoots[k];
+          s.t += dt;
+          if (s.t > s.d) {
+            shoots.splice(k, 1);
+            continue;
+          }
+          s.x += s.vx * dt;
+          s.y += s.vy * dt;
+          const gr = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * 0.16, s.y - s.vy * 0.16);
+          gr.addColorStop(0, "rgba(255, 240, 235, 1)");
+          gr.addColorStop(1, "rgba(255, 60, 75, 0)");
+          ctx.globalAlpha = Math.sin((Math.PI * s.t) / s.d);
+          ctx.strokeStyle = gr;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(s.x - s.vx * 0.16, s.y - s.vy * 0.16);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = "source-over";
+
         proj(0, 0, 0);
-        place(sun, Math.min(PS * 1.9, 2), PZ, PZ > NEAR);
+        const sunX = PX;
+        const sunY = PY;
+        const sunOn = PZ > NEAR;
+        const sunR = (sunW / 2) * Math.min(PS * 1.9, 2);
+        let occlude = 1;
+        place(sun, Math.min(PS * 1.9, 2), PZ, sunOn);
+        const sunZ = PZ;
 
         let fx = 0;
         let fy = 0;
@@ -345,6 +606,7 @@ export default function Stack() {
           tags[j].style.visibility = visible ? "visible" : "hidden";
           if (!visible) return;
           const d = widths[j] * scale;
+          if (PZ < sunZ) occlude = Math.min(occlude, clamp01((Math.hypot(PX - sunX, PY - sunY) - d * 0.3) / (d * 0.3 + sunR * 0.4)));
           const clear = phone ? clamp01((PY - tb + 30) / 120) : clamp01((PX + d / 2 - ax + 40) / 160);
           const op = 0.12 + 0.88 * Math.max(clear, focus);
           n.style.opacity = String(op);
@@ -369,6 +631,36 @@ export default function Stack() {
             fz = PZ;
           }
         });
+
+        fx2.clearRect(0, 0, w, h);
+        const edge = Math.max(Math.abs(sunX / w - 0.5), Math.abs(sunY / h - 0.5));
+        const I = sunOn ? clamp01((0.62 - edge) * 5) * occlude : 0;
+        if (I > 0.01) {
+          fx2.globalCompositeOperation = "lighter";
+          const q = h / 900;
+          fx2.globalAlpha = 0.5 * I;
+          fx2.drawImage(glowRed, sunX - w * 0.7, sunY - 7 * q, w * 1.4, 14 * q);
+          fx2.globalAlpha = 0.55 * I;
+          fx2.drawImage(glowWhite, sunX - w * 0.32, sunY - 1.5 * q, w * 0.64, 3 * q);
+          fx2.globalAlpha = 0.35 * I;
+          fx2.drawImage(glowRed, sunX - sunR * 2.4, sunY - sunR * 2.4, sunR * 4.8, sunR * 4.8);
+          const vx = w / 2 - sunX;
+          const vy = h / 2 - sunY;
+          const ghosts: [number, number, HTMLCanvasElement, number][] = [
+            [0.45, 36, glowRed, 0.22],
+            [0.8, 110, ring, 0.13],
+            [1.15, 26, glowWarm, 0.3],
+            [1.5, 190, ring, 0.08],
+            [1.9, 70, glowRed, 0.16],
+          ];
+          for (const [t, s, img, a] of ghosts) {
+            const r = s * q;
+            fx2.globalAlpha = a * I;
+            fx2.drawImage(img, sunX + vx * t - r, sunY + vy * t - r, r * 2, r * 2);
+          }
+          fx2.globalAlpha = 1;
+          fx2.globalCompositeOperation = "source-over";
+        }
 
         chapters.forEach((c, k) => {
           const d = T - k;
@@ -489,6 +781,8 @@ export default function Stack() {
           </span>
         ))}
       </div>
+
+      <canvas className="sys__fx" aria-hidden />
 
       <span className="sys__reticle" aria-hidden>
         <i />
