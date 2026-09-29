@@ -24,13 +24,12 @@ export default function Interactions() {
         trigger: el,
         start: "top 92%",
         once: true,
-        onEnter: () =>
-          gsap.to(el, { duration: 1.2, scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 0.6, revealDelay: 0.2 } }),
+        onEnter: () => gsap.to(el, { duration: 1.2, scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 0.6, revealDelay: 0.2 } }),
       });
     });
 
     /* ---- Scroll velocity skew ---- */
-    const skewTargets = gsap.utils.toArray<HTMLElement>(".h2, [data-skew]");
+    const skewTargets = gsap.utils.toArray<HTMLElement>(".h2:not(.projects__title), [data-skew]");
     if (skewTargets.length) {
       const setSkew = gsap.quickTo(skewTargets, "skewY", { duration: 0.6, ease: "power3.out" });
       const tick = () => {
@@ -80,8 +79,7 @@ export default function Interactions() {
     gsap.utils.toArray<HTMLElement>(SCRAMBLE_HOVER).forEach((span) => {
       const el = span.parentElement!;
       const text = span.textContent || "";
-      const enter = () =>
-        gsap.to(span, { duration: 0.6, overwrite: true, scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 1 } });
+      const enter = () => gsap.to(span, { duration: 0.6, overwrite: true, scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 1 } });
       el.addEventListener("mouseenter", enter);
       cleanups.push(() => el.removeEventListener("mouseenter", enter));
     });

@@ -85,14 +85,14 @@ export default function Projects() {
       const floor = section.querySelector<HTMLElement>(".floor")!;
       const cards = gsap.utils.toArray<HTMLElement>(".card", section);
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const state = { pos: 0, intro: reduced ? 0 : -1.6, lean: 0 };
+      const state = { pos: 0, intro: reduced ? 0 : -1.6 };
       let radius = 0;
       let cardH = 0;
       let current = 0;
 
       const render = () => {
         const pos = state.pos + state.intro;
-        ring.style.transform = `translateZ(${-radius}px) rotateX(${TILT + state.lean}deg) rotateY(${-pos * STEP}deg)`;
+        ring.style.transform = `translateZ(${-radius}px) rotateX(${TILT}deg) rotateY(${-pos * STEP}deg)`;
         cards.forEach((card, i) => {
           let d = wrap(i - pos);
           if (d > N / 2) d -= N;
@@ -200,22 +200,6 @@ export default function Projects() {
             },
             0.5,
           );
-
-        const leanTo = gsap.quickTo(state, "lean", {
-          duration: 0.8,
-          ease: "power3.out",
-          onUpdate: render,
-        });
-        const tick = () => {
-          leanTo(gsap.utils.clamp(-10, 10, (getLenis()?.velocity ?? 0) * -0.35));
-        };
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top bottom",
-          end: () => `bottom+=${window.innerHeight * PER_CARD * (N - 1)} top`,
-          onToggle: (self) => (self.isActive ? gsap.ticker.add(tick) : gsap.ticker.remove(tick)),
-        });
-
         if (finePointer()) {
           const rig = section.querySelector<HTMLElement>(".rig")!;
           const ry = gsap.quickTo(rig, "rotationY", {
