@@ -83,7 +83,7 @@ const planets = [
 
 const N = planets.length;
 const P = 1200;
-const FOCUS = 0.62;
+const FOCUS = 0.95;
 const PER_CHAPTER = 0.9;
 const clamp01 = gsap.utils.clamp(0, 1);
 const smoother = (x: number) => x * x * x * (x * (6 * x - 15) + 10);
@@ -116,6 +116,9 @@ export default function Stack() {
       let rMax = 0;
       let ax = 0;
       let ay = 0;
+      let tb = 0;
+      let ps = 1;
+      let baseTilt = 56;
       let phone = false;
       let radii: number[] = [];
       let speeds: number[] = [];
@@ -128,9 +131,11 @@ export default function Stack() {
         const h = section.clientHeight;
         phone = w <= 600;
         cx = phone ? w * 0.5 : w * 0.6;
-        cy = phone ? h * 0.66 : h * 0.54;
-        rMax = phone ? w * 0.62 : Math.min(w * 0.46, h * 0.95);
-        radii = planets.map((_, i) => rMax * (0.24 + (0.76 * i) / (N - 1)));
+        cy = phone ? h * 0.64 : h * 0.54;
+        rMax = phone ? w * 0.95 : Math.min(w * 0.46, h * 0.95);
+        ps = phone ? 0.55 : 1;
+        baseTilt = phone ? 48 : 56;
+        radii = planets.map((_, i) => rMax * (0.32 + (0.68 * i) / (N - 1)));
         speeds = radii.map((r) => 1.05 * Math.sqrt(rMax / r));
         widths = nodes.map((n) => n.offsetWidth);
         sys.style.perspectiveOrigin = `${cx}px ${cy}px`;
@@ -148,6 +153,7 @@ export default function Stack() {
         const box = section.getBoundingClientRect();
         ax = head.right - box.left + 24;
         ay = head.top - box.top + head.height * 0.42;
+        tb = head.bottom - box.top;
       };
 
       const render = (time = 0) => {
@@ -155,7 +161,7 @@ export default function Stack() {
         const T = state.t;
         const intro = smoother(clamp01(T));
         const k = 0.66 + 0.34 * intro;
-        const tilt = ((56 + 14 * intro + state.lift) * Math.PI) / 180;
+        const tilt = ((baseTilt + 14 * intro + state.lift) * Math.PI) / 180;
         const drift = reduced ? 0 : Math.sin(time * 0.25) * 0.05;
         const yaw = state.yaw + drift;
         const cosT = Math.cos(tilt);
@@ -178,7 +184,8 @@ export default function Stack() {
           const X = cx + x * s;
           const Y = cy + y * cosT * s;
           const focus = clamp01(1 - Math.abs(T - (i + 1)) / 0.45);
-          n.style.transform = `translate(${X}px, ${Y}px) translate(-50%, -50%) scale(${s * k * (1 + focus * 0.35)})`;
+          const size = s * k * ps * (1 + focus * 0.35);
+          n.style.transform = `translate(${X}px, ${Y}px) translate(-50%, -50%) scale(${size})`;
           n.style.zIndex = String(1000 + Math.round(z));
           const dx = cx - X;
           const dy = cy - Y;
@@ -186,7 +193,8 @@ export default function Stack() {
           n.style.setProperty("--lx", `${50 + (dx / dl) * 26}%`);
           n.style.setProperty("--ly", `${50 + (dy / dl) * 26}%`);
           n.style.setProperty("--f", focus.toFixed(3));
-          n.style.opacity = String(0.55 + 0.45 * clamp01((z + rMax) / rMax));
+          const clear = phone ? clamp01((Y - tb + 40) / 140) : clamp01((X - ax + 80) / 200);
+          n.style.opacity = String((0.55 + 0.45 * clamp01((z + rMax) / rMax)) * (0.12 + 0.88 * clear));
           const of = Math.round(focus * 20) / 20;
           if (of !== orbitFocus[i]) {
             orbitFocus[i] = of;
@@ -196,7 +204,7 @@ export default function Stack() {
             focusMax = focus;
             fx = X;
             fy = Y;
-            fs = widths[i] * s * k * (1 + focus * 0.35);
+            fs = widths[i] * size;
           }
         });
 
