@@ -170,6 +170,116 @@ html.has-cursor * {
   transform-origin: 0 50%;
 }
 
+/* ---------- Logo lab (temporary variants on the preloader) ---------- */
+
+.lab {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 46rem));
+  gap: 4.4rem 6rem;
+}
+
+.lab__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.6rem;
+  padding: 3.2rem 3.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1.6rem;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.lab__cell figcaption {
+  font-size: max(1.1rem, 10px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.lab__logo {
+  display: flex;
+  align-items: baseline;
+  height: 1.1em;
+  font-size: max(8rem, 44px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.lab__slash {
+  display: inline-block;
+  color: var(--red);
+  text-shadow: 0 0 3rem var(--red);
+  will-change: transform;
+}
+
+.lab__caret {
+  animation: lab-blink 1s steps(1) infinite;
+}
+
+@keyframes lab-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.lab__wrap {
+  display: inline-flex;
+  overflow: hidden;
+  width: 0;
+  padding-bottom: 0.08em;
+}
+
+.lab__wrap i {
+  display: inline-block;
+  font-style: normal;
+}
+
+.lab--pen .lab__slash {
+  margin: 0 0.03em;
+}
+
+.lab--pen .lab__wrap i {
+  transform-origin: 0 100%;
+}
+
+.lab__code {
+  font-variant-numeric: tabular-nums;
+}
+
+.lab__code.is-noisy {
+  color: #ff8a94;
+  text-shadow:
+    -2px 0 rgba(255, 43, 61, 0.7),
+    2px 0 rgba(120, 200, 255, 0.35);
+}
+
+.preloader__hint {
+  display: none;
+  color: #fff;
+}
+
+.preloader.is-waiting {
+  cursor: pointer;
+}
+
+.preloader.is-waiting .preloader__hint {
+  display: inline;
+  animation: lab-blink 1.6s ease-in-out infinite;
+}
+
+@media (max-width: 800px) {
+  .lab {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+
+  .lab__cell {
+    padding: 1.8rem 2.2rem;
+  }
+}
+
 /* ---------- Custom cursor ---------- */
 
 .cursor {
