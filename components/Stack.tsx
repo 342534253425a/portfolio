@@ -8,8 +8,7 @@ const planets = [
   {
     name: "React",
     Icon: ReactIcon,
-    color: "#ff2b3d",
-    size: 8.4,
+    size: 5.6,
     ring: true,
     years: "6 лет",
     text: "Сердце моего стека: архитектура компонентов, Server Components и бескомпромиссная производительность.",
@@ -18,8 +17,7 @@ const planets = [
   {
     name: "Next.js",
     Icon: NextIcon,
-    color: "#dcdce4",
-    size: 7,
+    size: 5,
     years: "4 года",
     text: "App Router, SSR и ISR — быстрые продукты, которые любят и пользователи, и поисковики.",
     tags: ["App Router", "SSR / ISR", "Edge"],
@@ -27,8 +25,7 @@ const planets = [
   {
     name: "TypeScript",
     Icon: TsIcon,
-    color: "#7f93bd",
-    size: 6.6,
+    size: 4.8,
     years: "5 лет",
     text: "Строгая типизация как страховка: меньше багов в проде, смелее рефакторинг.",
     tags: ["Strict", "Generics", "Zod"],
@@ -36,8 +33,7 @@ const planets = [
   {
     name: "Node.js",
     Icon: NodeIcon,
-    color: "#ff9a3d",
-    size: 7.6,
+    size: 5.4,
     years: "6 лет",
     text: "API, BFF и real-time сервисы — от прототипа за вечер до нагруженного продакшена.",
     tags: ["REST", "WebSocket", "BFF"],
@@ -45,8 +41,7 @@ const planets = [
   {
     name: "GraphQL",
     Icon: GraphqlIcon,
-    color: "#ff4f9a",
-    size: 6.2,
+    size: 4.6,
     years: "3 года",
     text: "Гибкие схемы и Apollo: интерфейс получает ровно те данные, которые ему нужны.",
     tags: ["Apollo", "Schema", "Codegen"],
@@ -54,8 +49,7 @@ const planets = [
   {
     name: "PostgreSQL",
     Icon: PostgresIcon,
-    color: "#8e98ab",
-    size: 7.2,
+    size: 5.2,
     years: "5 лет",
     text: "Надёжные данные: моделирование, индексы, транзакции и Prisma поверх.",
     tags: ["Prisma", "Индексы", "SQL"],
@@ -63,8 +57,7 @@ const planets = [
   {
     name: "Tailwind CSS",
     Icon: TailwindIcon,
-    color: "#ff6b5a",
-    size: 6.4,
+    size: 4.8,
     years: "4 года",
     text: "Дизайн-системы и UI-киты, которые масштабируются вместе с продуктом.",
     tags: ["Tokens", "UI-кит", "A11y"],
@@ -72,8 +65,7 @@ const planets = [
   {
     name: "Docker",
     Icon: DockerIcon,
-    color: "#a9c6d9",
-    size: 8,
+    size: 5.6,
     ring: true,
     years: "3 года",
     text: "Контейнеры и CI/CD — одинаково стабильно от ноутбука до продакшена.",
@@ -81,14 +73,32 @@ const planets = [
   },
 ];
 
+type V3 = [number, number, number];
+
 const N = planets.length;
-const P = 1200;
-const FOCUS = 0.95;
+const TAU = Math.PI * 2;
+const NEAR = 40;
+const R0 = 1500;
+const DR = 560;
+const RMAX = R0 + DR * (N - 1);
 const PER_CHAPTER = 0.9;
 const clamp01 = gsap.utils.clamp(0, 1);
 const smoother = (x: number) => x * x * x * (x * (6 * x - 15) + 10);
 /** Cinematic pacing: nearly still while a title is on screen, fast between planets. */
 const pace = (u: number) => 0.08 * u + 0.92 * smoother(clamp01((u - 0.3) / 0.4));
+const radii = planets.map((_, i) => R0 + DR * i);
+const phases = planets.map((_, i) => 0.6 + i * 2.39996);
+/** Per-planet camera elevation and swing (negative swing keeps the sun right of the planet, away from the text). */
+const SHOTS: [number, number][] = [
+  [0.2, -0.42],
+  [0.1, -0.16],
+  [0.3, -0.62],
+  [0.14, -0.28],
+  [0.24, -0.7],
+  [0.08, -0.12],
+  [0.28, -0.5],
+  [0.16, -0.34],
+];
 
 export default function Stack() {
   const root = useRef<HTMLElement>(null);
@@ -98,57 +108,114 @@ export default function Stack() {
     () => {
       const section = root.current!;
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const sys = section.querySelector<HTMLElement>(".sys")!;
-      const plane = section.querySelector<HTMLElement>(".sys__plane")!;
-      const orbits = gsap.utils.toArray<HTMLElement>(".sys__orbit", section);
-      const belt = section.querySelector<HTMLElement>(".sys__belt")!;
-      const star = section.querySelector<HTMLElement>(".star")!;
+      const canvas = section.querySelector<HTMLCanvasElement>(".sys__canvas")!;
+      const ctx = canvas.getContext("2d")!;
+      const sun = section.querySelector<HTMLElement>(".sun")!;
       const nodes = gsap.utils.toArray<HTMLElement>(".planet", section);
+      const tags = gsap.utils.toArray<HTMLElement>(".planet-tag", section);
       const chapters = gsap.utils.toArray<HTMLElement>(".chapter", section);
       const link = section.querySelector<SVGPathElement>(".sys__link path")!;
       const dot = section.querySelector<SVGCircleElement>(".sys__link circle")!;
       const reticle = section.querySelector<HTMLElement>(".sys__reticle")!;
       const bar = section.querySelector<HTMLElement>(".sys__bar i")!;
+      const dist = section.querySelector<HTMLElement>(".sys__dist")!;
 
-      const state = { target: 0, t: 0, yaw: 0, lift: 0 };
-      let cx = 0;
-      let cy = 0;
-      let rMax = 0;
+      const rnd = (a: number, b: number) => a + Math.random() * (b - a);
+      const dust: V3[] = Array.from({ length: 700 }, () => [rnd(-1.6, 1.6) * RMAX, rnd(-0.45, 0.45) * RMAX, rnd(-1.6, 1.6) * RMAX]);
+      const sky: V3[] = Array.from({ length: 420 }, () => {
+        const th = Math.random() * TAU;
+        const ph = Math.acos(rnd(-1, 1));
+        const r = RMAX * 30;
+        return [Math.sin(ph) * Math.cos(th) * r, Math.cos(ph) * r, Math.sin(ph) * Math.sin(th) * r];
+      });
+      const belt: V3[] = Array.from({ length: 520 }, () => {
+        const th = Math.random() * TAU;
+        const r = (radii[3] + radii[4]) / 2 + rnd(-0.3, 0.3) * DR;
+        return [Math.cos(th) * r, rnd(-40, 40), Math.sin(th) * r];
+      });
+      const points = [...dust, ...sky, ...belt];
+      const tint = points.map((_, i) => (i >= dust.length + sky.length ? 2 : Math.random() < 0.14 ? 1 : 0));
+      const prevX = new Float32Array(points.length);
+      const prevY = new Float32Array(points.length);
+      const prevOk = new Uint8Array(points.length);
+
+      const state = { target: 0, t: 0, mx: 0, my: 0, enter: 0 };
+      let w = 0;
+      let h = 0;
+      let F = 1;
+      let px0 = 0;
+      let py0 = 0;
       let ax = 0;
       let ay = 0;
       let tb = 0;
-      let ps = 1;
-      let baseTilt = 56;
       let phone = false;
-      let radii: number[] = [];
-      let speeds: number[] = [];
       let widths: number[] = [];
-      const orbitFocus = planets.map(() => -1);
       let current = -1;
 
+      let C: V3 = [0, 0, 0];
+      let fw: V3 = [0, 0, 1];
+      let rt: V3 = [1, 0, 0];
+      let up: V3 = [0, 1, 0];
+      let PX = 0;
+      let PY = 0;
+      let PZ = 0;
+      let PS = 0;
+      const proj = (x: number, y: number, z: number) => {
+        const dx = x - C[0];
+        const dy = y - C[1];
+        const dz = z - C[2];
+        PZ = dx * fw[0] + dy * fw[1] + dz * fw[2];
+        PS = F / Math.max(PZ, NEAR);
+        PX = px0 + (dx * rt[0] + dy * rt[1] + dz * rt[2]) * PS;
+        PY = py0 - (dx * up[0] + dy * up[1] + dz * up[2]) * PS;
+      };
+
+      const planetAt = (i: number, time: number): V3 => {
+        const th = phases[i] + (reduced ? 0 : time * 0.006 * Math.sqrt(RMAX / radii[i]));
+        return [Math.cos(th) * radii[i], 0, Math.sin(th) * radii[i]];
+      };
+
+      /** Camera shot for chapter i: 0 is the wide establishing shot, i > 0 frames planet i - 1. */
+      const shot = (i: number, time: number): [V3, V3] => {
+        if (i === 0) {
+          const d = RMAX * (phone ? 3.3 : 2.5) * (1 + (1 - state.enter) * 0.9);
+          const az = -1.05 + (1 - state.enter) * 0.5;
+          const el = 0.5 + (1 - state.enter) * 0.25;
+          return [
+            [Math.cos(az) * Math.cos(el) * d, Math.sin(el) * d, Math.sin(az) * Math.cos(el) * d],
+            [0, 0, 0],
+          ];
+        }
+        const j = i - 1;
+        const p = planetAt(j, time);
+        const n: V3 = [p[0] / radii[j], 0, p[2] / radii[j]];
+        const t: V3 = [-n[2], 0, n[0]];
+        const D = ((widths[j] || 240) * F) / (phone ? w * 0.36 : Math.min(w * 0.24, h * 0.38));
+        const [e, s] = SHOTS[j];
+        const ce = Math.cos(e) * D;
+        return [
+          [
+            p[0] + n[0] * ce * Math.cos(s) + t[0] * ce * Math.sin(s),
+            Math.sin(e) * D,
+            p[2] + n[2] * ce * Math.cos(s) + t[2] * ce * Math.sin(s),
+          ],
+          p,
+        ];
+      };
+
       const layout = () => {
-        const w = section.clientWidth;
-        const h = section.clientHeight;
+        w = section.clientWidth;
+        h = section.clientHeight;
         phone = w <= 600;
-        cx = phone ? w * 0.5 : w * 0.6;
-        cy = phone ? h * 0.64 : h * 0.54;
-        rMax = phone ? w * 0.95 : Math.min(w * 0.46, h * 0.95);
-        ps = phone ? 0.55 : 1;
-        baseTilt = phone ? 48 : 56;
-        radii = planets.map((_, i) => rMax * (0.32 + (0.68 * i) / (N - 1)));
-        speeds = radii.map((r) => 1.05 * Math.sqrt(rMax / r));
+        F = phone ? w * 1.35 : h * 1.25;
+        px0 = phone ? w * 0.5 : w * 0.66;
+        py0 = phone ? h * 0.64 : h * 0.52;
         widths = nodes.map((n) => n.offsetWidth);
-        sys.style.perspectiveOrigin = `${cx}px ${cy}px`;
-        plane.style.left = `${cx}px`;
-        plane.style.top = `${cy}px`;
-        orbits.forEach((o, i) => {
-          const d = radii[i] * 2;
-          o.style.width = o.style.height = `${d}px`;
-          o.style.margin = `${-d / 2}px 0 0 ${-d / 2}px`;
-        });
-        const bd = (radii[3] + radii[4]) * 1;
-        belt.style.width = belt.style.height = `${bd}px`;
-        belt.style.margin = `${-bd / 2}px 0 0 ${-bd / 2}px`;
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        prevOk.fill(0);
         const head = section.querySelector<HTMLElement>(".chapters")!.getBoundingClientRect();
         const box = section.getBoundingClientRect();
         ax = head.right - box.left + 24;
@@ -156,76 +223,171 @@ export default function Stack() {
         tb = head.bottom - box.top;
       };
 
-      const render = (time = 0) => {
-        state.t += (state.target - state.t) * 0.14;
-        const T = state.t;
-        const intro = smoother(clamp01(T));
-        const k = 0.66 + 0.34 * intro;
-        const tilt = ((baseTilt + 14 * intro + state.lift) * Math.PI) / 180;
-        const drift = reduced ? 0 : Math.sin(time * 0.25) * 0.05;
-        const yaw = state.yaw + drift;
-        const cosT = Math.cos(tilt);
-        const sinT = Math.sin(tilt);
+      const place = (el: HTMLElement, scale: number, z: number, visible: boolean) => {
+        if (!visible) {
+          el.style.visibility = "hidden";
+          return;
+        }
+        el.style.visibility = "visible";
+        el.style.transform = `translate(${PX}px, ${PY}px) translate(-50%, -50%) scale(${scale})`;
+        el.style.zIndex = String(Math.max(1, 900000 - Math.round(z)));
+      };
 
-        plane.style.transform = `rotateX(${tilt}rad) rotateZ(${yaw}rad) scale(${k})`;
-        star.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%) scale(${k})`;
+      const render = (time = 0) => {
+        state.t += (state.target - state.t) * 0.12;
+        const T = state.t;
+        const i = Math.min(N - 1, Math.floor(T));
+        const u = T - i;
+        const pu = smoother(u);
+        const lu = smoother(clamp01((u - 0.05) * 1.8));
+        const [C0, L0] = shot(i, time);
+        const [C1, L1] = shot(i + 1, time);
+        const hop = Math.hypot(C1[0] - C0[0], C1[1] - C0[1], C1[2] - C0[2]);
+        const arc = Math.sin(Math.PI * pu) * hop * 0.1;
+        const cam: V3 = [C0[0] + (C1[0] - C0[0]) * pu, C0[1] + (C1[1] - C0[1]) * pu + arc, C0[2] + (C1[2] - C0[2]) * pu];
+        const L: V3 = [L0[0] + (L1[0] - L0[0]) * lu, L0[1] + (L1[1] - L0[1]) * lu, L0[2] + (L1[2] - L0[2]) * lu];
+
+        let f: V3 = [L[0] - cam[0], L[1] - cam[1], L[2] - cam[2]];
+        const fl = Math.hypot(f[0], f[1], f[2]) || 1;
+        f = [f[0] / fl, f[1] / fl, f[2] / fl];
+        let r: V3 = [-f[2], 0, f[0]];
+        const rl = Math.hypot(r[0], r[2]) || 1;
+        r = [r[0] / rl, 0, r[2] / rl];
+        let v: V3 = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
+        const roll = Math.sin(Math.PI * pu) * 0.14 * (i % 2 ? 1 : -1) + (reduced ? 0 : Math.sin(time * 0.3) * 0.01);
+        const cr = Math.cos(roll);
+        const sr = Math.sin(roll);
+        [r, v] = [
+          [r[0] * cr + v[0] * sr, r[1] * cr + v[1] * sr, r[2] * cr + v[2] * sr],
+          [v[0] * cr - r[0] * sr, v[1] * cr - r[1] * sr, v[2] * cr - r[2] * sr],
+        ];
+        const sway = fl * 0.05;
+        C = [
+          cam[0] + (r[0] * state.mx + v[0] * state.my) * sway,
+          cam[1] + (r[1] * state.mx + v[1] * state.my) * sway,
+          cam[2] + (r[2] * state.mx + v[2] * state.my) * sway,
+        ];
+        fw = f;
+        rt = r;
+        up = v;
+
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.lineWidth = 1;
+        radii.forEach((R, j) => {
+          const fo = clamp01(1 - Math.abs(T - (j + 1)) / 0.5);
+          ctx.strokeStyle = `rgba(255, ${255 - 212 * fo}, ${255 - 194 * fo}, ${0.1 + 0.4 * fo})`;
+          ctx.beginPath();
+          let open = false;
+          for (let k = 0; k <= 180; k++) {
+            const th = (k / 180) * TAU;
+            proj(Math.cos(th) * R, 0, Math.sin(th) * R);
+            if (PZ < NEAR * 2) {
+              open = false;
+              continue;
+            }
+            if (open) ctx.lineTo(PX, PY);
+            else ctx.moveTo(PX, PY);
+            open = true;
+          }
+          ctx.stroke();
+        });
+
+        ctx.lineCap = "round";
+        const colors = ["#ffffff", "#ff4a5a", "#ffb4aa"];
+        for (let k = 0; k < points.length; k++) {
+          const p = points[k];
+          proj(p[0], p[1], p[2]);
+          if (PZ < NEAR * 2 || PX < -50 || PX > w + 50 || PY < -50 || PY > h + 50) {
+            prevOk[k] = 0;
+            continue;
+          }
+          const far = k >= dust.length && k < dust.length + sky.length;
+          const size = far ? 1.1 : Math.min(3.2, Math.max(0.7, PS * 5));
+          const a = far ? 0.55 : Math.min(0.85, 0.2 + PS * 3);
+          ctx.globalAlpha = a;
+          const dx = PX - prevX[k];
+          const dy = PY - prevY[k];
+          const len = Math.hypot(dx, dy);
+          if (prevOk[k] && len > 2 && !reduced) {
+            const cap = Math.min(1, 240 / len) * 1.4;
+            ctx.strokeStyle = colors[tint[k]];
+            ctx.lineWidth = size;
+            ctx.beginPath();
+            ctx.moveTo(PX, PY);
+            ctx.lineTo(PX - dx * cap, PY - dy * cap);
+            ctx.stroke();
+          } else {
+            ctx.fillStyle = colors[tint[k]];
+            ctx.fillRect(PX - size / 2, PY - size / 2, size, size);
+          }
+          prevX[k] = PX;
+          prevY[k] = PY;
+          prevOk[k] = 1;
+        }
+        ctx.globalAlpha = 1;
+
+        proj(0, 0, 0);
+        place(sun, Math.min(PS * 1.9, 2), PZ, PZ > NEAR);
 
         let fx = 0;
         let fy = 0;
         let fs = 0;
+        let fz = 0;
         let focusMax = 0;
-
-        nodes.forEach((n, i) => {
-          const a = FOCUS + speeds[i] * (T - (i + 1)) + yaw;
-          const x = Math.cos(a) * radii[i] * k;
-          const y = Math.sin(a) * radii[i] * k;
-          const z = y * sinT;
-          const s = P / (P - z);
-          const X = cx + x * s;
-          const Y = cy + y * cosT * s;
-          const focus = clamp01(1 - Math.abs(T - (i + 1)) / 0.45);
-          const size = s * k * ps * (1 + focus * 0.35);
-          n.style.transform = `translate(${X}px, ${Y}px) translate(-50%, -50%) scale(${size})`;
-          n.style.zIndex = String(1000 + Math.round(z));
-          const dx = cx - X;
-          const dy = cy - Y;
-          const dl = Math.hypot(dx, dy) || 1;
-          n.style.setProperty("--lx", `${50 + (dx / dl) * 26}%`);
-          n.style.setProperty("--ly", `${50 + (dy / dl) * 26}%`);
+        nodes.forEach((n, j) => {
+          const p = planetAt(j, time);
+          proj(p[0], p[1], p[2]);
+          const visible = PZ > NEAR * 2;
+          const focus = clamp01(1 - Math.abs(T - (j + 1)) / 0.45);
+          const scale = Math.min(PS, 1.15);
+          place(n, scale, PZ, visible);
+          tags[j].style.visibility = visible ? "visible" : "hidden";
+          if (!visible) return;
+          const d = widths[j] * scale;
+          const clear = phone ? clamp01((PY - tb + 30) / 120) : clamp01((PX + d / 2 - ax + 40) / 160);
+          const op = 0.12 + 0.88 * Math.max(clear, focus);
+          n.style.opacity = String(op);
           n.style.setProperty("--f", focus.toFixed(3));
-          const clear = phone ? clamp01((Y - tb + 40) / 140) : clamp01((X - ax + 80) / 200);
-          n.style.opacity = String((0.55 + 0.45 * clamp01((z + rMax) / rMax)) * (0.12 + 0.88 * clear));
-          const of = Math.round(focus * 20) / 20;
-          if (of !== orbitFocus[i]) {
-            orbitFocus[i] = of;
-            orbits[i].style.setProperty("--f", String(of));
-          }
+          proj(0, 0, 0);
+          const sx = PX;
+          const sy = PY;
+          proj(p[0], p[1], p[2]);
+          const lx = sx - PX;
+          const ly = sy - PY;
+          const ll = Math.hypot(lx, ly) || 1;
+          n.style.setProperty("--dx", (lx / ll).toFixed(3));
+          n.style.setProperty("--dy", (ly / ll).toFixed(3));
+          tags[j].style.transform = `translate(${PX}px, ${PY + d / 2 + 14}px) translate(-50%, 0)`;
+          tags[j].style.zIndex = n.style.zIndex;
+          tags[j].style.opacity = String(op * (1 - focus) * clamp01((d - 6) / 20));
           if (focus > focusMax) {
             focusMax = focus;
-            fx = X;
-            fy = Y;
-            fs = widths[i] * size;
+            fx = PX;
+            fy = PY;
+            fs = d;
+            fz = PZ;
           }
         });
 
-        chapters.forEach((c, i) => {
-          const d = T - i;
-          const o = clamp01(1 - Math.abs(d) / 0.36);
-          c.style.opacity = String(o * o);
+        chapters.forEach((c, k) => {
+          const d = T - k;
+          const o = clamp01(1 - Math.abs(d) / 0.34);
+          c.style.opacity = String(o * o * (3 - 2 * o));
           c.style.visibility = o < 0.01 ? "hidden" : "visible";
-          c.style.transform = `translate3d(0, ${-d * 110}px, 0) rotateX(${d * 28}deg)`;
+          c.style.transform = `translate3d(0, ${Math.round(-d * 70)}px, 0)`;
         });
 
         const on = !phone && focusMax > 0.02;
         link.style.opacity = dot.style.opacity = on ? String(focusMax) : "0";
         if (on) {
-          const ex = fx - fs * 0.62;
+          const ex = fx - fs * 0.72;
           link.setAttribute("d", `M${ax} ${ay} C${ax + 120} ${ay}, ${ex - 140} ${fy}, ${ex} ${fy}`);
           dot.setAttribute("cx", String(ex));
           dot.setAttribute("cy", String(fy));
         }
         reticle.style.opacity = String(focusMax);
-        reticle.style.transform = `translate(${fx}px, ${fy}px) translate(-50%, -50%) scale(${Math.max(0.2, fs / 100) * (1.5 - focusMax * 0.2)})`;
+        reticle.style.transform = `translate(${fx}px, ${fy}px) translate(-50%, -50%) scale(${(fs / 100) * (1.62 - focusMax * 0.22)})`;
 
         const idx = Math.round(gsap.utils.clamp(0, N, T));
         if (idx !== current) {
@@ -233,10 +395,19 @@ export default function Stack() {
           setChapter(idx);
         }
         bar.style.transform = `scaleX(${T / N})`;
+        dist.textContent = ((focusMax > 0.5 ? fz : Math.hypot(C[0], C[1], C[2])) / 1000).toFixed(2);
       };
 
       layout();
       render();
+
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top bottom",
+        end: "top top",
+        onUpdate: (self) => (state.enter = self.progress),
+        onLeave: () => (state.enter = 1),
+      });
 
       ScrollTrigger.create({
         trigger: section,
@@ -269,11 +440,11 @@ export default function Stack() {
 
       let move: ((e: PointerEvent) => void) | undefined;
       if (!reduced && finePointer()) {
-        const yawTo = gsap.quickTo(state, "yaw", { duration: 2, ease: "power3.out" });
-        const liftTo = gsap.quickTo(state, "lift", { duration: 2, ease: "power3.out" });
+        const mxTo = gsap.quickTo(state, "mx", { duration: 2.2, ease: "power3.out" });
+        const myTo = gsap.quickTo(state, "my", { duration: 2.2, ease: "power3.out" });
         move = (e) => {
-          yawTo((e.clientX / window.innerWidth - 0.5) * -0.18);
-          liftTo((e.clientY / window.innerHeight - 0.5) * -6);
+          mxTo(e.clientX / window.innerWidth - 0.5);
+          myTo(0.5 - e.clientY / window.innerHeight);
         };
         section.addEventListener("pointermove", move);
       }
@@ -290,35 +461,34 @@ export default function Stack() {
   return (
     <section ref={root} id="stack" className="stack">
       <div className="stack__nebula" aria-hidden />
+      <canvas className="sys__canvas" aria-hidden />
 
-      <div className="sys" aria-hidden>
-        <div className="sys__plane">
-          {planets.map((p) => (
-            <span key={p.name} className="sys__orbit" />
-          ))}
-          <span className="sys__belt" />
+      <div className="sys__world" aria-hidden>
+        <div className="sun">
+          <span className="sun__glow" />
+          <span className="sun__ticks" />
+          <span className="sun__ring" />
+          <span className="sun__core" />
         </div>
-      </div>
 
-      <div className="star" aria-hidden>
-        <span className="star__corona" />
-        <span className="star__flare" />
-        <span className="star__core" />
-      </div>
+        {planets.map(({ name, Icon, size, ring }) => (
+          <div key={name} className="planet" style={{ "--s": `${size * 4.4}rem` } as React.CSSProperties}>
+            <span className="planet__halo" />
+            {ring && <span className="planet__ring" />}
+            <span className="planet__body">
+              <Icon />
+            </span>
+            {ring && <span className="planet__ring planet__ring--front" />}
+            <span className="planet__moon" />
+          </div>
+        ))}
 
-      {planets.map(({ name, Icon, color, size, ring, years }) => (
-        <div key={name} className="planet" style={{ "--c": color, "--s": `${size}rem` } as React.CSSProperties}>
-          {ring && <span className="planet__ring" />}
-          <span className="planet__body">
-            <Icon />
-          </span>
-          {ring && <span className="planet__ring planet__ring--front" />}
-          <span className="planet__label">
+        {planets.map(({ name }) => (
+          <span key={name} className="planet-tag">
             {name}
-            <small>{years}</small>
           </span>
-        </div>
-      ))}
+        ))}
+      </div>
 
       <span className="sys__reticle" aria-hidden>
         <i />
@@ -338,7 +508,7 @@ export default function Stack() {
             <br />
             Система — <span className="accent">мой подход.</span>
           </h2>
-          <p className="lead">Моя вселенная технологий. Скролльте — пролетим по орбитам.</p>
+          <p className="lead">Моя вселенная технологий. Скролльте — полетим от планеты к планете.</p>
         </div>
         {planets.map(({ name, text, tags, years }, i) => (
           <div key={name} className="chapter">
@@ -362,6 +532,9 @@ export default function Stack() {
         </span>
         <span className="sys__bar">
           <i />
+        </span>
+        <span>
+          Дистанция <b className="sys__dist">0.00</b> а.е.
         </span>
         <span>
           <b>{String(chapter).padStart(2, "0")}</b> / {String(N).padStart(2, "0")}
