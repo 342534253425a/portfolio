@@ -183,10 +183,11 @@ export default function Projects() {
           .from(camera, {
             z: -900,
             rotationX: 24,
-            autoAlpha: 0,
             duration: 2.2,
             ease: "expo.out",
           })
+          /* Faded outside the preserve-3d chain: opacity below 1 on .camera would flatten the ring until it hits 1. */
+          .from(".stage3d", { opacity: 0, duration: 1.4, ease: "power2.out" }, 0)
           .to(state, { intro: 0, duration: 2.6, ease: "expo.out", onUpdate: render }, 0)
           .from(".floor", { autoAlpha: 0, duration: 2, ease: "power2.out" }, 0.4)
           .from(
