@@ -242,6 +242,111 @@ export default function Stack() {
         }
       });
 
+      const blackHole = sprite(512, (g, s) => {
+        const c = s / 2;
+        const disk = (front: boolean) => {
+          g.save();
+          g.translate(c, c);
+          g.rotate(-0.18);
+          g.beginPath();
+          g.rect(-c, front ? 0 : -c, s, c);
+          g.clip();
+          g.scale(1, 0.24);
+          for (let k = 0; k < 50; k++) {
+            const t = k / 50;
+            g.strokeStyle = `rgba(255, ${Math.round(200 - t * 150)}, ${Math.round(150 - t * 110)}, ${0.85 * (1 - t) ** 1.3})`;
+            g.lineWidth = s * 0.009;
+            g.beginPath();
+            g.arc(0, 0, s * (0.15 + t * 0.3), 0, TAU);
+            g.stroke();
+          }
+          g.restore();
+        };
+        g.globalCompositeOperation = "lighter";
+        g.globalAlpha = 0.55;
+        g.drawImage(glow("255, 80, 60"), s * 0.1, s * 0.1, s * 0.8, s * 0.8);
+        g.globalAlpha = 1;
+        disk(false);
+        g.shadowColor = "rgba(255, 150, 110, 0.9)";
+        g.shadowBlur = s * 0.03;
+        g.strokeStyle = "rgba(255, 180, 140, 0.8)";
+        g.lineWidth = s * 0.008;
+        g.beginPath();
+        g.arc(c, c, s * 0.125, 0, TAU);
+        g.stroke();
+        g.shadowBlur = 0;
+        g.globalCompositeOperation = "source-over";
+        g.fillStyle = "#000";
+        g.beginPath();
+        g.arc(c, c, s * 0.112, 0, TAU);
+        g.fill();
+        g.globalCompositeOperation = "lighter";
+        g.strokeStyle = "rgba(255, 235, 220, 0.9)";
+        g.lineWidth = 1.5;
+        g.beginPath();
+        g.arc(c, c, s * 0.114, 0, TAU);
+        g.stroke();
+        disk(true);
+      });
+      const wormhole = sprite(512, (g, s) => {
+        const c = s / 2;
+        g.globalCompositeOperation = "lighter";
+        g.globalAlpha = 0.4;
+        g.drawImage(glow("214, 28, 92"), 0, 0, s, s);
+        const hues = ["255, 74, 106", "255, 160, 170", "184, 50, 122"];
+        for (let k = 0; k < 36; k++) {
+          const t = k / 36;
+          const r = s * 0.44 * Math.pow(0.9, k);
+          g.strokeStyle = `rgba(${hues[k % 3]}, ${0.12 + 0.6 * t})`;
+          g.lineWidth = Math.max(1, s * 0.012 * (1 - t));
+          for (let a = 0; a < 3; a++) {
+            const st = k * 0.45 + (a * TAU) / 3;
+            g.globalAlpha = 1;
+            g.beginPath();
+            g.arc(c, c, r, st, st + 1.3);
+            g.stroke();
+          }
+        }
+        g.globalAlpha = 0.9;
+        g.drawImage(glowWhite, c - s * 0.06, c - s * 0.06, s * 0.12, s * 0.12);
+      });
+      const rays = sprite(512, (g, s) => {
+        const c = s / 2;
+        g.globalCompositeOperation = "lighter";
+        for (let k = 0; k < 42; k++) {
+          const a = (k / 42) * TAU + rnd(-0.05, 0.05);
+          const wd = rnd(0.012, 0.045);
+          const len = c * rnd(0.55, 1);
+          const gr = g.createRadialGradient(c, c, 0, c, c, len);
+          gr.addColorStop(0, "rgba(255, 90, 90, 0.5)");
+          gr.addColorStop(1, "rgba(255, 43, 61, 0)");
+          g.fillStyle = gr;
+          g.beginPath();
+          g.moveTo(c, c);
+          g.arc(c, c, len, a - wd, a + wd);
+          g.closePath();
+          g.fill();
+        }
+      });
+      /** Pins an object into planet j's shot: screen position (sx, sy) as viewport fractions, z depth in RMAX. */
+      type Anchor = { j: number; sx: number; sy: number; z: number };
+      const holes = [
+        { p: [-1.9 * RMAX, 0.45 * RMAX, 1.1 * RMAX] as V3, r: 0.34 * RMAX },
+        { p: [0, 0, 0] as V3, r: 0.42 * RMAX, at: { j: 2, sx: 0.9, sy: 0.2, z: 2.4 } as Anchor },
+        { p: [0, 0, 0] as V3, r: 0.36 * RMAX, at: { j: 6, sx: 0.88, sy: 0.8, z: 2.6 } as Anchor },
+      ];
+      const portals = [
+        { p: [0, 0, 0] as V3, r: 0.3 * RMAX, at: { j: 4, sx: 0.9, sy: 0.24, z: 2.2 } as Anchor },
+        { p: [0, 0, 0] as V3, r: 0.26 * RMAX, at: { j: 7, sx: 0.88, sy: 0.22, z: 2.4 } as Anchor },
+      ];
+      const pulsars = [
+        { p: [0, 0, 0] as V3, ph: 0.4, sp: 1.7, at: { j: 1, sx: 0.88, sy: 0.18, z: 2 } as Anchor },
+        { p: [0, 0, 0] as V3, ph: 2.1, sp: -1.2, at: { j: 3, sx: 0.9, sy: 0.78, z: 2 } as Anchor },
+        { p: [0, 0, 0] as V3, ph: 4, sp: 2.3, at: { j: 5, sx: 0.86, sy: 0.2, z: 2 } as Anchor },
+        { p: [0, 0, 0] as V3, ph: 1.2, sp: 1.4, at: { j: 0, sx: 0.58, sy: 0.12, z: 2.2 } as Anchor },
+      ];
+      const anchored = [...holes, ...portals, ...pulsars];
+
       const clouds = Array.from({ length: 9 }, (_, k) => {
         const th = (k / 9) * TAU + rnd(-0.3, 0.3);
         const d = RMAX * rnd(1.4, 2.6);
@@ -277,7 +382,7 @@ export default function Stack() {
       let nextShoot = 1.5;
       let last = 0;
 
-      const state = { target: 0, t: 0, mx: 0, my: 0, enter: 0 };
+      const state = { target: 0, t: 0, mx: 0, my: 0, enter: 0, e: 0 };
       let w = 0;
       let h = 0;
       let F = 1;
@@ -317,9 +422,9 @@ export default function Stack() {
       /** Camera shot for chapter i: 0 is the wide establishing shot, i > 0 frames planet i - 1. */
       const shot = (i: number, time: number): [V3, V3] => {
         if (i === 0) {
-          const d = RMAX * (phone ? 3.3 : 2.5) * (1 + (1 - state.enter) * 0.9);
-          const az = -1.05 + (1 - state.enter) * 0.5;
-          const el = 0.5 + (1 - state.enter) * 0.25;
+          const d = RMAX * (phone ? 3.3 : 2.5) * (1 + (1 - state.e) * 0.9);
+          const az = -1.05 + (1 - state.e) * 0.5;
+          const el = 0.5 + (1 - state.e) * 0.25;
           return [
             [Math.cos(az) * Math.cos(el) * d, Math.sin(el) * d, Math.sin(az) * Math.cos(el) * d],
             [0, 0, 0],
@@ -356,11 +461,14 @@ export default function Stack() {
           [canvas, ctx],
           [fxCanvas, fx2],
         ] as const) {
-          cv.width = Math.round(w * dpr);
-          cv.height = Math.round(h * dpr);
+          const cw = Math.round(w * dpr);
+          const ch = Math.round(h * dpr);
+          if (cv.width === cw && cv.height === ch) continue;
+          cv.width = cw;
+          cv.height = ch;
           c2.setTransform(dpr, 0, 0, dpr, 0, 0);
+          prevOk.fill(0);
         }
-        prevOk.fill(0);
         const head = section.querySelector<HTMLElement>(".chapters")!.getBoundingClientRect();
         const box = section.getBoundingClientRect();
         ax = head.right - box.left + 24;
@@ -378,19 +486,53 @@ export default function Stack() {
         el.style.zIndex = String(Math.max(1, 900000 - Math.round(z)));
       };
 
+      /** Hermite spline through the shots with tangents capped to the shorter neighbour hop, so it never overshoots. */
+      const spline = (pts: V3[], s: number): V3 => {
+        const i = Math.min(N - 1, Math.max(0, Math.floor(s)));
+        const u = clamp01(s - i);
+        const at = (k: number): V3 => {
+          if (k < 0) return [2 * pts[0][0] - pts[1][0], 2 * pts[0][1] - pts[1][1], 2 * pts[0][2] - pts[1][2]];
+          if (k > N) return [2 * pts[N][0] - pts[N - 1][0], 2 * pts[N][1] - pts[N - 1][1], 2 * pts[N][2] - pts[N - 1][2]];
+          return pts[k];
+        };
+        const tangent = (k: number): V3 => {
+          const a = at(k - 1);
+          const b = at(k);
+          const c = at(k + 1);
+          const m: V3 = [(c[0] - a[0]) / 2, (c[1] - a[1]) / 2, (c[2] - a[2]) / 2];
+          const ml = Math.hypot(m[0], m[1], m[2]) || 1;
+          const cap = Math.min(Math.hypot(c[0] - b[0], c[1] - b[1], c[2] - b[2]), Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]));
+          const f = Math.min(1, cap / ml);
+          return [m[0] * f, m[1] * f, m[2] * f];
+        };
+        const p0 = at(i);
+        const p1 = at(i + 1);
+        const m0 = tangent(i);
+        const m1 = tangent(i + 1);
+        const u2 = u * u;
+        const u3 = u2 * u;
+        const h00 = 2 * u3 - 3 * u2 + 1;
+        const h10 = u3 - 2 * u2 + u;
+        const h01 = -2 * u3 + 3 * u2;
+        const h11 = u3 - u2;
+        return [0, 1, 2].map((k) => h00 * p0[k] + h10 * m0[k] + h01 * p1[k] + h11 * m1[k]) as V3;
+      };
+
       const render = (time = 0) => {
         state.t += (state.target - state.t) * 0.07;
+        state.e += (state.enter - state.e) * 0.08;
         const T = state.t;
         const i = Math.min(N - 1, Math.floor(T));
         const u = T - i;
-        const pu = u;
-        const lu = 0.5 - 0.5 * Math.cos(Math.PI * clamp01((u - 0.04) * 1.5));
-        const [C0, L0] = shot(i, time);
-        const [C1, L1] = shot(i + 1, time);
-        const hop = Math.hypot(C1[0] - C0[0], C1[1] - C0[1], C1[2] - C0[2]);
-        const arc = Math.sin(Math.PI * pu) * hop * 0.1;
-        const cam: V3 = [C0[0] + (C1[0] - C0[0]) * pu, C0[1] + (C1[1] - C0[1]) * pu + arc, C0[2] + (C1[2] - C0[2]) * pu];
-        const L: V3 = [L0[0] + (L1[0] - L0[0]) * lu, L0[1] + (L1[1] - L0[1]) * lu, L0[2] + (L1[2] - L0[2]) * lu];
+        const shots = Array.from({ length: N + 1 }, (_, k) => shot(k, time));
+        const cams = shots.map((s) => s[0]);
+        const cam = spline(cams, T);
+        const hop = Math.hypot(cams[i + 1][0] - cams[i][0], cams[i + 1][1] - cams[i][1], cams[i + 1][2] - cams[i][2]);
+        cam[1] += Math.sin(Math.PI * u) ** 2 * hop * 0.08;
+        const L = spline(
+          shots.map((s) => s[1]),
+          T + 0.22 * Math.sin(Math.PI * u),
+        );
 
         let f: V3 = [L[0] - cam[0], L[1] - cam[1], L[2] - cam[2]];
         const fl = Math.hypot(f[0], f[1], f[2]) || 1;
@@ -399,7 +541,7 @@ export default function Stack() {
         const rl = Math.hypot(r[0], r[2]) || 1;
         r = [r[0] / rl, 0, r[2] / rl];
         let v: V3 = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
-        const roll = Math.sin(Math.PI * pu) * 0.14 * (i % 2 ? 1 : -1) + (reduced ? 0 : Math.sin(time * 0.3) * 0.01);
+        const roll = Math.sin(Math.PI * u) * 0.12 * (i % 2 ? 1 : -1) + (reduced ? 0 : Math.sin(time * 0.3) * 0.01);
         const cr = Math.cos(roll);
         const sr = Math.sin(roll);
         [r, v] = [
@@ -511,7 +653,65 @@ export default function Stack() {
         }
         ctx.globalAlpha = 1;
 
+        for (const o of anchored) {
+          if (!("at" in o) || !o.at) continue;
+          const { j, sx, sy, z } = o.at;
+          const [Cj, Lj] = shots[j + 1];
+          const df = norm([Lj[0] - Cj[0], Lj[1] - Cj[1], Lj[2] - Cj[2]]);
+          const dr = norm([-df[2], 0, df[0]]);
+          const du: V3 = [dr[1] * df[2] - dr[2] * df[1], dr[2] * df[0] - dr[0] * df[2], dr[0] * df[1] - dr[1] * df[0]];
+          const Z = z * RMAX;
+          const a = ((sx * w - px0) * Z) / F;
+          const b = ((py0 - sy * h) * Z) / F;
+          o.p = [0, 1, 2].map((k) => Cj[k] + df[k] * Z + dr[k] * a + du[k] * b) as V3;
+        }
+        for (const b of holes) {
+          proj(b.p[0], b.p[1], b.p[2]);
+          if (PZ < NEAR * 4) continue;
+          blit(blackHole, PX, PY, Math.min(b.r * PS, 3000), clamp01((PZ - b.r) / b.r));
+        }
         ctx.globalCompositeOperation = "lighter";
+        for (const o of portals) {
+          proj(o.p[0], o.p[1], o.p[2]);
+          const r = Math.min(o.r * PS, 3000);
+          const a = clamp01((PZ - o.r) / o.r) * (0.8 + 0.2 * Math.sin(time * 1.3));
+          if (PZ < NEAR * 4 || a < 0.01 || PX + r < 0 || PX - r > w || PY + r < 0 || PY - r > h) continue;
+          ctx.save();
+          ctx.globalAlpha = a;
+          ctx.translate(PX, PY);
+          ctx.rotate(reduced ? 0 : -time * 0.35);
+          ctx.drawImage(wormhole, -r, -r, r * 2, r * 2);
+          ctx.rotate(reduced ? 0 : time * 0.6);
+          ctx.globalAlpha = a * 0.5;
+          ctx.drawImage(wormhole, -r * 0.6, -r * 0.6, r * 1.2, r * 1.2);
+          ctx.restore();
+        }
+        for (const p of pulsars) {
+          proj(p.p[0], p.p[1], p.p[2]);
+          if (PZ < NEAR * 4 || PX < -200 || PX > w + 200 || PY < -200 || PY > h + 200) continue;
+          const q = h / 900;
+          const a = p.ph + (reduced ? 0 : time * p.sp);
+          const len = 150 * q;
+          const bx = Math.cos(a) * len;
+          const by = Math.sin(a) * len * 0.5;
+          const gr = ctx.createLinearGradient(PX - bx, PY - by, PX + bx, PY + by);
+          gr.addColorStop(0, "rgba(255, 70, 90, 0)");
+          gr.addColorStop(0.5, "rgba(255, 220, 220, 0.8)");
+          gr.addColorStop(1, "rgba(255, 70, 90, 0)");
+          ctx.strokeStyle = gr;
+          for (const [wd, al] of [
+            [7 * q, 0.2],
+            [1.6 * q, 0.9],
+          ]) {
+            ctx.globalAlpha = al;
+            ctx.lineWidth = wd;
+            ctx.beginPath();
+            ctx.moveTo(PX - bx, PY - by);
+            ctx.lineTo(PX + bx, PY + by);
+            ctx.stroke();
+          }
+          blit(glowWhite, PX, PY, 16 * q * (0.8 + 0.3 * Math.abs(Math.sin(a * 2))), 1);
+        }
         for (const c of comets) {
           const th = c.ph + (reduced ? 0 : time * c.sp);
           const x0 = Math.cos(th) * c.a;
@@ -586,6 +786,19 @@ export default function Stack() {
         const sunY = PY;
         const sunOn = PZ > NEAR;
         const sunR = (sunW / 2) * Math.min(PS * 1.9, 2);
+        if (sunOn) {
+          const r = sunR * 5;
+          ctx.save();
+          ctx.globalCompositeOperation = "lighter";
+          ctx.globalAlpha = 0.35;
+          ctx.translate(sunX, sunY);
+          ctx.rotate(reduced ? 0 : time * 0.03);
+          ctx.drawImage(rays, -r, -r, r * 2, r * 2);
+          ctx.rotate(reduced ? 0 : -time * 0.05);
+          ctx.globalAlpha = 0.2;
+          ctx.drawImage(rays, -r * 0.7, -r * 0.7, r * 1.4, r * 1.4);
+          ctx.restore();
+        }
         let occlude = 1;
         place(sun, Math.min(PS * 1.9, 2), PZ, sunOn);
         const sunZ = PZ;
@@ -696,7 +909,7 @@ export default function Stack() {
         trigger: section,
         start: "top bottom",
         end: "top top",
-        onUpdate: (self) => (state.enter = self.progress),
+        onUpdate: (self) => (state.enter = 1 - (1 - self.progress) ** 3),
         onLeave: () => (state.enter = 1),
       });
 
@@ -705,7 +918,6 @@ export default function Stack() {
         start: "top top",
         end: () => `+=${window.innerHeight * PER_CHAPTER * (N + 0.6)}`,
         pin: true,
-        anticipatePin: 1,
         invalidateOnRefresh: true,
         onRefresh: layout,
         onUpdate: (self) => {
@@ -720,10 +932,18 @@ export default function Stack() {
         trigger: section,
         start: "top bottom",
         end: () => `bottom+=${window.innerHeight * PER_CHAPTER * (N + 0.6)} top`,
-        onToggle: (self) => (self.isActive ? gsap.ticker.add(tick) : gsap.ticker.remove(tick)),
+        onToggle: (self) => {
+          if (self.isActive) {
+            prevOk.fill(0);
+            state.t = state.target;
+            state.e = state.enter;
+            gsap.ticker.add(tick);
+          } else gsap.ticker.remove(tick);
+        },
       });
 
       const ro = new ResizeObserver(() => {
+        if (Math.abs(section.clientWidth - w) < 2 && Math.abs(section.clientHeight - h) < 2) return;
         layout();
         render();
       });
