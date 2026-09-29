@@ -138,8 +138,7 @@ export default function Process() {
         end: "bottom 30%",
         onToggle: (self) => {
           clearInterval(timer);
-          if (self.isActive)
-            timer = setInterval(() => !touched.current && setActive((a) => (a + 1) % steps.length), 3200);
+          if (self.isActive) timer = setInterval(() => !touched.current && setActive((a) => (a + 1) % steps.length), 3200);
         },
       });
       return () => clearInterval(timer);
@@ -188,34 +187,36 @@ export default function Process() {
             Каждый проект — это последовательный путь, где важен каждый этап.
           </p>
 
-          <div className="process__panel" data-reveal="0.3" aria-live="polite">
-            <div className="panel__head" key={`h${active}`}>
-              <span className="panel__step panel__anim">Этап 0{active + 1}</span>
-              <span className="panel__time panel__anim">⏱ {s.time}</span>
-            </div>
-            <h3 className="panel__title panel__anim" key={`t${active}`}>
-              {s.title}
-            </h3>
-            <ul className="panel__list" key={`l${active}`}>
-              {s.items.map((item) => (
-                <li key={item} className="panel__anim">
-                  <i>✓</i> {item}
-                </li>
-              ))}
-            </ul>
-            <div className="panel__nav">
-              {steps.map((st, i) => (
-                <button
-                  key={st.title}
-                  type="button"
-                  className={`panel__dot${i === active ? " is-active" : ""}`}
-                  onClick={() => pick(i)}
-                  aria-label={st.title}
-                />
-              ))}
-              <span className="panel__bar">
-                <i />
-              </span>
+          <div data-reveal="0.3">
+            <div className="process__panel" data-tilt="12" aria-live="polite">
+              <div className="panel__head" key={`h${active}`}>
+                <span className="panel__step panel__anim">Этап 0{active + 1}</span>
+                <span className="panel__time panel__anim">⏱ {s.time}</span>
+              </div>
+              <h3 className="panel__title panel__anim" key={`t${active}`}>
+                {s.title}
+              </h3>
+              <ul className="panel__list" key={`l${active}`}>
+                {s.items.map((item) => (
+                  <li key={item} className="panel__anim">
+                    <i>✓</i> {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="panel__nav">
+                {steps.map((st, i) => (
+                  <button
+                    key={st.title}
+                    type="button"
+                    className={`panel__dot${i === active ? " is-active" : ""}`}
+                    onClick={() => pick(i)}
+                    aria-label={st.title}
+                  />
+                ))}
+                <span className="panel__bar">
+                  <i />
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -266,11 +267,7 @@ export default function Process() {
                     <em>0{i + 1}</em> {title}
                   </h3>
                   <p className="step__text">{text}</p>
-                  {rocket && (
-                    <p className="step__hint">
-                      {launches ? `🚀 Запусков: ${launches} — ещё?` : "Зажмите ракету 🚀"}
-                    </p>
-                  )}
+                  {rocket && <p className="step__hint">{launches ? `🚀 Запусков: ${launches} — ещё?` : "Зажмите ракету 🚀"}</p>}
                 </div>
               </li>
             );

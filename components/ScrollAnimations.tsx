@@ -4,8 +4,8 @@ import { gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
 
 /**
  * Declarative scroll animations driven by data attributes:
- *  data-split          — headline revealed line by line through a mask
- *  data-reveal         — fade/slide up (value = delay in seconds)
+ *  data-split          — headline lines flip up in 3D through a mask
+ *  data-reveal         — fade/rise with a 3D tilt (value = delay in seconds)
  *  data-stagger        — children marked with data-item appear one by one ("pop" = scale in)
  *  data-speed          — scrubbed parallax (value = fraction of half the viewport height, may be negative)
  *  data-zoom           — scrubbed background zoom-out
@@ -24,8 +24,10 @@ export default function ScrollAnimations() {
           onSplit(self) {
             return gsap.from(self.lines, {
               yPercent: 115,
+              rotationX: -75,
               rotate: 2.5,
-              transformOrigin: "0% 100%",
+              transformPerspective: 900,
+              transformOrigin: "50% 100% -30px",
               duration: 1.35,
               ease: "expo.out",
               stagger: 0.11,
@@ -42,6 +44,9 @@ export default function ScrollAnimations() {
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
         gsap.from(el, {
           y: 48,
+          rotationX: -28,
+          transformPerspective: 1000,
+          transformOrigin: "50% 100%",
           autoAlpha: 0,
           duration: 1.2,
           delay: parseFloat(el.dataset.reveal || "0") || 0,

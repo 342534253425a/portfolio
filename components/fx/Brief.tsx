@@ -38,7 +38,12 @@ export default function Brief({ email }: { email: string }) {
       snapTo.current = (i: number) => {
         current = i;
         setTime(i);
-        gsap.to(knob, { x: stop(i), duration: 0.6, ease: "elastic.out(1, 0.6)", onUpdate: () => paint(gsap.getProperty(knob, "x") as number) });
+        gsap.to(knob, {
+          x: stop(i),
+          duration: 0.6,
+          ease: "elastic.out(1, 0.6)",
+          onUpdate: () => paint(gsap.getProperty(knob, "x") as number),
+        });
       };
 
       const [drag] = Draggable.create(knob, {
@@ -116,13 +121,21 @@ export default function Brief({ email }: { email: string }) {
       .to(plane, {
         keyframes: [
           { x: window.innerWidth * 0.25, y: -120, rotation: -25, duration: 0.45, ease: "power1.in" },
-          { x: window.innerWidth * 0.7, y: -window.innerHeight * 0.8, rotation: -40, scale: 0.4, autoAlpha: 0, duration: 0.55, ease: "power2.in" },
+          {
+            x: window.innerWidth * 0.7,
+            y: -window.innerHeight * 0.8,
+            rotation: -40,
+            scale: 0.4,
+            autoAlpha: 0,
+            duration: 0.55,
+            ease: "power2.in",
+          },
         ],
       });
   };
 
   return (
-    <div ref={root} className="brief">
+    <div ref={root} className="brief" data-tilt="5">
       <p className="brief__title">
         <span className="brief__live" /> Соберите бриф за 10 секунд
       </p>
@@ -144,7 +157,14 @@ export default function Brief({ email }: { email: string }) {
       <div className="brief__range">
         <div className="brief__track">
           <span className="brief__fill" />
-          <span className="brief__knob" role="slider" aria-valuemin={0} aria-valuemax={3} aria-valuenow={time} aria-label="Срок" tabIndex={0}
+          <span
+            className="brief__knob"
+            role="slider"
+            aria-valuemin={0}
+            aria-valuemax={3}
+            aria-valuenow={time}
+            aria-label="Срок"
+            tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "ArrowRight") snapTo.current(Math.min(3, time + 1));
               if (e.key === "ArrowLeft") snapTo.current(Math.max(0, time - 1));

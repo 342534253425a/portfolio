@@ -122,6 +122,10 @@ export default function Hero() {
       });
       gsap.to(q(".hero__content"), {
         y: -140,
+        z: -220,
+        rotationX: 22,
+        transformPerspective: 1100,
+        transformOrigin: "50% 0%",
         autoAlpha: 0.1,
         ease: "none",
         scrollTrigger: { trigger: root.current, start: "20% top", end: "bottom top", scrub: true },
@@ -139,6 +143,9 @@ export default function Hero() {
       const gy = gsap.quickTo(glow, "y", { duration: 2, ease: "power3.out" });
       const cx = gsap.quickTo(content, "x", { duration: 1.6, ease: "power3.out" });
       const cy = gsap.quickTo(content, "y", { duration: 1.6, ease: "power3.out" });
+      const cry = gsap.quickTo(content, "rotationY", { duration: 1.6, ease: "power3.out" });
+      const crx = gsap.quickTo(content, "rotationX", { duration: 1.6, ease: "power3.out" });
+      gsap.set(content, { transformPerspective: 1400 });
 
       const move = (e: PointerEvent) => {
         const px = e.clientX / window.innerWidth - 0.5;
@@ -151,6 +158,8 @@ export default function Hero() {
         gy(py * window.innerHeight * 0.5);
         cx(px * 14);
         cy(py * 10);
+        cry(px * 7);
+        crx(-py * 5);
       };
       root.current!.addEventListener("pointermove", move);
       return () => {
