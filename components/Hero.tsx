@@ -90,11 +90,12 @@ export default function Hero() {
             enableProximity();
           },
         });
-        tl.from(
+        tl.fromTo(
           q(".hero__media-inner"),
+          { scale: 1.25, opacity: 0 },
           {
-            scale: 1.25,
-            autoAlpha: 0,
+            scale: 1,
+            opacity: 1,
             duration: 2.4,
             ease: "power3.out",
             clearProps: "transform",
@@ -113,6 +114,9 @@ export default function Hero() {
 
         q<HTMLElement>(".stat__num").forEach((el, i) => tl.add(rollCounter(el, stats[i]), 1.2 + i * 0.1));
       });
+
+      /* The photo paints under the opaque preloader at its starting scale, so the intro never waits on its raster. */
+      if (!reduced) gsap.set(q(".hero__media-inner"), { visibility: "visible", scale: 1.25 });
 
       const w = window as unknown as { __preloaderDone?: boolean };
       if (w.__preloaderDone) intro();

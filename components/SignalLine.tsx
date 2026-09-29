@@ -27,6 +27,7 @@ export default function SignalLine() {
 
     const state = { len: 0 };
     let total = 0;
+    let lens = new Float32Array(0);
     let maxYs = new Float32Array(0);
     let anchors: { el: HTMLElement; len: number }[] = [];
 
@@ -40,7 +41,7 @@ export default function SignalLine() {
         if (maxYs[mid] < y) lo = mid + 1;
         else hi = mid;
       }
-      return (total * lo) / n;
+      return lens[lo];
     };
 
     const render = () => {
@@ -82,23 +83,43 @@ export default function SignalLine() {
       });
       if (pts.length < 2) return;
 
+      /* The length ↔ height table is sampled from the bezier maths directly; getPointAtLength walks the whole path per call. */
+      const S = 48;
+      const segs = pts.length - 1;
+      lens = new Float32Array(segs * S + 1);
+      maxYs = new Float32Array(segs * S + 1);
+      maxYs[0] = pts[0].y;
       let d = `M${pts[0].x},${pts[0].y}`;
-      for (let i = 0; i < pts.length - 1; i++) {
+      let acc = 0;
+      let maxY = pts[0].y;
+      let px = pts[0].x;
+      let py = pts[0].y;
+      for (let i = 0; i < segs; i++) {
         const a = pts[i];
         const b = pts[i + 1];
         const dy = (b.y - a.y) * 0.55;
         d += ` C${a.x},${a.y + dy} ${b.x},${b.y - dy} ${b.x},${b.y}`;
+        for (let k = 1; k <= S; k++) {
+          const t = k / S;
+          const u = 1 - t;
+          const w1 = 3 * u * u * t;
+          const w2 = 3 * u * t * t;
+          const w3 = t * t * t;
+          const x = (u * u * u + w1) * a.x + (w2 + w3) * b.x;
+          const y = u * u * u * a.y + w1 * (a.y + dy) + w2 * (b.y - dy) + w3 * b.y;
+          acc += Math.hypot(x - px, y - py);
+          maxY = Math.max(maxY, y);
+          lens[i * S + k] = acc;
+          maxYs[i * S + k] = maxY;
+          px = x;
+          py = y;
+        }
       }
       [track, glow, core].forEach((p) => p.setAttribute("d", d));
 
       total = core.getTotalLength();
-      const n = Math.max(200, Math.round(total / 5));
-      maxYs = new Float32Array(n + 1);
-      let maxY = -Infinity;
-      for (let i = 0; i <= n; i++) {
-        maxY = Math.max(maxY, core.getPointAtLength((total * i) / n).y);
-        maxYs[i] = maxY;
-      }
+      const fit = acc > 0 ? total / acc : 0;
+      for (let i = 0; i < lens.length; i++) lens[i] *= fit;
       anchors = els.map((el, i) => ({ el, len: lenForY(pts[i].y) }));
 
       [glow, core].forEach((p) => (p.style.strokeDasharray = `${total} ${total}`));

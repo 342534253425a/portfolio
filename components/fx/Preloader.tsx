@@ -3,22 +3,10 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
+import { whenIdle } from "@/lib/idle";
 import LogoLab from "./LogoLab";
 
 export const PRELOADER_DONE = "preloader:done";
-
-/** Resolves once the page has loaded and the main thread has had a moment to breathe after hydration. */
-const whenIdle = () =>
-  new Promise<void>((resolve) => {
-    const idle = () => {
-      const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
-      if (ric) ric(() => requestAnimationFrame(() => resolve()), { timeout: 1200 });
-      else setTimeout(resolve, 250);
-    };
-    const loaded = () => (document.fonts?.ready ?? Promise.resolve()).then(idle);
-    if (document.readyState === "complete") loaded();
-    else window.addEventListener("load", loaded, { once: true });
-  });
 
 export default function Preloader() {
   const root = useRef<HTMLDivElement>(null);

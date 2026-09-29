@@ -193,6 +193,11 @@ html.has-cursor * {
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 1.6rem;
   background: rgba(255, 255, 255, 0.015);
+  opacity: 0;
+}
+
+.preloader.is-ready .lab__cell {
+  opacity: 1;
   animation: logo-in 0.9s cubic-bezier(0.19, 1, 0.22, 1) both;
 }
 
