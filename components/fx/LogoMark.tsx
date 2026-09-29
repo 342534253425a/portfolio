@@ -23,7 +23,7 @@ export function LogoGlyphs() {
   );
 }
 
-/** One A/ → Alexsey → A/ cycle; `el` is the `.lm` element, `data-tilt` sets how far the slash turns into an "l". */
+/** One A/ → Alexsey → A/ cycle; `el` is the `.lm` element, `data-pen-tilt` sets how far the slash turns into an "l". */
 export function logoTimeline(el: HTMLElement, variant: LogoVariant, hold = 1.6) {
   const text = el.querySelector<HTMLElement>(".lm__text")!;
   const slash = el.querySelector<HTMLElement>(".lm__slash")!;
@@ -40,7 +40,7 @@ export function logoTimeline(el: HTMLElement, variant: LogoVariant, hold = 1.6) 
   if (variant === "pen") {
     const pen = el.querySelector<HTMLElement>(".lm__pen")!;
     const ch = pen.children;
-    const tilt = Number(el.dataset.tilt ?? -21);
+    const tilt = Number(el.dataset.penTilt ?? -21);
     tl.set(ch, { yPercent: 110, rotation: 8 })
       .to(slash, { rotation: tilt, duration: 0.8, ease: "expo.inOut" })
       .to(pen, { width: () => pen.scrollWidth, duration: 1, ease: "expo.inOut" }, 0.35)

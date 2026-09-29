@@ -104,7 +104,7 @@ export default function Header() {
             ref={logo}
             href="#home"
             className="logo lm"
-            data-tilt="-27"
+            data-pen-tilt="-27"
             aria-label="На главную"
             onClick={() => setOpen(false)}
             onPointerEnter={playLogo}
@@ -113,7 +113,7 @@ export default function Header() {
           </a>
           <nav className="nav" aria-label="Основная навигация">
             {links.map((l) => (
-              <a key={l.href} href={l.href} className={active === l.href.slice(1) ? "is-active" : undefined}>
+              <a key={l.href} href={l.href} data-label={l.label} className={active === l.href.slice(1) ? "is-active" : undefined}>
                 <span>{l.label}</span>
               </a>
             ))}
