@@ -11,6 +11,7 @@ const projects = [
     title: "Crater Studio",
     tags: ["Next.js", "GSAP", "WebGL"],
     image: "/images/mountains.png",
+    pos: "50% 50%",
     year: "2026",
     role: "Frontend lead",
     text: "Иммерсивный сайт студии с 3D-сценами, плавным скроллом и анимациями, завязанными на взаимодействие пользователя.",
@@ -19,6 +20,7 @@ const projects = [
     title: "Nebula Commerce",
     tags: ["React", "Node.js", "PostgreSQL"],
     image: "/images/planet.png",
+    pos: "50% 50%",
     year: "2025",
     role: "Fullstack",
     text: "E-commerce платформа: витрина с мгновенным поиском, корзина в реальном времени и админ-панель с аналитикой.",
@@ -27,133 +29,221 @@ const projects = [
     title: "Orbit Analytics",
     tags: ["TypeScript", "GraphQL", "Docker"],
     image: "/images/orbit.png",
+    pos: "50% 50%",
     year: "2025",
     role: "Frontend",
     text: "Дашборд аналитики с живыми графиками, конструктором отчётов и продуманной системой компонентов.",
   },
+  {
+    title: "Redline Motion",
+    tags: ["GSAP", "Canvas", "Next.js"],
+    image: "/images/mountains.png",
+    pos: "15% 80%",
+    year: "2024",
+    role: "Motion developer",
+    text: "Промо-сайт с покадровой анимацией на скролле, интерактивными сценами и звуковым сопровождением.",
+  },
+  {
+    title: "Eclipse Bank",
+    tags: ["React", "TypeScript", "Storybook"],
+    image: "/images/planet.png",
+    pos: "90% 90%",
+    year: "2024",
+    role: "Frontend",
+    text: "Интерфейс онлайн-банка: дизайн-система на 120+ компонентов, строгая типизация и доступность AA.",
+  },
+  {
+    title: "Pulse Chat",
+    tags: ["Node.js", "WebSocket", "Redis"],
+    image: "/images/orbit.png",
+    pos: "20% 30%",
+    year: "2023",
+    role: "Fullstack",
+    text: "Мессенджер реального времени: комнаты, статусы набора, доставка сообщений и офлайн-очередь.",
+  },
 ];
 
-const slots = [
-  { xPercent: 0, scale: 1, rotationY: 16, z: 0, autoAlpha: 1, zIndex: 3, filter: "grayscale(0) brightness(1)" },
-  { xPercent: 42, scale: 0.84, rotationY: 22, z: -120, autoAlpha: 0.9, zIndex: 2, filter: "grayscale(1) brightness(0.75)" },
-  { xPercent: 72, scale: 0.66, rotationY: 26, z: -240, autoAlpha: 0.7, zIndex: 1, filter: "grayscale(1) brightness(0.55)" },
-];
+const N = projects.length;
+const STEP = 360 / N;
+const wrap = (i: number) => ((i % N) + N) % N;
 
 export default function Projects() {
   const root = useRef<HTMLElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState<number | null>(null);
-  const first = useRef(true);
   const dragged = useRef(false);
-
-  const go = (dir: number) => setIndex((i) => (i + dir + projects.length) % projects.length);
-
-  const { contextSafe } = useGSAP(
-    () => {
-      const cards = gsap.utils.toArray<HTMLElement>(".card", root.current);
-      cards.forEach((card, i) => {
-        const { zIndex, ...slot } = slots[(i - index + cards.length) % cards.length];
-        gsap.set(card, { zIndex });
-        if (first.current) gsap.set(card, { ...slot, yPercent: -50 });
-        else gsap.to(card, { ...slot, yPercent: -50, duration: 1.3, ease: "expo.inOut" });
-      });
-      gsap.fromTo(
-        ".projects__count b",
-        { yPercent: 100 },
-        { yPercent: 0, duration: 0.8, ease: "expo.out" },
-      );
-      gsap.to(".projects__progress i", { scaleX: (index + 1) / projects.length, duration: 1, ease: "expo.out" });
-      first.current = false;
-    },
-    { dependencies: [index], scope: root },
-  );
+  const goTo = useRef<(target: number) => void>(() => {});
+  const posRef = useRef(0);
 
   useGSAP(
     () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      gsap.from(".stage__inner", {
-        xPercent: 35,
-        rotationY: -30,
-        autoAlpha: 0,
-        duration: 1.8,
-        ease: "expo.out",
-        scrollTrigger: { trigger: ".projects__grid", start: "top 75%", toggleActions: "play none none reverse" },
-      });
-      gsap.fromTo(
-        ".stage",
-        { y: 80 },
-        {
-          y: -80,
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true },
-        },
-      );
+      const ring = root.current!.querySelector<HTMLElement>(".ring")!;
+      const cards = gsap.utils.toArray<HTMLElement>(".card", root.current);
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const state = { pos: 0 };
+      let radius = 0;
+      let px = 1;
+      let current = 0;
+      let pressed = 0;
+
+      const render = () => {
+        posRef.current = state.pos;
+        ring.style.transform = `translateZ(${-radius}px) rotateY(${-state.pos * STEP}deg)`;
+        cards.forEach((card, i) => {
+          let d = wrap(i - state.pos);
+          if (d > N / 2) d -= N;
+          const a = Math.abs(d);
+          card.style.setProperty("--dim", String(Math.min(0.85, a * 0.45)));
+          card.classList.toggle("is-active", a < 0.5);
+        });
+        const idx = wrap(Math.round(state.pos));
+        if (idx !== current) {
+          current = idx;
+          setIndex(idx);
+        }
+      };
+
+      const layout = () => {
+        const w = cards[0].offsetWidth;
+        radius = w / 2 / Math.tan(Math.PI / N) + w * 0.08;
+        px = w * 0.9;
+        cards.forEach((card, i) => {
+          card.style.transform = `translate(-50%, -50%) rotateY(${i * STEP}deg) translateZ(${radius}px)`;
+        });
+        render();
+      };
+      layout();
 
       const proxy = document.createElement("div");
+      proxy.className = "stage__proxy";
+      root.current!.querySelector(".stage")!.appendChild(proxy);
+      const spin = (target: number, duration = 1.2) => {
+        gsap.killTweensOf(proxy);
+        return gsap.to(state, { pos: target, duration, ease: "expo.out", overwrite: true, onUpdate: render });
+      };
+
+      goTo.current = (target) => spin(target);
+
       const [drag] = Draggable.create(proxy, {
         type: "x",
         trigger: ".stage",
+        inertia: true,
+        throwResistance: 3500,
+        maxDuration: 1.2,
         allowNativeTouchScrolling: true,
-        dragClickables: true,
         minimumMovement: 6,
-        onPress() {
-          gsap.set(proxy, { x: 0 });
-          this.update();
+        snap: {
+          x: (v: number) => {
+            const i = gsap.utils.clamp(pressed - 2, pressed + 2, Math.round(-v / px));
+            return -i * px;
+          },
         },
-        onDrag() {
-          gsap.to(".stage__inner", { x: this.x * 0.35, rotationY: this.x * 0.02, duration: 0.3, overwrite: "auto" });
+        onPress() {
+          pressed = Math.round(state.pos);
+          gsap.killTweensOf(state);
+          gsap.set(proxy, { x: -state.pos * px });
+          this.update();
         },
         onDragStart() {
           dragged.current = true;
+          root.current!.classList.add("is-dragging");
         },
-        onDragEnd() {
-          setTimeout(() => (dragged.current = false), 50);
-          if (Math.abs(this.x) > 60) go(this.x < 0 ? 1 : -1);
-          gsap.to(".stage__inner", { x: 0, rotationY: 0, duration: 1, ease: "elastic.out(1, 0.6)" });
+        onDrag() {
+          state.pos = -this.x / px;
+          render();
+        },
+        onThrowUpdate() {
+          state.pos = -this.x / px;
+          render();
+        },
+        onRelease() {
+          root.current!.classList.remove("is-dragging");
+          setTimeout(() => (dragged.current = false), 60);
+          if (!this.isThrowing) spin(Math.round(state.pos), 0.8);
         },
       });
+
+      const ro = new ResizeObserver(layout);
+      ro.observe(cards[0]);
+
+      if (!reduced) {
+        state.pos = -1.5;
+        render();
+        gsap.from(".stage__inner", { autoAlpha: 0, scale: 0.8, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: ".projects__grid", start: "top 75%", once: true } });
+        gsap.to(state, {
+          pos: 0,
+          duration: 2.4,
+          ease: "expo.out",
+          onUpdate: render,
+          scrollTrigger: { trigger: ".projects__grid", start: "top 75%", once: true },
+        });
+        gsap.fromTo(
+          ".stage",
+          { y: 60 },
+          { y: -60, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true } },
+        );
+      }
 
       let inView = false;
       ScrollTrigger.create({ trigger: root.current, start: "top 60%", end: "bottom 40%", onToggle: (s) => (inView = s.isActive) });
       const onKey = (e: KeyboardEvent) => {
         if (!inView || document.documentElement.classList.contains("modal-open")) return;
-        if (e.key === "ArrowRight") go(1);
-        if (e.key === "ArrowLeft") go(-1);
+        if (e.key === "ArrowRight") spin(Math.round(state.pos) + 1);
+        if (e.key === "ArrowLeft") spin(Math.round(state.pos) - 1);
       };
       window.addEventListener("keydown", onKey);
       return () => {
         drag.kill();
+        proxy.remove();
+        ro.disconnect();
         window.removeEventListener("keydown", onKey);
       };
     },
     { scope: root },
   );
 
-  const onMove = contextSafe((e: React.PointerEvent<HTMLElement>, active: boolean) => {
-    if (!active || e.pointerType !== "mouse") return;
+  useGSAP(
+    () => {
+      gsap.fromTo(".projects__count b", { yPercent: 100 }, { yPercent: 0, duration: 0.6, ease: "expo.out" });
+      gsap.to(".projects__progress i", { scaleX: (index + 1) / N, duration: 0.8, ease: "expo.out" });
+    },
+    { dependencies: [index], scope: root },
+  );
+
+  const step = (dir: number) => goTo.current(Math.round(posRef.current) + dir);
+
+  const select = (i: number) => {
+    if (dragged.current) return;
+    if (i === index) return setOpen(i);
+    let d = wrap(i - posRef.current);
+    if (d > N / 2) d -= N;
+    goTo.current(Math.round(posRef.current + d));
+  };
+
+  const onMove = (e: React.PointerEvent<HTMLElement>, active: boolean) => {
+    if (!active || e.pointerType !== "mouse" || dragged.current) return;
     const inner = e.currentTarget.querySelector<HTMLElement>(".card__inner")!;
     const r = e.currentTarget.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width;
-    const py = (e.clientY - r.top) / r.height;
-    gsap.to(inner, { rotationY: (px - 0.5) * 14, rotationX: -(py - 0.5) * 14, duration: 0.8, ease: "power3.out" });
-    gsap.to(inner.querySelector("img"), { x: (0.5 - px) * 24, y: (0.5 - py) * 16, scale: 1.08, duration: 0.8, ease: "power3.out" });
-    inner.style.setProperty("--gx", `${px * 100}%`);
-    inner.style.setProperty("--gy", `${py * 100}%`);
-  });
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    gsap.to(inner, { rotationY: (x - 0.5) * 12, rotationX: -(y - 0.5) * 12, duration: 0.8, ease: "power3.out" });
+    gsap.to(inner.querySelector("img"), { x: (0.5 - x) * 20, y: (0.5 - y) * 14, scale: 1.08, duration: 0.8, ease: "power3.out" });
+    inner.style.setProperty("--gx", `${x * 100}%`);
+    inner.style.setProperty("--gy", `${y * 100}%`);
+  };
 
-  const onLeave = contextSafe((e: React.PointerEvent<HTMLElement>) => {
+  const onLeave = (e: React.PointerEvent<HTMLElement>) => {
     const inner = e.currentTarget.querySelector(".card__inner")!;
     gsap.to(inner, { rotationY: 0, rotationX: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" });
     gsap.to(inner.querySelector("img"), { x: 0, y: 0, scale: 1, duration: 1.2, ease: "power3.out" });
-  });
+  };
 
   useEffect(() => {
-    const html = document.documentElement;
-    const lenis = getLenis();
     if (open === null) return;
+    const html = document.documentElement;
     html.classList.add("modal-open");
-    lenis?.stop();
+    getLenis()?.stop();
 
     const card = root.current!.querySelectorAll<HTMLElement>(".card__inner")[open];
     const modal = modalRef.current!;
@@ -209,7 +299,7 @@ export default function Projects() {
   return (
     <section ref={root} id="projects" className="section projects">
       <div className="section__bg projects__bg" aria-hidden>
-        <div className="section__bg-inner" data-zoom>
+        <div className="section__bg-inner">
           <Image src="/images/mountains.png" alt="" fill sizes="100vw" quality={80} />
         </div>
       </div>
@@ -225,19 +315,19 @@ export default function Projects() {
             <span className="accent">Реальный результат.</span>
           </h2>
           <p className="lead" data-reveal="0.2">
-            Здесь собраны проекты, над которыми я работал — от идеи до запуска. Нажмите на проект, чтобы
-            посмотреть подробности.
+            Здесь собраны проекты, над которыми я работал — от идеи до запуска. Крутите карусель и нажмите
+            на проект, чтобы посмотреть подробности.
           </p>
           <div className="arrows" data-reveal="0.3">
-            <button type="button" className="arrow" onClick={() => go(-1)} aria-label="Предыдущий проект">
+            <button type="button" className="arrow" onClick={() => step(-1)} aria-label="Предыдущий проект">
               <ArrowLeft />
             </button>
-            <button type="button" className="arrow arrow--next" onClick={() => go(1)} aria-label="Следующий проект">
+            <button type="button" className="arrow arrow--next" onClick={() => step(1)} aria-label="Следующий проект">
               <ArrowRight />
             </button>
             <div className="projects__meta">
               <span className="projects__count">
-                <b key={index}>{String(index + 1).padStart(2, "0")}</b> / {String(projects.length).padStart(2, "0")}
+                <b key={index}>{String(index + 1).padStart(2, "0")}</b> / {String(N).padStart(2, "0")}
               </span>
               <span className="projects__progress">
                 <i />
@@ -248,19 +338,24 @@ export default function Projects() {
 
         <div className="stage">
           <div className="stage__inner">
-            {projects.map((proj, i) => {
-              const active = i === index;
-              return (
+            <div className="ring">
+              {projects.map((proj, i) => (
                 <article
                   key={proj.title}
-                  className={`card${active ? " is-active" : ""}`}
-                  data-cursor={active ? "Открыть" : "Выбрать"}
-                  onClick={() => !dragged.current && (active ? setOpen(i) : setIndex(i))}
-                  onPointerMove={(e) => onMove(e, active)}
+                  className="card"
+                  onClick={() => select(i)}
+                  onPointerMove={(e) => onMove(e, i === index)}
                   onPointerLeave={onLeave}
                 >
                   <div className="card__inner">
-                    <Image src={proj.image} alt={proj.title} fill sizes="(max-width: 900px) 90vw, 560px" quality={90} />
+                    <Image
+                      src={proj.image}
+                      alt={proj.title}
+                      fill
+                      sizes="(max-width: 900px) 80vw, 520px"
+                      quality={90}
+                      style={{ objectPosition: proj.pos }}
+                    />
                     <span className="card__glare" />
                     <span className="card__num">
                       <b>/</b>
@@ -276,9 +371,12 @@ export default function Projects() {
                     </div>
                   </div>
                 </article>
-              );
-            })}
+              ))}
+            </div>
           </div>
+          <p className="stage__hint" aria-hidden>
+            ← Тяните, чтобы вращать →
+          </p>
         </div>
       </div>
 
@@ -288,7 +386,7 @@ export default function Projects() {
         <div ref={modalRef} className="modal" role="dialog" aria-modal="true" aria-label={p.title} onClick={close}>
           <div className="modal__body" onClick={(e) => e.stopPropagation()} data-lenis-prevent>
             <div className="modal__media">
-              <Image src={p.image} alt={p.title} fill sizes="90vw" quality={90} />
+              <Image src={p.image} alt={p.title} fill sizes="90vw" quality={90} style={{ objectPosition: p.pos }} />
               <span className="modal__num modal__reveal">
                 <b>/</b>
                 {String(open! + 1).padStart(2, "0")}
@@ -315,7 +413,7 @@ export default function Projects() {
                 <span className="btn__label">Закрыть</span>
               </button>
             </div>
-            <button type="button" className="modal__close" onClick={close} aria-label="Закрыть" data-cursor="Закрыть">
+            <button type="button" className="modal__close" onClick={close} aria-label="Закрыть">
               ✕
             </button>
           </div>

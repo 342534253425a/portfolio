@@ -113,23 +113,9 @@ export default function OrbitFX() {
           state.drag = (this.rotation * Math.PI) / 180;
         },
       });
-
-      const rx = gsap.quickTo(orbit, "rotationX", { duration: 1.2, ease: "power3.out" });
-      const ry = gsap.quickTo(orbit, "rotationY", { duration: 1.2, ease: "power3.out" });
-      gsap.set(orbit, { transformPerspective: 1400 });
-      const move = (e: PointerEvent) => {
-        const r = orbit.getBoundingClientRect();
-        rx(((e.clientY - r.top) / r.height - 0.5) * -16);
-        ry(((e.clientX - r.left) / r.width - 0.5) * 18);
-      };
-      const leave = () => (rx(0), ry(0));
-      orbit.addEventListener("pointermove", move);
-      orbit.addEventListener("pointerleave", leave);
       cleanups.push(() => {
         drag.kill();
         proxy.remove();
-        orbit.removeEventListener("pointermove", move);
-        orbit.removeEventListener("pointerleave", leave);
       });
     }
 

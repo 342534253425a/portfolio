@@ -1,0 +1,52 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+
+/** Planet follows the cursor with a slow, heavy parallax while the contact section is on screen. */
+export function PlanetParallax() {
+  useGSAP(() => {
+    const planet = document.querySelector<HTMLElement>(".contact__planet");
+    if (!planet || !finePointer() || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const x = gsap.quickTo(planet, "x", { duration: 2, ease: "power3.out" });
+    const y = gsap.quickTo(planet, "y", { duration: 2, ease: "power3.out" });
+    const r = gsap.quickTo(planet, "rotation", { duration: 2.4, ease: "power3.out" });
+    const move = (e: PointerEvent) => {
+      const px = e.clientX / window.innerWidth - 0.5;
+      const py = e.clientY / window.innerHeight - 0.5;
+      x(px * -28);
+      y(py * -18);
+      r(px * 3);
+    };
+    ScrollTrigger.create({
+      trigger: "#contacts",
+      start: "top bottom",
+      onToggle: (self) =>
+        self.isActive ? window.addEventListener("pointermove", move) : window.removeEventListener("pointermove", move),
+    });
+    return () => window.removeEventListener("pointermove", move);
+  });
+  return null;
+}
+
+export function LiveClock() {
+  const [now, setNow] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Moscow" });
+    const tick = () => setNow(fmt.format(new Date()));
+    tick();
+    const id = setInterval(tick, 15000);
+    return () => clearInterval(id);
+  }, []);
+
+  const hour = now ? parseInt(now, 10) : 12;
+  const awake = hour >= 9 && hour < 23;
+
+  return (
+    <p className="clock">
+      <span className={`clock__dot${awake ? "" : " is-sleep"}`} />
+      Москва, <b>{now ?? "--:--"}</b> · {awake ? "на связи, отвечу в течение часа" : "сплю, но утром отвечу первым делом"}
+    </p>
+  );
+}

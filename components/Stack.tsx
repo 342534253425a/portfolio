@@ -45,10 +45,10 @@ export default function Stack() {
           </p>
         </div>
 
-        <div className="orbit" data-stagger="pop" data-cursor="Крути">
-          <div className="orbit__img" data-item>
-            <div className="orbit__img-inner" data-zoom>
-              <Image src="/images/orbit.png" alt="" fill sizes="(max-width: 900px) 100vw, 900px" quality={90} />
+        <div className="orbit" data-stagger="pop" data-hover>
+          <div className="orbit__img">
+            <div className="orbit__img-inner">
+              {/* <Image src="/images/orbit.png" alt="" fill sizes="(max-width: 900px) 100vw, 900px" quality={90} /> */}
             </div>
           </div>
 
@@ -80,7 +80,7 @@ export default function Stack() {
           {nodes.map(({ name, Icon, x, y, speed, hot, tip }) => (
             <div key={name} className="node-pos" data-x={x} data-y={y} style={{ left: `${x}%`, top: `${y}%` }}>
               <div className="node-float" data-speed={speed}>
-                <div className={`node${hot ? " node--hot" : ""}`} data-item data-cursor={name}>
+                <div className={`node${hot ? " node--hot" : ""}`} data-item>
                   <span className="node__icon">
                     <Icon />
                   </span>

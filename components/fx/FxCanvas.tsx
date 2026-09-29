@@ -66,7 +66,7 @@ export default function FxCanvas() {
       const y = window.scrollY;
       const v = getLenis()?.velocity ?? y - lastScroll;
       lastScroll = y;
-      warp += (gsap.utils.clamp(-40, 40, v) - warp) * 0.12;
+      warp += (gsap.utils.clamp(-40, 40, v) - warp) * 0.06;
 
       ctx.clearRect(0, 0, w, h);
 
@@ -152,6 +152,15 @@ export default function FxCanvas() {
     };
     const leave = () => (mouse.active = false);
     const click = (e: PointerEvent) => !reduced && burst(e.clientX, e.clientY);
+    const onBurst = (e: Event) => {
+      const { x, y, n } = (e as CustomEvent<{ x: number; y: number; n?: number }>).detail;
+      if (!reduced) burst(x, y, n);
+    };
+    const onWarp = (e: Event) => {
+      warp += (e as CustomEvent<number>).detail;
+    };
+    window.addEventListener("fx:burst", onBurst);
+    window.addEventListener("fx:warp", onWarp);
     const visibility = () => (document.hidden ? gsap.ticker.remove(render) : !reduced && gsap.ticker.add(render));
 
     window.addEventListener("resize", resize);
@@ -162,6 +171,8 @@ export default function FxCanvas() {
 
     return () => {
       gsap.ticker.remove(render);
+      window.removeEventListener("fx:burst", onBurst);
+      window.removeEventListener("fx:warp", onWarp);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerdown", click);

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { finePointer, gsap, useGSAP } from "@/lib/gsap";
 
-const INTERACTIVE = "a, button, [data-cursor], .node, .step, .card";
+const INTERACTIVE = "a, button, [data-hover], .node, .step, .card";
 
 export default function Cursor() {
   const root = useRef<HTMLDivElement>(null);
@@ -12,7 +12,7 @@ export default function Cursor() {
     () => {
       if (!finePointer()) return;
       const q = gsap.utils.selector(root);
-      const [dot, ring, label, glow] = ["dot", "ring", "label", "glow"].map((n) => q(`.cursor__${n}`)[0] as HTMLElement);
+      const [dot, ring, glow] = ["dot", "ring", "glow"].map((n) => q(`.cursor__${n}`)[0] as HTMLElement);
       document.documentElement.classList.add("has-cursor");
 
       const dx = gsap.quickTo(dot, "x", { duration: 0.12, ease: "power3.out" });
@@ -50,9 +50,6 @@ export default function Cursor() {
       const over = (e: PointerEvent) => {
         const el = (e.target as HTMLElement).closest<HTMLElement>(INTERACTIVE);
         root.current!.classList.toggle("is-hover", !!el);
-        const text = el?.dataset.cursor ?? (el?.classList.contains("card") ? "Тяни" : "");
-        label.textContent = text;
-        root.current!.classList.toggle("has-label", !!text);
       };
 
       const down = () => root.current!.classList.add("is-down");
@@ -81,7 +78,6 @@ export default function Cursor() {
       <div className="cursor__glow" />
       <div className="cursor__ring">
         <span />
-        <em className="cursor__label" />
       </div>
       <div className="cursor__dot" />
     </div>

@@ -41,8 +41,10 @@ export default function Hero() {
         const setters = chars.map((c) => ({
           y: gsap.quickTo(c, "y", { duration: 0.5, ease: "power3.out" }),
           r: gsap.quickTo(c, "rotation", { duration: 0.5, ease: "power3.out" }),
-          s: gsap.quickTo(c, "scale", { duration: 0.5, ease: "power3.out" }),
+          sx: gsap.quickTo(c, "scaleX", { duration: 0.5, ease: "power3.out" }),
+          sy: gsap.quickTo(c, "scaleY", { duration: 0.5, ease: "power3.out" }),
         }));
+        const scale = (i: number, v: number) => (setters[i].sx(v), setters[i].sy(v));
         let rects: DOMRect[] = [];
         const measure = () => (rects = chars.map((c) => c.getBoundingClientRect()));
         const move = (e: PointerEvent) => {
@@ -54,12 +56,12 @@ export default function Hero() {
             const f = Math.max(0, 1 - Math.hypot(dx, dy) / 160);
             setters[i].y(-f * 18);
             setters[i].r(f * (dx > 0 ? -8 : 8));
-            setters[i].s(1 + f * 0.18);
+            scale(i, 1 + f * 0.18);
             c.classList.toggle("is-hot", f > 0.35);
           });
         };
         const leave = () => {
-          setters.forEach((s) => (s.y(0), s.r(0), s.s(1)));
+          setters.forEach((s, i) => (s.y(0), s.r(0), scale(i, 1)));
           chars.forEach((c) => c.classList.remove("is-hot"));
         };
         const reset = () => (rects = []);
@@ -197,7 +199,7 @@ export default function Hero() {
               Создаю веб-продукты с продуманной архитектурой, эстетичным интерфейсом и вниманием к деталям.
             </p>
             <div className="hero__actions" data-intro>
-              <a href="#projects" className="btn btn--primary" data-magnetic data-cursor="Смотреть">
+              <a href="#projects" className="btn btn--primary" data-magnetic>
                 <span className="btn__label">Смотреть проекты</span> <ArrowRight />
               </a>
               <a href="#contacts" className="btn btn--ghost" data-magnetic>
@@ -206,7 +208,7 @@ export default function Hero() {
             </div>
             <ul className="stats" data-intro>
               {stats.map((s) => (
-                <li key={s.label} className="stat" data-cursor="+1">
+                <li key={s.label} className="stat" data-hover>
                   <span className="stat__num">
                     {s.value}
                     {s.suffix}

@@ -19,7 +19,7 @@ export default function CopyEmail({ email }: { email: string }) {
   };
 
   return (
-    <button ref={ref} type="button" className={`copy${copied ? " is-copied" : ""}`} onClick={copy} data-cursor="Копировать">
+    <button ref={ref} type="button" className={`copy${copied ? " is-copied" : ""}`} onClick={copy}>
       <span className="copy__dot" />
       <span className="copy__text">{email}</span>
       <span className="copy__state">{copied ? "Скопировано ✓" : "Копировать"}</span>
