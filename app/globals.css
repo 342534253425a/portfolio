@@ -1293,22 +1293,6 @@ img {
 
 /* ---------- Overlays ---------- */
 
-.cursor-glow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: 64rem;
-  height: 64rem;
-  margin: -32rem 0 0 -32rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 43, 61, 0.07) 0%, transparent 60%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.6s;
-  mix-blend-mode: screen;
-}
-
 .grain {
   position: fixed;
   inset: -50%;

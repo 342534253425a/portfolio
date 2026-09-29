@@ -49,7 +49,13 @@ export default function Preloader() {
         }, "-=0.75")
         .set(root.current, { display: "none" });
 
-      fonts.then(() => tl.play());
+      let alive = true;
+      fonts.then(() => {
+        if (alive) tl.play();
+      });
+      return () => {
+        alive = false;
+      };
     },
     { scope: root },
   );

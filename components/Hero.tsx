@@ -104,8 +104,9 @@ export default function Hero() {
       const w = window as unknown as { __preloaderDone?: boolean };
       if (w.__preloaderDone) intro();
       else window.addEventListener(PRELOADER_DONE, intro, { once: true });
+      const offIntro = () => window.removeEventListener(PRELOADER_DONE, intro);
 
-      if (reduced) return;
+      if (reduced) return offIntro;
 
       q<HTMLElement>(".stat").forEach((stat, i) => {
         const num = stat.querySelector<HTMLElement>(".stat__num")!;
@@ -124,7 +125,7 @@ export default function Hero() {
         scrollTrigger: { trigger: root.current, start: "20% top", end: "bottom top", scrub: true },
       });
 
-      if (!finePointer()) return;
+      if (!finePointer()) return offIntro;
       const media = q(".hero__depth")[0];
       const glow = q(".hero__glow")[0];
       const content = q(".hero__content-inner")[0];
@@ -150,7 +151,10 @@ export default function Hero() {
         cy(py * 10);
       };
       root.current!.addEventListener("pointermove", move);
-      return () => root.current?.removeEventListener("pointermove", move);
+      return () => {
+        offIntro();
+        root.current?.removeEventListener("pointermove", move);
+      };
     },
     { scope: root },
   );
@@ -216,8 +220,10 @@ export default function Hero() {
       </div>
 
       <a href="#stack" className="hero__scroll" data-intro data-magnetic aria-label="Листать вниз">
-        <span className="hero__scroll-wheel" />
-        <span>Scroll</span>
+        <span className="hero__scroll-mouse">
+          <span className="hero__scroll-wheel" />
+        </span>
+        <span>Листай</span>
       </a>
 
       <span className="anchor anchor--dot hero__anchor" data-anchor="1" />

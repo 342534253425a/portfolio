@@ -9,8 +9,7 @@ import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { useGSAP } from "@gsap/react";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, SplitText, Draggable, InertiaPlugin, ScrambleTextPlugin, useGSAP);
-}
+  gsap.registerPlugin(ScrollTrigger, SplitText, Draggable, InertiaPlugin, ScrambleTextPlugin, useGSAP);}
 
 export { gsap, ScrollTrigger, SplitText, Draggable, InertiaPlugin, useGSAP };
 

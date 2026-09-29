@@ -7,23 +7,33 @@ import Contact from "@/components/Contact";
 import SignalLine from "@/components/SignalLine";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollAnimations from "@/components/ScrollAnimations";
-import CursorGlow from "@/components/CursorGlow";
+import Preloader from "@/components/fx/Preloader";
+import Cursor from "@/components/fx/Cursor";
+import FxCanvas from "@/components/fx/FxCanvas";
+import Interactions from "@/components/fx/Interactions";
+import Marquee from "@/components/fx/Marquee";
+import ScrollProgress from "@/components/fx/ScrollProgress";
 
 export default function Home() {
   return (
     <>
       <SmoothScroll />
-      <CursorGlow />
+      <Preloader />
+      <FxCanvas />
       <Header />
       <main className="page">
         <SignalLine />
         <Hero />
         <Stack />
         <Projects />
+        <Marquee />
         <Process />
         <Contact />
       </main>
+      <ScrollProgress />
       <ScrollAnimations />
+      <Interactions />
+      <Cursor />
       <div className="grain" aria-hidden />
     </>
   );

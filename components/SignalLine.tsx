@@ -107,6 +107,22 @@ export default function SignalLine() {
       render();
     };
 
+    const pulseEl = svg.querySelector<SVGGElement>(".signal__pulse")!;
+    let pulseAt = 0;
+    const pulse = () => {
+      const len = Math.min(state.len, total);
+      if (len < 80) {
+        pulseEl.style.opacity = "0";
+        return;
+      }
+      pulseAt += Math.max(5, len / 260);
+      if (pulseAt > len) pulseAt = 0;
+      const p = core.getPointAtLength(pulseAt);
+      pulseEl.setAttribute("transform", `translate(${p.x} ${p.y})`);
+      pulseEl.style.opacity = String(Math.min(1, (len - pulseAt) / 120, pulseAt / 120));
+    };
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) gsap.ticker.add(pulse);
+
     build();
     ScrollTrigger.create({ start: 0, end: "max", onUpdate: () => setLen(target()) });
     ScrollTrigger.addEventListener("refresh", build);
@@ -119,6 +135,7 @@ export default function SignalLine() {
     ro.observe(main);
 
     return () => {
+      gsap.ticker.remove(pulse);
       ro.disconnect();
       cancelAnimationFrame(raf);
       ScrollTrigger.removeEventListener("refresh", build);
@@ -137,6 +154,10 @@ export default function SignalLine() {
       <path className="signal__track" />
       <path className="signal__glow" />
       <path className="signal__core" />
+      <g className="signal__pulse">
+        <circle r="10" fill="url(#signal-head)" opacity="0.8" />
+        <circle r="2" fill="#fff" />
+      </g>
       <g className="signal__head">
         <circle r="22" fill="url(#signal-head)" opacity="0.55" />
         <circle r="3.5" fill="#fff" />

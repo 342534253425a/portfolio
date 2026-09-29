@@ -20,7 +20,7 @@ export default function Process() {
       <div className="container process__grid">
         <div className="process__text">
           <p className="label" data-reveal>
-            <b>04 /</b> Мой процесс
+            <b>04 /</b> <span>Мой процесс</span>
           </p>
           <h2 className="h2" data-split>
             От идеи
@@ -34,12 +34,15 @@ export default function Process() {
 
         <ol className="steps" data-stagger>
           {steps.map(({ title, text, Icon }, i) => (
-            <li key={title} className="step" data-item>
+            <li key={title} className="step" data-item data-cursor={`Этап ${i + 1}`}>
               <span className="step__icon" data-anchor={5 + i}>
+                <span className="step__ripple" />
                 <Icon />
               </span>
               <div>
-                <h3 className="step__title">{title}</h3>
+                <h3 className="step__title">
+                  <em>0{i + 1}</em> {title}
+                </h3>
                 <p className="step__text">{text}</p>
               </div>
             </li>

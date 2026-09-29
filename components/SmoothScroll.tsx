@@ -17,6 +17,7 @@ export default function SmoothScroll() {
       autoRaf: false,
     });
     setLenis(lenis);
+    if (document.documentElement.classList.contains("is-loading")) lenis.stop();
 
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);

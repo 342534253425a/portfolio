@@ -1,4 +1,5 @@
 import Image from "next/image";
+import CopyEmail from "./fx/CopyEmail";
 import { ArrowRight, GithubIcon, LinkedinIcon, TelegramIcon } from "./icons";
 
 export default function Contact() {
@@ -14,7 +15,7 @@ export default function Contact() {
       <div className="container">
         <div className="contact__text">
           <p className="label" data-reveal>
-            <b>05 /</b> Контакты
+            <b>05 /</b> <span>Контакты</span>
           </p>
           <h2 className="h2" data-split>
             Обсудим ваш
@@ -25,25 +26,30 @@ export default function Contact() {
             Всегда открыт к интересным задачам, сотрудничеству и новым возможностям.
           </p>
           <div className="contact__actions" data-stagger>
-            <a href="mailto:hello@example.com" className="btn btn--primary" data-item>
-              Написать мне <ArrowRight />
+            <a href="mailto:hello@example.com" className="btn btn--primary btn--xl" data-item data-magnetic="0.4" data-cursor="Привет!">
+              <span className="btn__label">Написать мне</span> <ArrowRight />
             </a>
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="social" aria-label="GitHub" data-item>
+            <a href="https://github.com" target="_blank" rel="noreferrer" className="social" aria-label="GitHub" data-item data-cursor="GitHub">
               <GithubIcon />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="social" aria-label="LinkedIn" data-item>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="social" aria-label="LinkedIn" data-item data-cursor="LinkedIn">
               <LinkedinIcon />
             </a>
-            <a href="https://t.me" target="_blank" rel="noreferrer" className="social" aria-label="Telegram" data-item>
+            <a href="https://t.me" target="_blank" rel="noreferrer" className="social" aria-label="Telegram" data-item data-cursor="Telegram">
               <TelegramIcon />
             </a>
+          </div>
+          <div data-reveal="0.4">
+            <CopyEmail email="hello@example.com" />
           </div>
         </div>
       </div>
 
       <footer className="footer container">
         <span>© 2026 A/ — Frontend разработчик</span>
-        <a href="#home">Наверх ↑</a>
+        <a href="#home">
+          <span>Наверх ↑</span>
+        </a>
       </footer>
     </section>
   );
