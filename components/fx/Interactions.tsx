@@ -3,13 +3,12 @@
 import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 
-const MAGNETIC = "[data-magnetic], .arrow, .social";
 const SCRAMBLE_HOVER = ".nav a > span, .footer a > span, .menu__nav a > span, .lnk > .lnk__text";
 const SCRAMBLE_CHARS = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯ01/<>_";
 
 /**
  * Page-wide pointer & scroll interactions, wired by selectors so sections stay declarative:
- *  magnetic pull, text scramble, tilt + glare ([data-tilt]) and scroll-velocity skew ([data-skew], h2).
+ *  text scramble, tilt + glare ([data-tilt]) and scroll-velocity skew ([data-skew], h2).
  */
 export default function Interactions() {
   useGSAP(() => {
@@ -42,44 +41,19 @@ export default function Interactions() {
 
     if (!finePointer()) return () => cleanups.forEach((c) => c());
 
-    /* ---- Magnetic elements ---- */
-    gsap.utils.toArray<HTMLElement>(MAGNETIC).forEach((el) => {
-      el.classList.add("is-magnetic");
-      const strength = parseFloat(el.dataset.magnetic || "") || 0.35;
-      const inner = el.querySelector<HTMLElement>(".btn__label, svg");
-      const x = gsap.quickTo(el, "x", { duration: 0.8, ease: "elastic.out(1, 0.4)" });
-      const y = gsap.quickTo(el, "y", { duration: 0.8, ease: "elastic.out(1, 0.4)" });
-      const ix = inner && gsap.quickTo(inner, "x", { duration: 0.8, ease: "elastic.out(1, 0.4)" });
-      const iy = inner && gsap.quickTo(inner, "y", { duration: 0.8, ease: "elastic.out(1, 0.4)" });
-
-      const move = (e: PointerEvent) => {
-        const r = el.getBoundingClientRect();
-        const dx = e.clientX - (r.left + r.width / 2);
-        const dy = e.clientY - (r.top + r.height / 2);
-        x(dx * strength);
-        y(dy * strength);
-        ix?.(dx * strength * 0.5);
-        iy?.(dy * strength * 0.5);
-      };
-      const leave = () => {
-        x(0);
-        y(0);
-        ix?.(0);
-        iy?.(0);
-      };
-      el.addEventListener("pointermove", move);
-      el.addEventListener("pointerleave", leave);
-      cleanups.push(() => {
-        el.removeEventListener("pointermove", move);
-        el.removeEventListener("pointerleave", leave);
-      });
-    });
-
     /* ---- Hover scramble ---- */
     gsap.utils.toArray<HTMLElement>(SCRAMBLE_HOVER).forEach((span) => {
       const el = span.parentElement!;
       const text = span.textContent || "";
-      const enter = () => gsap.to(span, { duration: 0.6, overwrite: true, scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 1 } });
+      const enter = () => {
+        if (!span.style.width) gsap.set(span, { display: "inline-block", width: span.offsetWidth, whiteSpace: "nowrap" });
+        gsap.to(span, {
+          duration: 0.6,
+          overwrite: true,
+          scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 1 },
+          onComplete: () => gsap.set(span, { clearProps: "display,width,whiteSpace" }),
+        });
+      };
       el.addEventListener("mouseenter", enter);
       cleanups.push(() => el.removeEventListener("mouseenter", enter));
     });

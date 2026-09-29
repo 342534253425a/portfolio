@@ -39,7 +39,7 @@ export default function Contact() {
             Открыт к работе в команде и интересным проектам. Люблю сложные интерфейсы, где важны детали и скорость.
           </p>
           <div className="contact__actions" data-stagger>
-            <a href={`mailto:${EMAIL}`} className="lnk" data-item data-magnetic="0.2">
+            <a href={`mailto:${EMAIL}`} className="lnk" data-item>
               <span className="lnk__text">Написать мне</span>
               <span className="lnk__icon">
                 <ArrowRight />

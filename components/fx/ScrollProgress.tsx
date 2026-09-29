@@ -28,7 +28,7 @@ export default function ScrollProgress() {
   );
 
   return (
-    <a ref={root} href="#home" className="progress" aria-label="Наверх" data-magnetic="0.5">
+    <a ref={root} href="#home" className="progress" aria-label="Наверх">
       <svg viewBox="0 0 50 50">
         <circle cx="25" cy="25" r={R} className="progress__track" />
         <circle cx="25" cy="25" r={R} className="progress__bar" strokeDasharray={C} strokeDashoffset={C} />

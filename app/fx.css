@@ -17,14 +17,6 @@ html.has-cursor * {
   cursor: none !important;
 }
 
-.is-magnetic {
-  transition-property: box-shadow, border-color, background-color, color !important;
-}
-
-.is-magnetic:hover {
-  transform: none;
-}
-
 /* ---------- Preloader ---------- */
 
 .preloader {

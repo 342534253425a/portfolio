@@ -145,13 +145,10 @@ export default function Hero() {
       if (!finePointer()) return offIntro;
       const media = q(".hero__depth")[0];
       const glow = q(".hero__glow")[0];
-      const content = q(".hero__content-inner")[0];
       const mx = gsap.quickTo(media, "x", { duration: 1.4, ease: "power3.out" });
       const my = gsap.quickTo(media, "y", { duration: 1.4, ease: "power3.out" });
       const gx = gsap.quickTo(glow, "x", { duration: 2, ease: "power3.out" });
       const gy = gsap.quickTo(glow, "y", { duration: 2, ease: "power3.out" });
-      const cx = gsap.quickTo(content, "x", { duration: 1.6, ease: "power3.out" });
-      const cy = gsap.quickTo(content, "y", { duration: 1.6, ease: "power3.out" });
       const move = (e: PointerEvent) => {
         const px = e.clientX / window.innerWidth - 0.5;
         const py = e.clientY / window.innerHeight - 0.5;
@@ -159,8 +156,6 @@ export default function Hero() {
         my(-py * 24);
         gx(px * window.innerWidth * 0.5);
         gy(py * window.innerHeight * 0.5);
-        cx(px * 14);
-        cy(py * 10);
       };
       root.current!.addEventListener("pointermove", move);
       return () => {
@@ -201,13 +196,13 @@ export default function Hero() {
               Создаю веб-продукты с продуманной архитектурой, эстетичным интерфейсом и вниманием к деталям.
             </p>
             <div className="hero__actions" data-intro>
-              <a href="#projects" className="lnk" data-magnetic="0.2">
+              <a href="#projects" className="lnk">
                 <span className="lnk__text">Смотреть проекты</span>
                 <span className="lnk__icon">
                   <ArrowRight />
                 </span>
               </a>
-              <a href="#contacts" className="lnk lnk--muted" data-magnetic="0.2">
+              <a href="#contacts" className="lnk lnk--muted">
                 <span className="lnk__text">Связаться</span>
                 <span className="lnk__icon">
                   <ArrowRight />
@@ -229,7 +224,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <a href="#stack" className="hero__scroll" data-intro data-magnetic aria-label="Листать вниз">
+      <a href="#stack" className="hero__scroll" data-intro aria-label="Листать вниз">
         <span className="hero__scroll-mouse">
           <span className="hero__scroll-wheel" />
         </span>
