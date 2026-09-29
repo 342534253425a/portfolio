@@ -240,22 +240,6 @@ img {
   box-shadow: 0 0 3rem -0.6rem rgba(255, 43, 61, 0.5);
 }
 
-.btn--outline {
-  height: 4.4rem;
-  padding: 0 2rem;
-  gap: 1rem;
-  font-size: 1.5rem;
-  border: 1px solid var(--red);
-  background: rgba(255, 43, 61, 0.04);
-  box-shadow:
-    inset 0 0 1.8rem rgba(255, 43, 61, 0.12),
-    0 0 1.8rem -0.6rem rgba(255, 43, 61, 0.5);
-}
-
-.btn--outline:hover {
-  background: rgba(255, 43, 61, 0.14);
-}
-
 /* ---------- Header ---------- */
 
 .header {
@@ -309,13 +293,13 @@ img {
 .nav {
   position: relative;
   display: flex;
-  gap: 4.6rem;
+  gap: 3.8rem;
 }
 
 .nav a {
   position: relative;
   padding: 1rem 0;
-  font-size: 1.55rem;
+  font-size: 1.4rem;
   color: #c9c9cf;
   transition: color 0.3s;
 }
@@ -498,7 +482,6 @@ img {
 
 .section__bg img,
 .hero__media img,
-.orbit__img img,
 .card img,
 .contact__bg img {
   object-fit: cover;
@@ -696,218 +679,6 @@ img {
 .hero__anchor {
   left: 83%;
   top: 82%;
-}
-
-/* ---------- Stack ---------- */
-
-.stack {
-  padding: 10rem 0;
-}
-
-.stack__grid {
-  display: grid;
-  grid-template-columns: 50rem minmax(0, 1fr);
-  align-items: center;
-}
-
-.stack__text {
-  position: relative;
-  z-index: 2;
-}
-
-.orbit {
-  position: relative;
-  width: 90rem;
-  aspect-ratio: 900 / 506;
-  justify-self: end;
-  container-type: inline-size;
-}
-
-.orbit__img {
-  position: absolute;
-  inset: -8% -6%;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 51.5% 47%, #000 50%, transparent 100%);
-  mask-image: radial-gradient(ellipse 50% 50% at 51.5% 47%, #000 50%, transparent 100%);
-}
-
-.orbit__img-inner {
-  position: absolute;
-  inset: 0;
-}
-
-.orbit__rings {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.orbit__ring {
-  fill: none;
-  stroke: rgba(255, 43, 61, 0.35);
-  stroke-width: 1;
-}
-
-.orbit__ring--a {
-  stroke-dasharray: 2 9;
-  animation: dash 40s linear infinite;
-}
-
-.orbit__ring--b {
-  stroke: rgba(255, 255, 255, 0.08);
-}
-
-.orbit__sat {
-  fill: #ff5663;
-  filter: drop-shadow(0 0 6px #ff2b3d);
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: -600;
-  }
-}
-
-.orbit__core {
-  --core: 20cqw;
-  position: absolute;
-  left: 52.48%;
-  top: 45%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.9cqw;
-  width: var(--core);
-  height: var(--core);
-  margin: calc(var(--core) / -2) 0 0 calc(var(--core) / -2);
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 60, 76, 0.9);
-  background: radial-gradient(circle, rgba(40, 5, 9, 0.55) 0%, rgba(8, 6, 7, 0.75) 70%);
-  box-shadow:
-    0 0 5cqw rgba(255, 43, 61, 0.5),
-    inset 0 0 3.6cqw rgba(255, 43, 61, 0.35);
-  color: var(--red-soft);
-  backdrop-filter: blur(2px);
-}
-
-.orbit__core svg {
-  width: 6cqw;
-  height: 6cqw;
-  filter: drop-shadow(0 0 8px rgba(255, 43, 61, 0.9));
-  animation: spin 24s linear infinite;
-}
-
-.orbit__core span:not(.orbit__pulse) {
-  font-size: max(1.75cqw, 12px);
-  font-weight: 500;
-  color: #fff;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.orbit__pulse {
-  position: absolute;
-  inset: -1px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 43, 61, 0.6);
-  animation: pulse 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
-
-@keyframes pulse {
-  from {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-  to {
-    transform: scale(1.7);
-    opacity: 0;
-  }
-}
-
-.node-pos {
-  --icon: max(5.8cqw, 38px);
-  position: absolute;
-  width: 0;
-  height: 0;
-}
-
-.node-float {
-  position: absolute;
-  left: calc(var(--icon) / -2);
-  top: calc(var(--icon) / -2);
-}
-
-.node {
-  display: flex;
-  align-items: center;
-  gap: 1.7cqw;
-  cursor: default;
-}
-
-.node__icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: var(--icon);
-  height: var(--icon);
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(10, 10, 12, 0.78);
-  color: #f1f1f3;
-  box-shadow:
-    0 0 0 0.5cqw rgba(255, 255, 255, 0.025),
-    0 0 2.6cqw rgba(255, 43, 61, 0.12);
-  backdrop-filter: blur(6px);
-  transition:
-    border-color 0.4s,
-    box-shadow 0.4s,
-    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-    color 0.4s;
-}
-
-.node__icon svg {
-  width: 45%;
-  height: 45%;
-}
-
-.node--hot .node__icon {
-  color: var(--red-soft);
-  border-color: rgba(255, 43, 61, 0.55);
-  box-shadow:
-    0 0 0 0.5cqw rgba(255, 43, 61, 0.05),
-    0 0 2.6cqw rgba(255, 43, 61, 0.35);
-}
-
-.node:hover .node__icon {
-  transform: scale(1.12);
-  border-color: var(--red);
-  color: var(--red-soft);
-  box-shadow:
-    0 0 0 0.6cqw rgba(255, 43, 61, 0.08),
-    0 0 3.4cqw rgba(255, 43, 61, 0.6);
-}
-
-.node__name {
-  font-size: max(1.65cqw, 11px);
-  color: #dcdce0;
-  white-space: nowrap;
-}
-
-.stack__anchor-a {
-  left: 36%;
-  top: 22%;
-}
-
-.stack__anchor-b {
-  left: 52%;
-  bottom: 3rem;
 }
 
 /* ---------- Projects ---------- */
@@ -1144,27 +915,6 @@ img {
     gap: 7rem;
   }
 
-  .stack__grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 7rem;
-  }
-
-  .orbit {
-    width: calc(100% + var(--pad) * 2);
-    margin: 0 calc(var(--pad) * -1);
-    justify-self: stretch;
-  }
-
-  .stack__anchor-a {
-    left: 88%;
-    top: 7%;
-  }
-
-  .stack__anchor-b {
-    left: 50%;
-    bottom: 2rem;
-  }
-
   .contact {
     justify-content: flex-start;
     min-height: auto;
@@ -1188,7 +938,7 @@ img {
 /* ---------- Phone (≤ 600px) ---------- */
 
 @media (max-width: 600px) {
-  .btn--outline {
+  .header__cta {
     display: none;
   }
 
@@ -1270,41 +1020,8 @@ img {
     font-size: 1.3rem;
   }
 
-  .stack__grid {
-    gap: 5rem;
-  }
-
-  /* Orbit: wider than the screen so the nodes keep breathing room, labels under icons */
-  .orbit {
-    width: 130%;
-    margin: 3rem 0 3rem -15%;
-  }
-
-  .node {
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .node-float {
-    left: 0;
-    translate: -50% 0;
-  }
-
-  .node__name {
-    font-size: 11px;
-  }
-
-  .stack__anchor-a {
-    left: 92%;
-    top: 5%;
-  }
-
   .contact__actions {
     gap: 1.2rem;
-  }
-
-  .contact__actions .btn {
-    flex: 1 1 100%;
   }
 
   .social {

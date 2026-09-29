@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { finePointer, gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { PRELOADER_DONE } from "./fx/Preloader";
-import { ArrowRight, CircleArrow } from "./icons";
+import { ArrowRight } from "./icons";
 
 const stats = [
   { value: 7, suffix: "+", label: "Лет опыта" },
@@ -208,11 +208,17 @@ export default function Hero() {
               Создаю веб-продукты с продуманной архитектурой, эстетичным интерфейсом и вниманием к деталям.
             </p>
             <div className="hero__actions" data-intro>
-              <a href="#projects" className="btn btn--primary" data-magnetic>
-                <span className="btn__label">Смотреть проекты</span> <ArrowRight />
+              <a href="#projects" className="lnk" data-magnetic="0.2">
+                <span className="lnk__text">Смотреть проекты</span>
+                <span className="lnk__icon">
+                  <ArrowRight />
+                </span>
               </a>
-              <a href="#contacts" className="btn btn--ghost" data-magnetic>
-                <span className="btn__label">Связаться со мной</span> <CircleArrow />
+              <a href="#contacts" className="lnk lnk--muted" data-magnetic="0.2">
+                <span className="lnk__text">Связаться</span>
+                <span className="lnk__icon">
+                  <ArrowRight />
+                </span>
               </a>
             </div>
             <ul className="stats" data-intro>

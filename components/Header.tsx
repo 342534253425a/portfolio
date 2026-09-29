@@ -102,8 +102,11 @@ export default function Header() {
             <span ref={bar} className="nav__bar" />
           </nav>
           <div className="header__right">
-            <a href="#contacts" className="btn btn--outline" data-magnetic="0.25">
-              <span className="btn__label">Обсудить проект</span> <ArrowRight />
+            <a href="#contacts" className="lnk lnk--sm header__cta" data-magnetic="0.2">
+              <span className="lnk__text">Связаться</span>
+              <span className="lnk__icon">
+                <ArrowRight />
+              </span>
             </a>
             <button
               type="button"
@@ -137,11 +140,14 @@ export default function Header() {
         </nav>
         <a
           href="#contacts"
-          className="btn btn--primary menu__cta"
+          className="lnk menu__cta"
           tabIndex={open ? 0 : -1}
           onClick={() => setOpen(false)}
         >
-          Обсудить проект <ArrowRight />
+          <span className="lnk__text">Обсудить проект</span>
+          <span className="lnk__icon">
+            <ArrowRight />
+          </span>
         </a>
       </div>
     </>

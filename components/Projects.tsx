@@ -462,8 +462,11 @@ export default function Projects() {
           </ul>
         </div>
         <div className="hud__controls">
-          <button type="button" className="btn btn--primary hud__open" onClick={() => setOpen(index)}>
-            <span className="btn__label">Смотреть кейс</span> <ArrowRight />
+          <button type="button" className="lnk hud__open" onClick={() => setOpen(index)}>
+            <span className="lnk__text">Смотреть кейс</span>
+            <span className="lnk__icon">
+              <ArrowRight />
+            </span>
           </button>
           <div className="arrows">
             <button type="button" className="arrow" onClick={() => goTo.current(index - 1)} aria-label="Предыдущий проект">

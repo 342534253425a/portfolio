@@ -2,9 +2,14 @@ import Image from "next/image";
 import CopyEmail from "./fx/CopyEmail";
 import HoloCard from "./fx/HoloCard";
 import { Finale, LiveClock, PlanetParallax } from "./fx/ContactFX";
-import { ArrowRight, GithubIcon, LinkedinIcon, TelegramIcon } from "./icons";
+import { ArrowRight } from "./icons";
 
 const EMAIL = "hello@example.com";
+const SOCIALS = [
+  { href: "https://github.com", label: "GitHub" },
+  { href: "https://linkedin.com", label: "LinkedIn" },
+  { href: "https://t.me", label: "Telegram" },
+];
 
 export default function Contact() {
   return (
@@ -34,18 +39,17 @@ export default function Contact() {
             Открыт к работе в команде и интересным проектам. Люблю сложные интерфейсы, где важны детали и скорость.
           </p>
           <div className="contact__actions" data-stagger>
-            <a href={`mailto:${EMAIL}`} className="btn btn--primary btn--xl" data-item data-magnetic="0.4">
-              <span className="btn__label">Написать мне</span> <ArrowRight />
+            <a href={`mailto:${EMAIL}`} className="lnk" data-item data-magnetic="0.2">
+              <span className="lnk__text">Написать мне</span>
+              <span className="lnk__icon">
+                <ArrowRight />
+              </span>
             </a>
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="social" aria-label="GitHub" data-item>
-              <GithubIcon />
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="social" aria-label="LinkedIn" data-item>
-              <LinkedinIcon />
-            </a>
-            <a href="https://t.me" target="_blank" rel="noreferrer" className="social" aria-label="Telegram" data-item>
-              <TelegramIcon />
-            </a>
+            {SOCIALS.map(({ href, label }) => (
+              <a key={label} href={href} target="_blank" rel="noreferrer" className="lnk lnk--muted" data-item>
+                <span className="lnk__text">{label} ↗</span>
+              </a>
+            ))}
           </div>
           <div className="contact__meta" data-reveal="0.3">
             <CopyEmail email={EMAIL} />
