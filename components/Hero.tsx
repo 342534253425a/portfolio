@@ -90,7 +90,7 @@ export default function Hero() {
             enableProximity();
           },
         });
-        tl.from(q(".hero__media-inner"), { scale: 1.35, autoAlpha: 0, filter: "blur(20px)", duration: 2.4, ease: "power3.out" }, 0)
+        tl.from(q(".hero__media-inner"), { scale: 1.25, autoAlpha: 0, duration: 2.4, ease: "power3.out" }, 0)
           .from(q(".hero__glow"), { autoAlpha: 0, scale: 0.4, duration: 2.4, ease: "power2.out" }, 0.1)
           .from(header, { yPercent: -100, autoAlpha: 0, duration: 1.4 }, 0.25)
           .from(q(".hero .label"), { x: -30, autoAlpha: 0, duration: 1.2 }, 0.35)

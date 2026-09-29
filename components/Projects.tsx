@@ -300,7 +300,7 @@ export default function Projects() {
     <section ref={root} id="projects" className="section projects">
       <div className="section__bg projects__bg" aria-hidden>
         <div className="section__bg-inner">
-          <Image src="/images/mountains.png" alt="" fill sizes="100vw" quality={80} />
+          {/* <Image src="/images/mountains.png" alt="" fill sizes="100vw" quality={80} /> */}
         </div>
       </div>
 

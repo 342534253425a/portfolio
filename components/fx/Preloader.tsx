@@ -6,6 +6,20 @@ import { getLenis } from "@/lib/lenis";
 
 export const PRELOADER_DONE = "preloader:done";
 
+/** Resolves once the page has loaded and the main thread has had a moment to breathe after hydration. */
+const whenIdle = () =>
+  new Promise<void>((resolve) => {
+    const idle = () => {
+      const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
+        .requestIdleCallback;
+      if (ric) ric(() => requestAnimationFrame(() => resolve()), { timeout: 1200 });
+      else setTimeout(resolve, 250);
+    };
+    const loaded = () => (document.fonts?.ready ?? Promise.resolve()).then(idle);
+    if (document.readyState === "complete") loaded();
+    else window.addEventListener("load", loaded, { once: true });
+  });
+
 export default function Preloader() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -22,20 +36,18 @@ export default function Preloader() {
       getLenis()?.stop();
       document.documentElement.classList.add("is-loading");
 
-      const fonts = document.fonts?.ready ?? Promise.resolve();
       const tl = gsap.timeline({ paused: true });
-
-      tl.from(q(".preloader__logo span"), { yPercent: 120, duration: 0.9, stagger: 0.08, ease: "expo.out" })
+      tl.add(() => root.current!.classList.add("is-ready"))
         .to(counter, {
           v: 100,
-          duration: 1.5,
+          duration: 1.4,
           ease: "power2.inOut",
           onUpdate: () => {
             num.textContent = String(Math.round(counter.v)).padStart(3, "0");
           },
-        }, 0.1)
-        .to(q(".preloader__bar i"), { scaleX: 1, duration: 1.5, ease: "power2.inOut" }, 0.1)
-        .to(q(".preloader__logo span, .preloader__meta"), { yPercent: -120, autoAlpha: 0, duration: 0.6, stagger: 0.04, ease: "power3.in" }, "+=0.1")
+        })
+        .to(q(".preloader__bar i"), { scaleX: 1, duration: 1.4, ease: "power2.inOut" }, "<")
+        .to(q(".preloader__logo span, .preloader__meta"), { yPercent: -120, autoAlpha: 0, duration: 0.6, stagger: 0.04, ease: "power3.in" }, "+=0.15")
         .to(q(".preloader__panel"), {
           yPercent: -100,
           duration: 1.1,
@@ -50,7 +62,7 @@ export default function Preloader() {
         .set(root.current, { display: "none" });
 
       let alive = true;
-      fonts.then(() => {
+      whenIdle().then(() => {
         if (alive) tl.play();
       });
       return () => {

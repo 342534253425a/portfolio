@@ -170,7 +170,7 @@ export default function Process() {
     <section ref={root} id="process" className="section process">
       <div className="section__bg process__bg" aria-hidden>
         <div className="section__bg-inner" data-zoom>
-          <Image src="/images/mountains.png" alt="" fill sizes="100vw" quality={80} />
+          {/* <Image src="/images/mountains.png" alt="" fill sizes="100vw" quality={80} /> */}
         </div>
       </div>
 
