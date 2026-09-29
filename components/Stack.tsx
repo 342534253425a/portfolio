@@ -1,4 +1,5 @@
 import Image from "next/image";
+import OrbitFX from "./fx/OrbitFX";
 import {
   DockerIcon,
   GraphqlIcon,
@@ -11,13 +12,13 @@ import {
 } from "./icons";
 
 const nodes = [
-  { name: "Next.js", Icon: NextIcon, x: 29.4, y: 17.4, speed: 0.05 },
-  { name: "Tailwind CSS", Icon: TailwindIcon, x: 66.4, y: 17.4, speed: 0.08 },
-  { name: "TypeScript", Icon: TsIcon, x: 22.8, y: 47, speed: 0.11 },
-  { name: "Docker", Icon: DockerIcon, x: 83.1, y: 47, speed: 0.04 },
-  { name: "Node.js", Icon: NodeIcon, x: 27.4, y: 76.7, speed: 0.09, hot: true },
-  { name: "GraphQL", Icon: GraphqlIcon, x: 74.8, y: 76.7, speed: 0.13, hot: true },
-  { name: "PostgreSQL", Icon: PostgresIcon, x: 53.9, y: 93, speed: 0.06 },
+  { name: "Next.js", Icon: NextIcon, x: 29.4, y: 17.4, speed: 0.05, tip: "4 года · SSR/ISR" },
+  { name: "Tailwind CSS", Icon: TailwindIcon, x: 66.4, y: 17.4, speed: 0.08, tip: "4 года · дизайн-системы" },
+  { name: "TypeScript", Icon: TsIcon, x: 22.8, y: 47, speed: 0.11, tip: "5 лет · строгая типизация" },
+  { name: "Docker", Icon: DockerIcon, x: 83.1, y: 47, speed: 0.04, tip: "3 года · CI/CD" },
+  { name: "Node.js", Icon: NodeIcon, x: 27.4, y: 76.7, speed: 0.09, hot: true, tip: "6 лет · API и BFF" },
+  { name: "GraphQL", Icon: GraphqlIcon, x: 74.8, y: 76.7, speed: 0.13, hot: true, tip: "3 года · Apollo" },
+  { name: "PostgreSQL", Icon: PostgresIcon, x: 53.9, y: 93, speed: 0.06, tip: "5 лет · Prisma" },
 ];
 
 export default function Stack() {
@@ -26,7 +27,7 @@ export default function Stack() {
       <div className="container stack__grid">
         <div className="stack__text">
           <p className="label" data-reveal>
-            <b>02 /</b> Мой стек
+            <b>02 /</b> <span>Мой стек</span>
           </p>
           <h2 className="h2" data-split>
             Технологии —
@@ -39,9 +40,12 @@ export default function Stack() {
             Постоянно изучаю новые технологии и лучшие инструменты для создания современных, быстрых и
             масштабируемых веб-приложений.
           </p>
+          <p className="stack__hint" data-reveal="0.35">
+            <span className="stack__hint-icon">⟲</span> Покрутите орбиту мышкой
+          </p>
         </div>
 
-        <div className="orbit" data-stagger="pop">
+        <div className="orbit" data-stagger="pop" data-cursor="Крути">
           <div className="orbit__img" data-item>
             <div className="orbit__img-inner" data-zoom>
               <Image src="/images/orbit.png" alt="" fill sizes="(max-width: 900px) 100vw, 900px" quality={90} />
@@ -64,20 +68,26 @@ export default function Stack() {
             </circle>
           </svg>
 
+          <svg className="orbit__links" aria-hidden />
+
           <div className="orbit__core" data-item>
             <span className="orbit__pulse" />
+            <span className="orbit__pulse orbit__pulse--late" />
             <ReactIcon />
             <span>React</span>
           </div>
 
-          {nodes.map(({ name, Icon, x, y, speed, hot }) => (
-            <div key={name} className="node-pos" style={{ left: `${x}%`, top: `${y}%` }}>
+          {nodes.map(({ name, Icon, x, y, speed, hot, tip }) => (
+            <div key={name} className="node-pos" data-x={x} data-y={y} style={{ left: `${x}%`, top: `${y}%` }}>
               <div className="node-float" data-speed={speed}>
-                <div className={`node${hot ? " node--hot" : ""}`} data-item>
+                <div className={`node${hot ? " node--hot" : ""}`} data-item data-cursor={name}>
                   <span className="node__icon">
                     <Icon />
                   </span>
-                  <span className="node__name">{name}</span>
+                  <span className="node__name">
+                    {name}
+                    <small className="node__tip">{tip}</small>
+                  </span>
                 </div>
               </div>
             </div>
@@ -87,6 +97,7 @@ export default function Stack() {
 
       <span className="anchor anchor--dot stack__anchor-a" data-anchor="2" />
       <span className="anchor stack__anchor-b" data-anchor="3" />
+      <OrbitFX />
     </section>
   );
 }

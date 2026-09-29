@@ -96,14 +96,14 @@ export default function Header() {
           <nav className="nav" aria-label="Основная навигация">
             {links.map((l) => (
               <a key={l.href} href={l.href} className={active === l.href.slice(1) ? "is-active" : undefined}>
-                {l.label}
+                <span>{l.label}</span>
               </a>
             ))}
             <span ref={bar} className="nav__bar" />
           </nav>
           <div className="header__right">
-            <a href="#contacts" className="btn btn--outline">
-              Обсудить проект <ArrowRight />
+            <a href="#contacts" className="btn btn--outline" data-magnetic="0.25">
+              <span className="btn__label">Обсудить проект</span> <ArrowRight />
             </a>
             <button
               type="button"
@@ -131,7 +131,7 @@ export default function Header() {
               onClick={() => setOpen(false)}
             >
               <b>{String(i + 1).padStart(2, "0")}</b>
-              {l.label}
+              <span>{l.label}</span>
             </a>
           ))}
         </nav>
