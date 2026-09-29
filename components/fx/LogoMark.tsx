@@ -42,12 +42,12 @@ export function logoTimeline(el: HTMLElement, variant: LogoVariant, hold = 1.6) 
     const ch = pen.children;
     const tilt = Number(el.dataset.penTilt ?? -21);
     tl.set(ch, { yPercent: 110, rotation: 8 })
-      .to(slash, { rotation: tilt, duration: 0.8, ease: "expo.inOut" })
+      .to(slash, { rotation: tilt, xPercent: -35, duration: 0.8, ease: "expo.inOut" })
       .to(pen, { width: () => pen.scrollWidth, duration: 1, ease: "expo.inOut" }, 0.35)
       .to(ch, { yPercent: 0, rotation: 0, duration: 0.9, stagger: 0.05, ease: "expo.out" }, 0.5)
       .to(ch, { yPercent: -110, rotation: -8, duration: 0.6, stagger: { each: 0.04, from: "end" }, ease: "expo.in" }, `+=${hold}`)
       .to(pen, { width: 0, duration: 0.8, ease: "expo.inOut" }, "<0.35")
-      .to(slash, { rotation: 0, duration: 0.8, ease: "expo.inOut" }, "<0.3");
+      .to(slash, { rotation: 0, xPercent: 0, duration: 0.8, ease: "expo.inOut" }, "<0.3");
   }
 
   if (variant === "code") {

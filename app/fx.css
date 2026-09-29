@@ -146,6 +146,10 @@ html.has-cursor * {
   }
 }
 
+.lm > * {
+  flex-shrink: 0;
+}
+
 .lm__blade,
 .lm__pen {
   display: inline-flex;
@@ -162,7 +166,7 @@ html.has-cursor * {
 }
 
 .lm__pen {
-  margin-left: 0.03em;
+  margin-left: -0.05em;
 }
 
 .lm__pen i {
