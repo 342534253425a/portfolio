@@ -1429,7 +1429,8 @@ html.has-cursor * {
   }
 
   .projects__meta,
-  .projects__hint {
+  .projects__hint,
+  .hud__site {
     display: none;
   }
 }
@@ -1528,6 +1529,12 @@ html.has-cursor * {
 .modal__facts dd {
   margin-top: 0.6rem;
   font-size: 1.5rem;
+}
+
+.modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
 }
 
 .modal__close {

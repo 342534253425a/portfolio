@@ -8,58 +8,54 @@ import { ArrowLeft, ArrowRight } from "./icons";
 
 const projects = [
   {
-    title: "Crater Studio",
-    tags: ["Next.js", "GSAP", "WebGL"],
-    image: "/images/mountains.png",
+    title: "Psyches Strings",
+    tags: ["React", "Vite", "Node.js"],
+    image: "/images/projects/psyches-strings.jpg",
+    url: "https://psyches-strings.vercel.app",
+    pos: "30% 50%",
+    year: "2026",
+    role: "Fullstack",
+    text: "Платформа тестов личности: MBTI, эннеаграмма и код Голланда с результатом сразу, курсы, личный кабинет и три языка — RU, EN, 中文.",
+  },
+  {
+    title: "Bloom",
+    tags: ["React", "Supabase", "PWA"],
+    image: "/images/projects/bloom.webp",
+    url: "https://bloom-app-bice.vercel.app",
+    pos: "25% 50%",
+    year: "2026",
+    role: "Fullstack",
+    text: "PWA для привычек и спокойного дня: цели, задачи, фокус, настроение и рефлексия в одном приложении, синхронизация телефона и компьютера через Supabase.",
+  },
+  {
+    title: "Tideline",
+    tags: ["Node.js", "RSS", "YouTube API"],
+    image: "/images/projects/tideline.jpg",
+    url: "https://world-news-snowy.vercel.app",
     pos: "50% 50%",
     year: "2026",
-    role: "Frontend lead",
-    text: "Иммерсивный сайт студии с 3D-сценами, плавным скроллом и анимациями, завязанными на взаимодействие пользователя.",
-  },
-  {
-    title: "Nebula Commerce",
-    tags: ["React", "Node.js", "PostgreSQL"],
-    image: "/images/planet.png",
-    pos: "50% 50%",
-    year: "2025",
     role: "Fullstack",
-    text: "E-commerce платформа: витрина с мгновенным поиском, корзина в реальном времени и админ-панель с аналитикой.",
+    text: "Агрегатор мировых новостей из 20 изданий и YouTube в одном спокойном интерфейсе: режим чтения, поиск, каналы и прокси, чтобы сайт открывался там, где источники заблокированы.",
   },
   {
-    title: "Orbit Analytics",
-    tags: ["TypeScript", "GraphQL", "Docker"],
-    image: "/images/orbit.png",
-    pos: "50% 50%",
-    year: "2025",
+    title: "Елизавета",
+    tags: ["Next.js", "GSAP", "Tailwind"],
+    image: "/images/projects/elizaveta.jpg",
+    url: "https://elizaveta-pi.vercel.app",
+    pos: "30% 50%",
+    year: "2026",
     role: "Frontend",
-    text: "Дашборд аналитики с живыми графиками, конструктором отчётов и продуманной системой компонентов.",
+    text: "Сайт психолога: бережная подача, рассказ о подходе и стоимости, отзывы и онлайн-запись на консультацию.",
   },
   {
-    title: "Redline Motion",
-    tags: ["GSAP", "Canvas", "Next.js"],
-    image: "/images/mountains.png",
-    pos: "15% 80%",
-    year: "2024",
-    role: "Motion developer",
-    text: "Промо-сайт с покадровой анимацией на скролле, интерактивными сценами и звуковым сопровождением.",
-  },
-  {
-    title: "Eclipse Bank",
-    tags: ["React", "TypeScript", "Storybook"],
-    image: "/images/planet.png",
-    pos: "90% 90%",
-    year: "2024",
-    role: "Frontend",
-    text: "Интерфейс онлайн-банка: дизайн-система на 120+ компонентов, строгая типизация и доступность AA.",
-  },
-  {
-    title: "Pulse Chat",
-    tags: ["Node.js", "WebSocket", "Redis"],
-    image: "/images/orbit.png",
-    pos: "20% 30%",
-    year: "2023",
+    title: "Ярослава",
+    tags: ["Node.js", "Express", "GSAP"],
+    image: "/images/projects/yaroslava.jpg",
+    url: "https://yaroslava-knit.vercel.app",
+    pos: "40% 50%",
+    year: "2026",
     role: "Fullstack",
-    text: "Мессенджер реального времени: комнаты, статусы набора, доставка сообщений и офлайн-очередь.",
+    text: "Сайт мастерской авторского трикотажа и кружева: каталог изделий, видео-уроки, индивидуальные заказы и админка для управления контентом.",
   },
 ];
 
@@ -453,6 +449,12 @@ export default function Projects() {
               <ArrowRight />
             </span>
           </button>
+          <a className="lnk lnk--muted hud__site" href={cur.url} target="_blank" rel="noopener noreferrer">
+            <span className="lnk__text">Открыть сайт</span>
+            <span className="lnk__icon">
+              <ArrowRight />
+            </span>
+          </a>
           <div className="arrows">
             <button type="button" className="arrow" onClick={() => goTo.current(index - 1)} aria-label="Предыдущий проект">
               <ArrowLeft />
@@ -503,9 +505,15 @@ export default function Projects() {
                   <dd>{p.tags.join(" · ")}</dd>
                 </div>
               </dl>
-              <button type="button" className="btn btn--primary modal__reveal" onClick={close}>
-                <span className="btn__label">Закрыть</span>
-              </button>
+              <div className="modal__actions modal__reveal">
+                <a className="btn btn--primary" href={p.url} target="_blank" rel="noopener noreferrer">
+                  <span className="btn__label">Открыть сайт</span>
+                  <ArrowRight />
+                </a>
+                <button type="button" className="btn btn--ghost" onClick={close}>
+                  <span className="btn__label">Закрыть</span>
+                </button>
+              </div>
             </div>
             <button type="button" className="modal__close" onClick={close} aria-label="Закрыть">
               ✕
