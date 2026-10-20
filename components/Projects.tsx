@@ -21,7 +21,7 @@ const projects = [
     title: "Bloom",
     tags: ["React", "Supabase", "PWA"],
     image: "/images/projects/bloom.webp",
-    url: "https://bloom-app-bice.vercel.app",
+    url: "https://bloom-love.online",
     pos: "25% 50%",
     year: "2026",
     role: "Fullstack",
