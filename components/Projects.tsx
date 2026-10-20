@@ -40,7 +40,7 @@ const projects = [
   {
     title: "Елизавета",
     tags: ["Next.js", "GSAP", "Tailwind"],
-    image: "/images/projects/elizaveta.jpg",
+    image: "/images/projects/elizaveta.webp",
     url: "https://elizaveta-pi.vercel.app",
     pos: "30% 50%",
     year: "2026",
