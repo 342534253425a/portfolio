@@ -234,14 +234,52 @@ html.has-cursor * {
   animation: lm-blink 1.6s ease-in-out infinite;
 }
 
+@media (hover: hover) {
+  .preloader.is-waiting .preloader__hint--touch {
+    display: none;
+  }
+}
+
+@media (hover: none) {
+  .preloader.is-waiting .preloader__hint--mouse {
+    display: none;
+  }
+}
+
 @media (max-width: 800px) {
+  .preloader__center {
+    width: calc(100vw - 32px);
+  }
+
   .lab {
+    width: 100%;
     grid-template-columns: 1fr;
-    gap: 1.6rem;
+  }
+
+  /* One logo on phones: the pen take, same as the header. */
+  .lab__cell:not(:nth-child(2)) {
+    display: none;
   }
 
   .lab__cell {
-    padding: 1.8rem 2.2rem;
+    padding: 3.2rem 2rem;
+    text-align: center;
+    animation-delay: 0s !important;
+  }
+
+  .lab__logo {
+    font-size: min(80px, calc((100vw - 90px) / 4.1));
+  }
+
+  .preloader__meta {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1rem;
+  }
+
+  .preloader__hint {
+    flex-basis: 100%;
+    text-align: center;
   }
 }
 
@@ -1512,7 +1550,7 @@ html.has-cursor * {
 
 .modal__facts {
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: auto 1fr;
   gap: 3rem;
   padding: 2rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);

@@ -85,7 +85,8 @@ export default function Preloader() {
             <i />
           </span>
           <span>Загрузка опыта</span>
-          <span className="preloader__hint">· Кликни, чтобы войти</span>
+          <span className="preloader__hint preloader__hint--mouse">· Кликни, чтобы войти</span>
+          <span className="preloader__hint preloader__hint--touch">Нажми, чтобы войти</span>
         </div>
       </div>
     </div>

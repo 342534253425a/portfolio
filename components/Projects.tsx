@@ -13,7 +13,6 @@ const projects = [
     image: "/images/projects/psyches-strings.jpg",
     url: "https://psyches-strings.vercel.app",
     pos: "30% 50%",
-    year: "2026",
     role: "Fullstack",
     text: "Платформа тестов личности: MBTI, эннеаграмма и код Голланда с результатом сразу, курсы, личный кабинет и три языка — RU, EN, 中文.",
   },
@@ -23,7 +22,6 @@ const projects = [
     image: "/images/projects/bloom.webp",
     url: "https://bloom-love.online",
     pos: "25% 50%",
-    year: "2026",
     role: "Fullstack",
     text: "PWA для привычек и спокойного дня: цели, задачи, фокус, настроение и рефлексия в одном приложении, синхронизация телефона и компьютера через Supabase.",
   },
@@ -33,7 +31,6 @@ const projects = [
     image: "/images/projects/tideline.jpg",
     url: "https://world-news-snowy.vercel.app",
     pos: "50% 50%",
-    year: "2026",
     role: "Fullstack",
     text: "Агрегатор мировых новостей из 20 изданий и YouTube в одном спокойном интерфейсе: режим чтения, поиск, каналы и прокси, чтобы сайт открывался там, где источники заблокированы.",
   },
@@ -43,7 +40,6 @@ const projects = [
     image: "/images/projects/elizaveta.webp",
     url: "https://elizaveta-pi.vercel.app",
     pos: "30% 50%",
-    year: "2026",
     role: "Frontend",
     text: "Сайт психолога: бережная подача, рассказ о подходе и стоимости, отзывы и онлайн-запись на консультацию.",
   },
@@ -53,7 +49,6 @@ const projects = [
     image: "/images/projects/yaroslava.jpg",
     url: "https://yaroslava-knit.vercel.app",
     pos: "40% 50%",
-    year: "2026",
     role: "Fullstack",
     text: "Сайт мастерской авторского трикотажа и кружева: каталог изделий, видео-уроки, индивидуальные заказы и админка для управления контентом.",
   },
@@ -433,7 +428,7 @@ export default function Projects() {
       <div className="container projects__hud">
         <div className="hud__info" key={`i${index}`}>
           <p className="hud__meta">
-            <b>/{String(index + 1).padStart(2, "0")}</b> {cur.year} · {cur.role}
+            <b>/{String(index + 1).padStart(2, "0")}</b> {cur.role}
           </p>
           <h3 className="hud__title">{cur.title}</h3>
           <ul className="hud__tags">
@@ -492,10 +487,6 @@ export default function Projects() {
               <h3 className="modal__title modal__reveal">{p.title}</h3>
               <p className="modal__text modal__reveal">{p.text}</p>
               <dl className="modal__facts modal__reveal">
-                <div>
-                  <dt>Год</dt>
-                  <dd>{p.year}</dd>
-                </div>
                 <div>
                   <dt>Роль</dt>
                   <dd>{p.role}</dd>

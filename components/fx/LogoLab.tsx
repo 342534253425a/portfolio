@@ -15,6 +15,7 @@ export default function LogoLab() {
       let alive = true;
       const start = contextSafe!(() => {
         gsap.utils.toArray<HTMLElement>(".lm", root.current).forEach((el, i) => {
+          if (!el.offsetParent) return; // hidden on phones
           logoTimeline(el, LOGO_VARIANTS[i])
             .repeat(-1)
             .repeatDelay(0.6)
