@@ -2583,11 +2583,6 @@ html.has-cursor * {
   box-shadow: 0 0 10px #3ddc84;
 }
 
-.clock__dot.is-sleep {
-  background: #f5b942;
-  box-shadow: 0 0 10px #f5b942;
-}
-
 .btn--xl {
   height: 7rem;
   padding: 0 3.6rem;
@@ -2797,7 +2792,10 @@ html.has-cursor * {
   }
 
   .copy {
-    font-size: 1.4rem;
+    gap: 1rem;
+    padding-inline: 1.4rem;
+    font-size: 1.3rem;
+    white-space: nowrap;
   }
 
   .hero__scroll {

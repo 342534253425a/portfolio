@@ -652,31 +652,6 @@ img {
   margin-top: 3.6rem;
 }
 
-.stats {
-  display: flex;
-  gap: 8rem;
-  margin-top: 4.8rem;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat__num {
-  font-size: 3.4rem;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat__txt {
-  margin-top: 1.2rem;
-  font-size: 1.6rem;
-  color: var(--muted);
-}
-
 .hero__anchor {
   left: 83%;
   top: 82%;
@@ -921,10 +896,6 @@ img {
     top: 58%;
   }
 
-  .stats {
-    gap: 7rem;
-  }
-
   .contact {
     justify-content: flex-start;
     min-height: auto;
@@ -1007,6 +978,13 @@ img {
     top: 97%;
   }
 
+  /* Keep the signal line in the right gutter so it never crosses the contact text. */
+  .contact__anchor-a,
+  .contact__anchor-b,
+  .contact__anchor-c {
+    left: 96%;
+  }
+
   .hero__actions {
     gap: 1.2rem;
     margin-top: 2.8rem;
@@ -1014,20 +992,6 @@ img {
 
   .hero__actions .btn {
     flex: 1 1 100%;
-  }
-
-  .stats {
-    justify-content: space-between;
-    gap: 2rem;
-    margin-top: 3.6rem;
-  }
-
-  .stat__num {
-    font-size: 3rem;
-  }
-
-  .stat__txt {
-    font-size: 1.3rem;
   }
 
   .contact__actions {

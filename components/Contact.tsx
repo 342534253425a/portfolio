@@ -1,15 +1,9 @@
 import Image from "next/image";
 import CopyEmail from "./fx/CopyEmail";
 import HoloCard from "./fx/HoloCard";
-import { Finale, LiveClock, PlanetParallax } from "./fx/ContactFX";
+import { Finale, PlanetParallax, ReplyNote } from "./fx/ContactFX";
 import { ArrowRight } from "./icons";
-
-const EMAIL = "hello@example.com";
-const SOCIALS = [
-  { href: "https://github.com", label: "GitHub" },
-  { href: "https://linkedin.com", label: "LinkedIn" },
-  { href: "https://t.me", label: "Telegram" },
-];
+import { EMAIL, SOCIALS } from "@/lib/contacts";
 
 export default function Contact() {
   return (
@@ -53,7 +47,7 @@ export default function Contact() {
           </div>
           <div className="contact__meta" data-reveal="0.3">
             <CopyEmail email={EMAIL} />
-            <LiveClock />
+            <ReplyNote />
           </div>
         </div>
 

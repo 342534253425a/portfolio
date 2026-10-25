@@ -13,7 +13,7 @@ const projects = [
     image: "/images/projects/psyches-strings.jpg",
     url: "https://psyches-strings.vercel.app",
     pos: "30% 50%",
-    role: "Fullstack",
+    role: "Frontend + бэкенд",
     text: "Платформа тестов личности: MBTI, эннеаграмма и код Голланда с результатом сразу, курсы, личный кабинет и три языка — RU, EN, 中文.",
   },
   {
@@ -22,7 +22,7 @@ const projects = [
     image: "/images/projects/bloom.webp",
     url: "https://bloom-love.online",
     pos: "25% 50%",
-    role: "Fullstack",
+    role: "Frontend + бэкенд",
     text: "PWA для привычек и спокойного дня: цели, задачи, фокус, настроение и рефлексия в одном приложении, синхронизация телефона и компьютера через Supabase.",
   },
   {
@@ -31,7 +31,7 @@ const projects = [
     image: "/images/projects/tideline.jpg",
     url: "https://world-news-snowy.vercel.app",
     pos: "50% 50%",
-    role: "Fullstack",
+    role: "Frontend + бэкенд",
     text: "Агрегатор мировых новостей из 20 изданий и YouTube в одном спокойном интерфейсе: режим чтения, поиск, каналы и прокси, чтобы сайт открывался там, где источники заблокированы.",
   },
   {
@@ -49,7 +49,7 @@ const projects = [
     image: "/images/projects/yaroslava.jpg",
     url: "https://yaroslava-knit.vercel.app",
     pos: "40% 50%",
-    role: "Fullstack",
+    role: "Frontend + бэкенд",
     text: "Сайт мастерской авторского трикотажа и кружева: каталог изделий, видео-уроки, индивидуальные заказы и админка для управления контентом.",
   },
 ];
@@ -470,7 +470,7 @@ export default function Projects() {
       </div>
 
       <p className="projects__hint" aria-hidden>
-        Скролльте или тяните ↔
+        Листайте или тяните ↔
       </p>
 
       {p && (

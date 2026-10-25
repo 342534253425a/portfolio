@@ -3,13 +3,11 @@
 import { useRef, useState } from "react";
 import { finePointer, gsap, useGSAP } from "@/lib/gsap";
 import { burstFrom } from "@/lib/fx";
-import { GithubIcon, LinkedinIcon, TelegramIcon } from "../icons";
+import { SOCIALS } from "@/lib/contacts";
+import { GithubIcon, TelegramIcon } from "../icons";
 
-const LINKS = [
-  { href: "https://github.com", label: "GitHub", Icon: GithubIcon },
-  { href: "https://linkedin.com", label: "LinkedIn", Icon: LinkedinIcon },
-  { href: "https://t.me", label: "Telegram", Icon: TelegramIcon },
-];
+const ICONS = { GitHub: GithubIcon, Telegram: TelegramIcon };
+const LINKS = SOCIALS.map((s) => ({ ...s, Icon: ICONS[s.label] }));
 
 /** Holographic business card floating in 3D with orbiting satellites; flips to reveal the links. */
 export default function HoloCard({ email }: { email: string }) {
@@ -111,7 +109,7 @@ export default function HoloCard({ email }: { email: string }) {
               <span className="holo__chip" aria-hidden />
               <div className="holo__mid">
                 <p className="holo__role">Frontend разработчик</p>
-                <p className="holo__stack">React · Next.js · TypeScript · GSAP · WebGL</p>
+                <p className="holo__stack">React · Next.js · TypeScript · GSAP · Supabase</p>
               </div>
               <div className="holo__bottom">
                 <span>{email}</span>

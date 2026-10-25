@@ -5,7 +5,7 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 
 const rows = [
-  ["React", "Next.js", "GSAP", "TypeScript", "Node.js", "WebGL", "Motion", "UI/UX"],
+  ["React", "Next.js", "GSAP", "TypeScript", "Node.js", "Supabase", "PWA", "UI/UX"],
   ["Анимации", "Интерфейсы", "Архитектура", "Скорость", "Детали", "Опыт", "Система", "Результат"],
 ];
 

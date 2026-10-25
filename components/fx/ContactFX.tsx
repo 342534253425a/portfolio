@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { finePointer, gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
 
 /** Planet rises into view on scroll, then follows the cursor with a slow, heavy parallax. */
@@ -89,24 +89,11 @@ export function Finale({ email }: { email: string }) {
   );
 }
 
-export function LiveClock() {
-  const [now, setNow] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Moscow" });
-    const tick = () => setNow(fmt.format(new Date()));
-    tick();
-    const id = setInterval(tick, 15000);
-    return () => clearInterval(id);
-  }, []);
-
-  const hour = now ? parseInt(now, 10) : 12;
-  const awake = hour >= 9 && hour < 23;
-
+export function ReplyNote() {
   return (
     <p className="clock">
-      <span className={`clock__dot${awake ? "" : " is-sleep"}`} />
-      Москва, <b>{now ?? "--:--"}</b> · {awake ? "на связи, отвечу в течение часа" : "сплю, но утром отвечу первым делом"}
+      <span className="clock__dot" />
+      Обычно отвечаю в течение дня
     </p>
   );
 }

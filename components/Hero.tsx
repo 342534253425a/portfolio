@@ -6,12 +6,6 @@ import { finePointer, gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { PRELOADER_DONE } from "./fx/Preloader";
 import { ArrowRight } from "./icons";
 
-const stats = [
-  { value: 7, suffix: "+", label: "Лет опыта" },
-  { value: 30, suffix: "+", label: "Проектов" },
-  { value: 100, suffix: "%", label: "Реальных кейсов" },
-];
-
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
 
@@ -21,18 +15,6 @@ export default function Hero() {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const header = document.querySelector("[data-intro-header]");
       const title = q(".hero__title")[0] as HTMLElement;
-
-      const rollCounter = (el: HTMLElement, s: (typeof stats)[number], duration = 2) => {
-        const counter = { v: 0 };
-        return gsap.to(counter, {
-          v: s.value,
-          duration,
-          ease: "power3.out",
-          onUpdate: () => {
-            el.textContent = Math.round(counter.v) + s.suffix;
-          },
-        });
-      };
 
       const enableProximity = contextSafe!(() => {
         if (!finePointer()) return;
@@ -109,10 +91,7 @@ export default function Hero() {
           .from(split.lines, { yPercent: 115, rotate: 3, transformOrigin: "0% 100%", duration: 1.6, stagger: 0.12 }, 0.4)
           .from(q(".hero .lead"), { y: 30, autoAlpha: 0, duration: 1.3 }, 0.9)
           .from(q(".hero__actions > *"), { y: 30, autoAlpha: 0, duration: 1.2, stagger: 0.1 }, 1)
-          .from(q(".stat"), { y: 30, autoAlpha: 0, duration: 1.2, stagger: 0.1 }, 1.15)
-          .from(q(".hero__scroll"), { autoAlpha: 0, y: 20, duration: 1 }, 1.4);
-
-        q<HTMLElement>(".stat__num").forEach((el, i) => tl.add(rollCounter(el, stats[i]), 1.2 + i * 0.1));
+          .from(q(".hero__scroll"), { autoAlpha: 0, y: 20, duration: 1 }, 1.3);
       });
 
       /* The photo paints under the opaque preloader at its starting scale, so the intro never waits on its raster. */
@@ -124,11 +103,6 @@ export default function Hero() {
       const offIntro = () => window.removeEventListener(PRELOADER_DONE, intro);
 
       if (reduced) return offIntro;
-
-      q<HTMLElement>(".stat").forEach((stat, i) => {
-        const num = stat.querySelector<HTMLElement>(".stat__num")!;
-        stat.addEventListener("mouseenter", () => rollCounter(num, stats[i], 1));
-      });
 
       gsap.to(q(".hero__media"), {
         yPercent: 22,
@@ -171,7 +145,7 @@ export default function Hero() {
       <div className="hero__media" aria-hidden>
         <div className="hero__depth">
           <div className="hero__media-inner" data-intro>
-            <Image src="/images/hero.png" alt="" fill sizes="115vw" loading="eager" fetchPriority="high" quality={95} />
+            <Image src="/images/hero.webp" alt="" fill sizes="115vw" loading="eager" fetchPriority="high" quality={95} />
           </div>
         </div>
         <div className="hero__glow" data-intro />
@@ -209,17 +183,6 @@ export default function Hero() {
                 </span>
               </a>
             </div>
-            <ul className="stats" data-intro>
-              {stats.map((s) => (
-                <li key={s.label} className="stat" data-hover>
-                  <span className="stat__num">
-                    {s.value}
-                    {s.suffix}
-                  </span>
-                  <span className="stat__txt">{s.label}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </div>
@@ -228,7 +191,7 @@ export default function Hero() {
         <span className="hero__scroll-mouse">
           <span className="hero__scroll-wheel" />
         </span>
-        <span>Листай</span>
+        <span>Листайте</span>
       </a>
 
       <span className="anchor anchor--dot hero__anchor" data-anchor="1" />

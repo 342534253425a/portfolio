@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { DockerIcon, GraphqlIcon, NextIcon, NodeIcon, PostgresIcon, ReactIcon, TailwindIcon, TsIcon } from "./icons";
+import { GsapIcon, NextIcon, NodeIcon, PwaIcon, ReactIcon, SupabaseIcon, TailwindIcon, TsIcon } from "./icons";
 
 const planets = [
   {
@@ -10,23 +10,20 @@ const planets = [
     Icon: ReactIcon,
     size: 5.6,
     ring: true,
-    years: "6 лет",
-    text: "Сердце моего стека: архитектура компонентов, Server Components и бескомпромиссная производительность.",
-    tags: ["RSC", "Hooks", "Suspense"],
+    text: "Основа почти всех моих проектов: компоненты, хуки и состояние, которое не разваливается при росте.",
+    tags: ["Hooks", "Context", "Router"],
   },
   {
     name: "Next.js",
     Icon: NextIcon,
     size: 5,
-    years: "4 года",
-    text: "App Router, SSR и ISR — быстрые продукты, которые любят и пользователи, и поисковики.",
-    tags: ["App Router", "SSR / ISR", "Edge"],
+    text: "App Router и SSR: на нём сделаны это портфолио и сайт психолога «Елизавета».",
+    tags: ["App Router", "SSR", "SEO"],
   },
   {
     name: "TypeScript",
     Icon: TsIcon,
     size: 4.8,
-    years: "5 лет",
     text: "Строгая типизация как страховка: меньше багов в проде, смелее рефакторинг.",
     tags: ["Strict", "Generics", "Zod"],
   },
@@ -34,42 +31,37 @@ const planets = [
     name: "Node.js",
     Icon: NodeIcon,
     size: 5.4,
-    years: "6 лет",
-    text: "API, BFF и real-time сервисы — от прототипа за вечер до нагруженного продакшена.",
-    tags: ["REST", "WebSocket", "BFF"],
+    text: "Свой сервер, когда он нужен: API и админка мастерской, RSS и прокси для агрегатора новостей.",
+    tags: ["Express", "REST", "RSS"],
   },
   {
-    name: "GraphQL",
-    Icon: GraphqlIcon,
+    name: "Supabase",
+    Icon: SupabaseIcon,
     size: 4.6,
-    years: "3 года",
-    text: "Гибкие схемы и Apollo: интерфейс получает ровно те данные, которые ему нужны.",
-    tags: ["Apollo", "Schema", "Codegen"],
+    text: "Авторизация, база и синхронизация между устройствами в Bloom — без своего сервера.",
+    tags: ["Auth", "Postgres", "Sync"],
   },
   {
-    name: "PostgreSQL",
-    Icon: PostgresIcon,
+    name: "GSAP",
+    Icon: GsapIcon,
     size: 5.2,
-    years: "5 лет",
-    text: "Надёжные данные: моделирование, индексы, транзакции и Prisma поверх.",
-    tags: ["Prisma", "Индексы", "SQL"],
+    text: "Анимации, которые вы видите на этом сайте: скролл, 3D-карусель, текстовые эффекты.",
+    tags: ["ScrollTrigger", "SplitText", "Draggable"],
   },
   {
     name: "Tailwind CSS",
     Icon: TailwindIcon,
     size: 4.8,
-    years: "4 года",
-    text: "Дизайн-системы и UI-киты, которые масштабируются вместе с продуктом.",
-    tags: ["Tokens", "UI-кит", "A11y"],
+    text: "Быстрая вёрстка адаптивных интерфейсов без разрастающегося CSS.",
+    tags: ["Адаптив", "UI-кит", "A11y"],
   },
   {
-    name: "Docker",
-    Icon: DockerIcon,
+    name: "PWA",
+    Icon: PwaIcon,
     size: 5.6,
     ring: true,
-    years: "3 года",
-    text: "Контейнеры и CI/CD — одинаково стабильно от ноутбука до продакшена.",
-    tags: ["CI/CD", "Compose", "Deploy"],
+    text: "Сайт, который ставится на телефон как приложение и работает офлайн — так устроен Bloom.",
+    tags: ["Offline", "Vite", "i18n"],
   },
 ];
 
@@ -1027,12 +1019,12 @@ export default function Stack() {
             <br />
             Система — <span className="accent">мой подход.</span>
           </h2>
-          <p className="lead">Моя вселенная технологий. Скролльте — полетим от планеты к планете.</p>
+          <p className="lead">Моя вселенная технологий. Листайте — полетим от планеты к планете.</p>
         </div>
-        {planets.map(({ name, text, tags, years }, i) => (
+        {planets.map(({ name, text, tags }, i) => (
           <div key={name} className="chapter">
             <p className="chapter__kicker">
-              <b>{String(i + 1).padStart(2, "0")}</b> / {String(N).padStart(2, "0")} · {years}
+              <b>{String(i + 1).padStart(2, "0")}</b> / {String(N).padStart(2, "0")}
             </p>
             <h3 className="chapter__name">{name}</h3>
             <p className="chapter__text">{text}</p>

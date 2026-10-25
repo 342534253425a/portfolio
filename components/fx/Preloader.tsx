@@ -24,8 +24,9 @@ export default function Preloader() {
       getLenis()?.stop();
       document.documentElement.classList.add("is-loading");
 
-      /** Counts to 100, then waits for a click so the logos can be watched before entering. */
+      /** Counts to 100, then lets the logos be watched for a moment; a click enters right away. */
       const play = contextSafe!(() => {
+        const enter = () => tl.paused() && tl.play();
         const tl = gsap
           .timeline()
           .add(() => root.current!.classList.add("is-ready"))
@@ -38,7 +39,10 @@ export default function Preloader() {
             },
           })
           .to(q(".preloader__bar i"), { scaleX: 1, duration: 1.4, ease: "power2.inOut" }, "<")
-          .add(() => root.current!.classList.add("is-waiting"))
+          .add(() => {
+            root.current!.classList.add("is-waiting");
+            gsap.delayedCall(2.2, enter);
+          })
           .addPause()
           .to(
             q(".lab__cell, .preloader__meta"),
@@ -56,7 +60,7 @@ export default function Preloader() {
             done();
           }, "-=0.75")
           .set(root.current, { display: "none" });
-        root.current!.addEventListener("click", () => tl.paused() && tl.play());
+        root.current!.addEventListener("click", enter);
       });
 
       let alive = true;
@@ -85,8 +89,8 @@ export default function Preloader() {
             <i />
           </span>
           <span>Загрузка опыта</span>
-          <span className="preloader__hint preloader__hint--mouse">· Кликни, чтобы войти</span>
-          <span className="preloader__hint preloader__hint--touch">Нажми, чтобы войти</span>
+          <span className="preloader__hint preloader__hint--mouse">· Кликните, чтобы войти</span>
+          <span className="preloader__hint preloader__hint--touch">Нажмите, чтобы войти</span>
         </div>
       </div>
     </div>
