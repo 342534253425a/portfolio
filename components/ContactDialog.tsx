@@ -3,9 +3,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
-import { EMAIL, SOCIALS } from "@/lib/contacts";
+import { EMAIL, PHONE, PHONE_LABEL, SOCIALS, WHATSAPP, writeEmailHref } from "@/lib/contacts";
 import { useI18n } from "@/lib/i18n";
-import { ArrowLeft, ArrowRight, CalendarIcon, ChatIcon, CopyIcon, MailIcon, SendIcon, TelegramIcon } from "./icons";
+import { ArrowLeft, ArrowRight, CalendarIcon, ChatIcon, CopyIcon, MailIcon, PhoneIcon, SendIcon, TelegramIcon, WhatsappIcon } from "./icons";
 
 type View = "choose" | "request" | "call" | "direct" | "done";
 type Method = "telegram" | "email" | "phone" | "whatsapp";
@@ -333,6 +333,9 @@ export default function ContactDialog() {
 
   if (!open) return null;
 
+  const mobile = window.matchMedia("(pointer: coarse)").matches;
+  const emailHref = writeEmailHref(d.direct.email.subject);
+
   /* ---- Pieces ---- */
   const field = (key: string, label: React.ReactNode, control: React.ReactNode, hint?: string) => (
     <div className={`cd__field cd__in${errors[key] ? " is-error" : ""}`} data-field={key}>
@@ -384,7 +387,9 @@ export default function ContactDialog() {
       <a href={TELEGRAM} target="_blank" rel="noreferrer">
         Telegram
       </a>{" "}
-      · <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+      · <a href={emailHref} target="_blank" rel="noreferrer">
+        {EMAIL}
+      </a>
     </p>
   );
 
@@ -600,6 +605,25 @@ export default function ContactDialog() {
                 </a>
                 <div className="cd__dm cd__in" onPointerMove={spot}>
                   <span className="cd__opt-icon">
+                    <PhoneIcon />
+                  </span>
+                  <span>
+                    <span className="cd__dm-title">{d.direct.phone.title}</span>
+                    <span className="cd__dm-sub">
+                      {PHONE_LABEL} · {d.direct.phone.text}
+                    </span>
+                  </span>
+                  <span className="cd__dm-actions">
+                    <a className="cd__pill" href={`tel:${PHONE}`}>
+                      <PhoneIcon /> {d.direct.phone.call}
+                    </a>
+                    <a className="cd__pill cd__pill--red" href={WHATSAPP} target="_blank" rel="noreferrer">
+                      <WhatsappIcon /> {d.direct.phone.whatsapp}
+                    </a>
+                  </span>
+                </div>
+                <div className="cd__dm cd__in" onPointerMove={spot}>
+                  <span className="cd__opt-icon">
                     <MailIcon />
                   </span>
                   <span>
@@ -612,10 +636,11 @@ export default function ContactDialog() {
                     <button type="button" className="cd__pill" onClick={copyEmail}>
                       <CopyIcon /> {copied ? t.contact.copied : t.contact.copy}
                     </button>
-                    <a className="cd__pill cd__pill--red" href={`mailto:${EMAIL}`}>
-                      {d.direct.email.action} <ArrowRight />
+                    <a className="cd__pill cd__pill--red" href={emailHref} target="_blank" rel="noreferrer">
+                      {mobile ? d.direct.email.actionMobile : d.direct.email.action} <ArrowRight />
                     </a>
                   </span>
+                  {!mobile && <span className="cd__dm-hint">{d.direct.email.hint}</span>}
                 </div>
               </div>
               <p className="cd__reply cd__in">

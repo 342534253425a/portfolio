@@ -113,7 +113,7 @@ const ru = {
       { title: "Анализ", text: "Разбираюсь в задаче: для кого сайт, что он должен делать и что уже есть у конкурентов.", tags: ["Цели", "Конкуренты", "ТЗ"] },
       { title: "Проектирование", text: "Структура страниц, сценарии и визуальный стиль — до того, как написана первая строка.", tags: ["Сценарии", "Дизайн", "Структура"] },
       { title: "Разработка", text: "Типизированный код, адаптив под телефон и живая ссылка на демо по ходу работы.", tags: ["TypeScript", "Адаптив", "Демо"] },
-      { title: "Запуск", text: "Деплой на Vercel, свой домен и HTTPS. И дальше — правки и поддержка.", tags: ["Vercel", "Домен", "Поддержка"] },
+      { title: "Запуск", text: "Сначала демо-сервер, чтобы всё проверить. Потом — ваш хостинг или VPS, домен и HTTPS. И дальше — правки и поддержка.", tags: ["Демо", "Хостинг / VPS", "Поддержка"] },
     ],
     stage: "Этап",
     holdAria: "Зажмите, чтобы запустить ракету",
@@ -167,7 +167,7 @@ const ru = {
     options: {
       request: { title: "Оставить заявку", text: "Опишите задачу — я сам свяжусь с вами в течение дня.", meta: "≈ 1 минута" },
       call: { title: "Назначить созвон", text: "Выберите день и время — обсудим проект голосом.", meta: "20–30 минут" },
-      direct: { title: "Написать самому", text: "Telegram или почта — как вам привычнее.", meta: "Сразу" },
+      direct: { title: "Написать самому", text: "Telegram, WhatsApp, телефон или почта — как вам привычнее.", meta: "Сразу" },
     },
     name: "Как вас зовут",
     namePh: "Имя",
@@ -206,7 +206,14 @@ const ru = {
     fail: "Не получилось отправить. Напишите мне напрямую — так даже быстрее:",
     direct: {
       telegram: { text: "Самый быстрый способ", action: "Открыть чат" },
-      email: { text: "Для подробных писем", action: "Написать" },
+      phone: { title: "Телефон и WhatsApp", text: "Звонок или сообщение", call: "Позвонить", whatsapp: "WhatsApp" },
+      email: {
+        text: "Для подробных писем",
+        action: "Написать в Gmail",
+        actionMobile: "Написать",
+        hint: "Откроется Gmail с готовым письмом. Другая почта — скопируйте адрес.",
+        subject: "Вопрос по проекту",
+      },
     },
   },
 };
@@ -320,7 +327,7 @@ const en: Dict = {
       { title: "Research", text: "I dig into the task: who the site is for, what it must do and what competitors already have.", tags: ["Goals", "Competitors", "Brief"] },
       { title: "Design", text: "Page structure, user flows and visual style — before the first line of code.", tags: ["Flows", "Design", "Structure"] },
       { title: "Development", text: "Typed code, a layout that works on phones and a live demo link as the work goes.", tags: ["TypeScript", "Responsive", "Demo"] },
-      { title: "Launch", text: "Deploy on Vercel, your own domain and HTTPS. And then — updates and support.", tags: ["Vercel", "Domain", "Support"] },
+      { title: "Launch", text: "First a demo server to check everything. Then your hosting or a VPS, your domain and HTTPS. And after that — updates and support.", tags: ["Demo", "Hosting / VPS", "Support"] },
     ],
     stage: "Stage",
     holdAria: "Hold to launch the rocket",
@@ -374,7 +381,7 @@ const en: Dict = {
     options: {
       request: { title: "Leave a request", text: "Describe the task — I’ll get back to you within a day.", meta: "≈ 1 minute" },
       call: { title: "Book a call", text: "Pick a day and time — we’ll talk the project through.", meta: "20–30 minutes" },
-      direct: { title: "Message me directly", text: "Telegram or email — whatever you prefer.", meta: "Instant" },
+      direct: { title: "Message me directly", text: "Telegram, WhatsApp, phone or email — whatever you prefer.", meta: "Instant" },
     },
     name: "Your name",
     namePh: "Name",
@@ -413,7 +420,14 @@ const en: Dict = {
     fail: "Couldn’t send it. Message me directly — it’s even faster:",
     direct: {
       telegram: { text: "The fastest way", action: "Open chat" },
-      email: { text: "For detailed messages", action: "Write" },
+      phone: { title: "Phone & WhatsApp", text: "Call or message", call: "Call", whatsapp: "WhatsApp" },
+      email: {
+        text: "For detailed messages",
+        action: "Write in Gmail",
+        actionMobile: "Write",
+        hint: "Gmail opens with a ready message. Using another mail service? Copy the address.",
+        subject: "Project inquiry",
+      },
     },
   },
 };

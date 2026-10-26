@@ -807,6 +807,13 @@ textarea.cd__input {
   box-shadow: 0 1rem 2.6rem -1rem var(--red-glow);
 }
 
+.cd__dm-hint {
+  grid-column: 2 / -1;
+  margin-top: -1rem;
+  font-size: 1.25rem;
+  color: var(--muted);
+}
+
 .cd__reply {
   display: flex;
   align-items: center;

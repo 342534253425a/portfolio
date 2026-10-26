@@ -2451,8 +2451,10 @@ html.has-cursor * {
   perspective: 900px;
 }
 
+/* Room below the baseline so the gradient also paints descenders like "g". */
 .finale__char {
-  padding-bottom: 0.06em;
+  margin-bottom: -0.22em;
+  padding-bottom: 0.22em;
   background: linear-gradient(180deg, #fff 25%, #ffc2c8 55%, rgba(255, 43, 61, 0.55) 100%);
   -webkit-background-clip: text;
   background-clip: text;

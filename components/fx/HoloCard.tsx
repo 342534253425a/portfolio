@@ -4,10 +4,11 @@ import { useRef, useState } from "react";
 import { finePointer, gsap, useGSAP } from "@/lib/gsap";
 import { burstFrom } from "@/lib/fx";
 import { SOCIALS } from "@/lib/contacts";
-import { TelegramIcon } from "../icons";
+import { TelegramIcon, WhatsappIcon } from "../icons";
 import { useI18n } from "@/lib/i18n";
 
-const LINKS = SOCIALS.map((s) => ({ ...s, Icon: TelegramIcon }));
+const ICONS = { Telegram: TelegramIcon, WhatsApp: WhatsappIcon };
+const LINKS = SOCIALS.map((s) => ({ ...s, Icon: ICONS[s.label] }));
 
 /** Holographic business card floating in 3D with orbiting satellites; flips to reveal the links. */
 export default function HoloCard({ email }: { email: string }) {
@@ -130,7 +131,7 @@ export default function HoloCard({ email }: { email: string }) {
                   </li>
                 ))}
                 <li>
-                  <a href={`mailto:${email}`} onClick={(e) => e.stopPropagation()}>
+                  <a href="#contact" data-contact="direct" onClick={(e) => e.stopPropagation()}>
                     <b>@</b> {email} <em>↗</em>
                   </a>
                 </li>
