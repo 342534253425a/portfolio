@@ -24,6 +24,39 @@ const DAYS = 10;
 
 type Day = { key: string; noon: Date; slots: number[] };
 
+/** FormSubmit now and then answers 5xx or hangs, so each attempt is time-boxed and server-side failures are retried. */
+const ATTEMPTS = 3;
+const ATTEMPT_TIMEOUT = 12_000;
+const RETRY_DELAYS = [1500, 3000];
+
+class FinalError extends Error {}
+
+async function postForm(payload: Record<string, string>, onRetry: () => void) {
+  for (let attempt = 0; ; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ATTEMPT_TIMEOUT);
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+        signal: ctrl.signal,
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && String(json.success) === "true") return;
+      // A 4xx or an explicit refusal won't change on a retry.
+      if (res.status < 500 && res.status !== 429) throw new FinalError(json.message || res.statusText);
+      throw new Error(json.message || res.statusText);
+    } catch (err) {
+      if (err instanceof FinalError || attempt >= ATTEMPTS - 1) throw err;
+      onRetry();
+      await new Promise((r) => setTimeout(r, RETRY_DELAYS[attempt]));
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+}
+
 /** Rise-in for dialog content; CSS transform transitions are paused so they don't fight the tween. */
 const rise = (targets: NodeListOf<HTMLElement> | HTMLElement[], vars: gsap.TweenVars = {}) => {
   const els = Array.from(targets);
@@ -82,6 +115,7 @@ export default function ContactDialog() {
   const [format, setFormat] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "fail">("idle");
+  const [retrying, setRetrying] = useState(false);
   const [done, setDone] = useState<{ kind: "request" | "call"; summary?: string }>({ kind: "request" });
   const [copied, setCopied] = useState(false);
 
@@ -297,14 +331,9 @@ export default function ContactDialog() {
       ...(method === "email" ? { _replyto: reach.trim() } : {}),
     };
     setStatus("sending");
+    setRetrying(false);
     try {
-      const res = await fetch(ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || String(json.success) !== "true") throw new Error(json.message || res.statusText);
+      await postForm(payload, () => setRetrying(true));
       setDone({ kind, summary: kind === "call" ? `${fmtDay.long.format(slot!)} · ${fmtTime.format(slot!)}` : undefined });
       setStatus("idle");
       setMessage("");
@@ -397,7 +426,7 @@ export default function ContactDialog() {
     <div className="cd__actions cd__in">
       <button type="submit" className="btn btn--primary cd__submit" disabled={status === "sending"}>
         {status === "sending" ? <span className="cd__spin" aria-hidden /> : null}
-        <span className="btn__label">{status === "sending" ? d.sending : label}</span>
+        <span className="btn__label">{status === "sending" ? (retrying ? d.retrying : d.sending) : label}</span>
         {status !== "sending" && <ArrowRight />}
       </button>
       <p className="cd__note">{d.consent}</p>
