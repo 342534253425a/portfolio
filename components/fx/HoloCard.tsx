@@ -4,14 +4,15 @@ import { useRef, useState } from "react";
 import { finePointer, gsap, useGSAP } from "@/lib/gsap";
 import { burstFrom } from "@/lib/fx";
 import { SOCIALS } from "@/lib/contacts";
-import { GithubIcon, TelegramIcon } from "../icons";
+import { TelegramIcon } from "../icons";
+import { useI18n } from "@/lib/i18n";
 
-const ICONS = { GitHub: GithubIcon, Telegram: TelegramIcon };
-const LINKS = SOCIALS.map((s) => ({ ...s, Icon: ICONS[s.label] }));
+const LINKS = SOCIALS.map((s) => ({ ...s, Icon: TelegramIcon }));
 
 /** Holographic business card floating in 3D with orbiting satellites; flips to reveal the links. */
 export default function HoloCard({ email }: { email: string }) {
   const root = useRef<HTMLDivElement>(null);
+  const { t } = useI18n();
   const [flipped, setFlipped] = useState(false);
 
   useGSAP(
@@ -91,7 +92,7 @@ export default function HoloCard({ email }: { email: string }) {
             className="holo__card"
             role="button"
             tabIndex={0}
-            aria-label={flipped ? "Перевернуть визитку обратно" : "Перевернуть визитку"}
+            aria-label={flipped ? t.holo.flipBack : t.holo.flip}
             onClick={flip}
             onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), flip())}
           >
@@ -103,23 +104,23 @@ export default function HoloCard({ email }: { email: string }) {
                   A<b>/</b>
                 </span>
                 <span className="holo__status">
-                  <i /> Открыт к предложениям
+                  <i /> {t.holo.status}
                 </span>
               </div>
               <span className="holo__chip" aria-hidden />
               <div className="holo__mid">
-                <p className="holo__role">Frontend разработчик</p>
+                <p className="holo__role">{t.holo.role}</p>
                 <p className="holo__stack">React · Next.js · TypeScript · GSAP · Supabase</p>
               </div>
               <div className="holo__bottom">
                 <span>{email}</span>
-                <span className="holo__hint">Нажмите ↻</span>
+                <span className="holo__hint">{t.holo.tap}</span>
               </div>
             </div>
 
             <div className="holo__face holo__back">
               <span className="holo__foil" />
-              <p className="holo__back-title">Где меня найти</p>
+              <p className="holo__back-title">{t.holo.backTitle}</p>
               <ul className="holo__links">
                 {LINKS.map(({ href, label, Icon }) => (
                   <li key={label}>
@@ -134,7 +135,7 @@ export default function HoloCard({ email }: { email: string }) {
                   </a>
                 </li>
               </ul>
-              <span className="holo__hint">↻ Назад</span>
+              <span className="holo__hint">{t.holo.back}</span>
             </div>
           </div>
         </div>

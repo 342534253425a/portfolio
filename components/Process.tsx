@@ -5,33 +5,9 @@ import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { burst, warp } from "@/lib/fx";
 import { CodeIcon, PenIcon, RocketIcon, SearchIcon } from "./icons";
+import { useI18n } from "@/lib/i18n";
 
-const steps = [
-  {
-    title: "Анализ",
-    text: "Разбираюсь в задаче: для кого сайт, что он должен делать и что уже есть у конкурентов.",
-    Icon: SearchIcon,
-    tags: ["Цели", "Конкуренты", "ТЗ"],
-  },
-  {
-    title: "Проектирование",
-    text: "Структура страниц, сценарии и визуальный стиль — до того, как написана первая строка.",
-    Icon: PenIcon,
-    tags: ["Сценарии", "Дизайн", "Структура"],
-  },
-  {
-    title: "Разработка",
-    text: "Типизированный код, адаптив под телефон и живая ссылка на демо по ходу работы.",
-    Icon: CodeIcon,
-    tags: ["TypeScript", "Адаптив", "Демо"],
-  },
-  {
-    title: "Запуск",
-    text: "Деплой на Vercel, свой домен и HTTPS. И дальше — правки и поддержка.",
-    Icon: RocketIcon,
-    tags: ["Vercel", "Домен", "Поддержка"],
-  },
-];
+const steps = [SearchIcon, PenIcon, CodeIcon, RocketIcon].map((Icon) => ({ Icon }));
 
 const N = steps.length;
 const RINGS = 14;
@@ -39,6 +15,7 @@ const CHARGE = 2 * Math.PI * 38;
 const wrap = (v: number, m: number) => ((v % m) + m) % m;
 
 export default function Process() {
+  const { t } = useI18n();
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
   const [launches, setLaunches] = useState(0);
@@ -250,7 +227,8 @@ export default function Process() {
             {Array.from({ length: RINGS }, (_, k) => (
               <span key={k} className={`tunnel__ring${k % 3 === 0 ? " tunnel__ring--hot" : ""}`} aria-hidden />
             ))}
-            {steps.map(({ title, text, Icon, tags }, i) => {
+            {steps.map(({ Icon }, i) => {
+              const { title, text, tags } = t.process.steps[i];
               const rocket = i === N - 1;
               return (
                 <article key={title} className={`gate${i === active ? " is-active" : ""}`}>
@@ -261,12 +239,14 @@ export default function Process() {
                     0{i + 1}
                   </span>
                   <div className="gate__body">
-                    <p className="gate__kicker">Этап 0{i + 1}</p>
+                    <p className="gate__kicker">
+                      {t.process.stage} 0{i + 1}
+                    </p>
                     <h3 className="gate__title">{title}</h3>
                     <p className="gate__text">{text}</p>
                     <ul className="gate__tags">
-                      {tags.map((t) => (
-                        <li key={t}>{t}</li>
+                      {tags.map((tag) => (
+                        <li key={tag}>{tag}</li>
                       ))}
                     </ul>
                   </div>
@@ -274,7 +254,7 @@ export default function Process() {
                     <button
                       type="button"
                       className="gate__icon gate__icon--rocket"
-                      aria-label="Зажмите, чтобы запустить ракету"
+                      aria-label={t.process.holdAria}
                       onPointerDown={() => charge.current.start()}
                       onPointerUp={() => charge.current.stop()}
                       onPointerLeave={() => charge.current.stop()}
@@ -292,7 +272,7 @@ export default function Process() {
                     </span>
                   )}
                   {rocket && (
-                    <p className="gate__hint">{launches ? `🚀 Запусков: ${launches} — ещё?` : "Зажмите ракету, чтобы запустить 🚀"}</p>
+                    <p className="gate__hint">{launches ? t.process.launches(launches) : t.process.hint}</p>
                   )}
                 </article>
               );
@@ -311,17 +291,15 @@ export default function Process() {
 
       <div className="container tunnel__head">
         <p className="label" data-reveal>
-          <b>04 /</b> <span>Мой процесс</span>
+          <b>04 /</b> <span>{t.process.label}</span>
         </p>
         <h2 className="h2 tunnel__title" data-split>
-          От идеи
-          <br />
-          до <span className="accent">результата.</span>
+          {t.process.title}
         </h2>
       </div>
 
-      <nav className="tunnel__nav" aria-label="Этапы">
-        {steps.map((s, i) => (
+      <nav className="tunnel__nav" aria-label={t.process.stages}>
+        {t.process.steps.map((s, i) => (
           <button key={s.title} type="button" className={i === active ? "is-active" : ""} onClick={() => goTo.current(i)}>
             <em>0{i + 1}</em> {s.title}
             <i />
@@ -331,13 +309,13 @@ export default function Process() {
 
       <div className="tunnel__hud" aria-hidden>
         <span className="hud__depth">
-          Глубина <b>0000</b> м
+          {t.process.depth} <b>0000</b> {t.process.depthUnit}
         </span>
         <span className="tunnel__bar">
           <i />
         </span>
         <span className="hud__speed">
-          Скорость <b>0.0</b> c
+          {t.process.speed} <b>0.0</b> c
         </span>
       </div>
     </section>

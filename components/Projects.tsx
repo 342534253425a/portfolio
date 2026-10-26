@@ -5,16 +5,15 @@ import { useEffect, useRef, useState } from "react";
 import { Draggable, finePointer, gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { ArrowLeft, ArrowRight } from "./icons";
+import { useI18n } from "@/lib/i18n";
 
-const projects = [
+const BASE = [
   {
     title: "Psyches Strings",
     tags: ["React", "Vite", "Node.js"],
     image: "/images/projects/psyches-strings.jpg",
     url: "https://psyches-strings.vercel.app",
     pos: "30% 50%",
-    role: "Frontend + бэкенд",
-    text: "Платформа тестов личности: MBTI, эннеаграмма и код Голланда с результатом сразу, курсы, личный кабинет и три языка — RU, EN, 中文.",
   },
   {
     title: "Bloom",
@@ -22,8 +21,6 @@ const projects = [
     image: "/images/projects/bloom.webp",
     url: "https://bloom-love.online",
     pos: "25% 50%",
-    role: "Frontend + бэкенд",
-    text: "PWA для привычек и спокойного дня: цели, задачи, фокус, настроение и рефлексия в одном приложении, синхронизация телефона и компьютера через Supabase.",
   },
   {
     title: "Tideline",
@@ -31,8 +28,6 @@ const projects = [
     image: "/images/projects/tideline.jpg",
     url: "https://world-news-snowy.vercel.app",
     pos: "50% 50%",
-    role: "Frontend + бэкенд",
-    text: "Агрегатор мировых новостей из 20 изданий и YouTube в одном спокойном интерфейсе: режим чтения, поиск, каналы и прокси, чтобы сайт открывался там, где источники заблокированы.",
   },
   {
     title: "Елизавета",
@@ -40,8 +35,6 @@ const projects = [
     image: "/images/projects/elizaveta.webp",
     url: "https://elizaveta-pi.vercel.app",
     pos: "30% 50%",
-    role: "Frontend",
-    text: "Сайт психолога: бережная подача, рассказ о подходе и стоимости, отзывы и онлайн-запись на консультацию.",
   },
   {
     title: "Ярослава",
@@ -49,18 +42,18 @@ const projects = [
     image: "/images/projects/yaroslava.jpg",
     url: "https://yaroslava-knit.vercel.app",
     pos: "40% 50%",
-    role: "Frontend + бэкенд",
-    text: "Сайт мастерской авторского трикотажа и кружева: каталог изделий, видео-уроки, индивидуальные заказы и админка для управления контентом.",
   },
 ];
 
-const N = projects.length;
+const N = BASE.length;
 const STEP = 360 / N;
 const PER_CARD = 0.75;
 const TILT = -10;
 const wrap = (i: number) => ((i % N) + N) % N;
 
 export default function Projects() {
+  const { t } = useI18n();
+  const projects = BASE.map((p, i) => ({ ...p, ...t.projects.items[i], title: t.projects.items[i].title ?? p.title }));
   const root = useRef<HTMLElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -383,10 +376,10 @@ export default function Projects() {
 
       <div className="container projects__head">
         <p className="label" data-reveal>
-          <b>03 /</b> <span>Мои проекты</span>
+          <b>03 /</b> <span>{t.projects.label}</span>
         </p>
         <h2 className="h2 h2--light projects__title" data-split>
-          Реальные проекты. <span className="accent">Реальный результат.</span>
+          {t.projects.title}
         </h2>
       </div>
 
@@ -439,22 +432,22 @@ export default function Projects() {
         </div>
         <div className="hud__controls">
           <button type="button" className="lnk hud__open" onClick={() => setOpen(index)}>
-            <span className="lnk__text">Смотреть кейс</span>
+            <span className="lnk__text">{t.projects.seeCase}</span>
             <span className="lnk__icon">
               <ArrowRight />
             </span>
           </button>
           <a className="lnk lnk--muted hud__site" href={cur.url} target="_blank" rel="noopener noreferrer">
-            <span className="lnk__text">Открыть сайт</span>
+            <span className="lnk__text">{t.projects.openSite}</span>
             <span className="lnk__icon">
               <ArrowRight />
             </span>
           </a>
           <div className="arrows">
-            <button type="button" className="arrow" onClick={() => goTo.current(index - 1)} aria-label="Предыдущий проект">
+            <button type="button" className="arrow" onClick={() => goTo.current(index - 1)} aria-label={t.projects.prev}>
               <ArrowLeft />
             </button>
-            <button type="button" className="arrow arrow--next" onClick={() => goTo.current(index + 1)} aria-label="Следующий проект">
+            <button type="button" className="arrow arrow--next" onClick={() => goTo.current(index + 1)} aria-label={t.projects.next}>
               <ArrowRight />
             </button>
             <div className="projects__meta">
@@ -470,7 +463,7 @@ export default function Projects() {
       </div>
 
       <p className="projects__hint" aria-hidden>
-        Листайте или тяните ↔
+        {t.projects.hint}
       </p>
 
       {p && (
@@ -488,25 +481,25 @@ export default function Projects() {
               <p className="modal__text modal__reveal">{p.text}</p>
               <dl className="modal__facts modal__reveal">
                 <div>
-                  <dt>Роль</dt>
+                  <dt>{t.projects.role}</dt>
                   <dd>{p.role}</dd>
                 </div>
                 <div>
-                  <dt>Стек</dt>
+                  <dt>{t.projects.stack}</dt>
                   <dd>{p.tags.join(" · ")}</dd>
                 </div>
               </dl>
               <div className="modal__actions modal__reveal">
                 <a className="btn btn--primary" href={p.url} target="_blank" rel="noopener noreferrer">
-                  <span className="btn__label">Открыть сайт</span>
+                  <span className="btn__label">{t.projects.openSite}</span>
                   <ArrowRight />
                 </a>
                 <button type="button" className="btn btn--ghost" onClick={close}>
-                  <span className="btn__label">Закрыть</span>
+                  <span className="btn__label">{t.projects.close}</span>
                 </button>
               </div>
             </div>
-            <button type="button" className="modal__close" onClick={close} aria-label="Закрыть">
+            <button type="button" className="modal__close" onClick={close} aria-label={t.projects.close}>
               ✕
             </button>
           </div>

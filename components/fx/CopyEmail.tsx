@@ -2,8 +2,10 @@
 
 import { useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
+import { useI18n } from "@/lib/i18n";
 
 export default function CopyEmail({ email }: { email: string }) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
 
@@ -22,7 +24,7 @@ export default function CopyEmail({ email }: { email: string }) {
     <button ref={ref} type="button" className={`copy${copied ? " is-copied" : ""}`} onClick={copy}>
       <span className="copy__dot" />
       <span className="copy__text">{email}</span>
-      <span className="copy__state">{copied ? "Скопировано ✓" : "Копировать"}</span>
+      <span className="copy__state">{copied ? t.contact.copied : t.contact.copy}</span>
     </button>
   );
 }

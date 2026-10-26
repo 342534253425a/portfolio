@@ -2,11 +2,13 @@
 
 import { useRef } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { useI18n } from "@/lib/i18n";
 
 const R = 22;
 const C = 2 * Math.PI * R;
 
 export default function ScrollProgress() {
+  const { t } = useI18n();
   const root = useRef<HTMLAnchorElement>(null);
 
   useGSAP(
@@ -28,7 +30,7 @@ export default function ScrollProgress() {
   );
 
   return (
-    <a ref={root} href="#home" className="progress" aria-label="Наверх">
+    <a ref={root} href="#home" className="progress" aria-label={t.contact.topAria}>
       <svg viewBox="0 0 50 50">
         <circle cx="25" cy="25" r={R} className="progress__track" />
         <circle cx="25" cy="25" r={R} className="progress__bar" strokeDasharray={C} strokeDashoffset={C} />

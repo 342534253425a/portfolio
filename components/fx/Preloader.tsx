@@ -5,10 +5,12 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { whenIdle } from "@/lib/idle";
 import LogoLab from "./LogoLab";
+import { useI18n } from "@/lib/i18n";
 
 export const PRELOADER_DONE = "preloader:done";
 
 export default function Preloader() {
+  const { t } = useI18n();
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -88,9 +90,9 @@ export default function Preloader() {
           <span className="preloader__bar">
             <i />
           </span>
-          <span>Загрузка опыта</span>
-          <span className="preloader__hint preloader__hint--mouse">· Кликните, чтобы войти</span>
-          <span className="preloader__hint preloader__hint--touch">Нажмите, чтобы войти</span>
+          <span>{t.preloader.loading}</span>
+          <span className="preloader__hint preloader__hint--mouse">{t.preloader.click}</span>
+          <span className="preloader__hint preloader__hint--touch">{t.preloader.tap}</span>
         </div>
       </div>
     </div>

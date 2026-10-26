@@ -33,6 +33,7 @@ export default function SmoothScroll() {
 
     /** Anchor jumps: a neon-edged panel covers the screen, the page jumps underneath, then the panel slides on. */
     const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented) return;
       const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
       if (!link) return;
       const hash = link.getAttribute("href")!;

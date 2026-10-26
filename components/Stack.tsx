@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { GsapIcon, NextIcon, NodeIcon, PwaIcon, ReactIcon, SupabaseIcon, TailwindIcon, TsIcon } from "./icons";
+import { useI18n } from "@/lib/i18n";
 
 const planets = [
   {
@@ -10,58 +11,42 @@ const planets = [
     Icon: ReactIcon,
     size: 5.6,
     ring: true,
-    text: "Основа почти всех моих проектов: компоненты, хуки и состояние, которое не разваливается при росте.",
-    tags: ["Hooks", "Context", "Router"],
   },
   {
     name: "Next.js",
     Icon: NextIcon,
     size: 5,
-    text: "App Router и SSR: на нём сделаны это портфолио и сайт психолога «Елизавета».",
-    tags: ["App Router", "SSR", "SEO"],
   },
   {
     name: "TypeScript",
     Icon: TsIcon,
     size: 4.8,
-    text: "Строгая типизация как страховка: меньше багов в проде, смелее рефакторинг.",
-    tags: ["Strict", "Generics", "Zod"],
   },
   {
     name: "Node.js",
     Icon: NodeIcon,
     size: 5.4,
-    text: "Свой сервер, когда он нужен: API и админка мастерской, RSS и прокси для агрегатора новостей.",
-    tags: ["Express", "REST", "RSS"],
   },
   {
     name: "Supabase",
     Icon: SupabaseIcon,
     size: 4.6,
-    text: "Авторизация, база и синхронизация между устройствами в Bloom — без своего сервера.",
-    tags: ["Auth", "Postgres", "Sync"],
   },
   {
     name: "GSAP",
     Icon: GsapIcon,
     size: 5.2,
-    text: "Анимации, которые вы видите на этом сайте: скролл, 3D-карусель, текстовые эффекты.",
-    tags: ["ScrollTrigger", "SplitText", "Draggable"],
   },
   {
     name: "Tailwind CSS",
     Icon: TailwindIcon,
     size: 4.8,
-    text: "Быстрая вёрстка адаптивных интерфейсов без разрастающегося CSS.",
-    tags: ["Адаптив", "UI-кит", "A11y"],
   },
   {
     name: "PWA",
     Icon: PwaIcon,
     size: 5.6,
     ring: true,
-    text: "Сайт, который ставится на телефон как приложение и работает офлайн — так устроен Bloom.",
-    tags: ["Offline", "Vite", "i18n"],
   },
 ];
 
@@ -97,6 +82,7 @@ const SHOTS: [number, number, number][] = [
 const ROLLS: V3[] = [[0, 0, 0], ...SHOTS.map(([, , r]): V3 => [r, 0, 0])];
 
 export default function Stack() {
+  const { t } = useI18n();
   const root = useRef<HTMLElement>(null);
   const [chapter, setChapter] = useState(0);
 
@@ -1012,25 +998,21 @@ export default function Stack() {
       <div className="chapters">
         <div className="chapter chapter--intro">
           <p className="label">
-            <b>02 /</b> <span>Мой стек</span>
+            <b>02 /</b> <span>{t.stack.label}</span>
           </p>
-          <h2 className="h2">
-            Технологии — мои инструменты.
-            <br />
-            Система — <span className="accent">мой подход.</span>
-          </h2>
-          <p className="lead">Моя вселенная технологий. Листайте — полетим от планеты к планете.</p>
+          <h2 className="h2">{t.stack.title}</h2>
+          <p className="lead">{t.stack.lead}</p>
         </div>
-        {planets.map(({ name, text, tags }, i) => (
+        {planets.map(({ name }, i) => (
           <div key={name} className="chapter">
             <p className="chapter__kicker">
               <b>{String(i + 1).padStart(2, "0")}</b> / {String(N).padStart(2, "0")}
             </p>
             <h3 className="chapter__name">{name}</h3>
-            <p className="chapter__text">{text}</p>
+            <p className="chapter__text">{t.stack.planets[i].text}</p>
             <ul className="chapter__tags">
-              {tags.map((t) => (
-                <li key={t}>{t}</li>
+              {t.stack.planets[i].tags.map((tag) => (
+                <li key={tag}>{tag}</li>
               ))}
             </ul>
           </div>
@@ -1039,13 +1021,13 @@ export default function Stack() {
 
       <div className="sys__hud" aria-hidden>
         <span>
-          Система <b>A/</b> · {N} планет
+          {t.stack.system0} <b>A/</b> · {t.stack.system(N)}
         </span>
         <span className="sys__bar">
           <i />
         </span>
         <span>
-          Дистанция <b className="sys__dist">0.00</b> а.е.
+          {t.stack.distance} <b className="sys__dist">0.00</b> {t.stack.au}
         </span>
         <span>
           <b>{String(chapter).padStart(2, "0")}</b> / {String(N).padStart(2, "0")}

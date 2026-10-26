@@ -4,7 +4,7 @@ import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 
 const SCRAMBLE_HOVER = ".nav a > span, .footer a > span, .menu__nav a > span, .lnk > .lnk__text";
-const SCRAMBLE_CHARS = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯ01/<>_";
+const SCRAMBLE_CHARS = { ru: "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯ01/<>_", en: "ABCDEFGHIJKLMNOPQRSTUVWXYZ01/<>_" };
 
 /**
  * Page-wide pointer & scroll interactions, wired by selectors so sections stay declarative:
@@ -15,6 +15,7 @@ export default function Interactions() {
     const cleanups: (() => void)[] = [];
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) return;
+    const chars = document.documentElement.lang === "ru" ? SCRAMBLE_CHARS.ru : SCRAMBLE_CHARS.en;
 
     /* ---- Scramble labels once when they enter the viewport ---- */
     gsap.utils.toArray<HTMLElement>("[data-scramble] span, .label span").forEach((el) => {
@@ -23,7 +24,7 @@ export default function Interactions() {
         trigger: el,
         start: "top 92%",
         once: true,
-        onEnter: () => gsap.to(el, { duration: 1.2, scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 0.6, revealDelay: 0.2 } }),
+        onEnter: () => gsap.to(el, { duration: 1.2, scrambleText: { text, chars, speed: 0.6, revealDelay: 0.2 } }),
       });
     });
 
@@ -50,7 +51,7 @@ export default function Interactions() {
         gsap.to(span, {
           duration: 0.6,
           overwrite: true,
-          scrambleText: { text, chars: SCRAMBLE_CHARS, speed: 1 },
+          scrambleText: { text, chars, speed: 1 },
           onComplete: () => gsap.set(span, { clearProps: "display,width,whiteSpace" }),
         });
       };

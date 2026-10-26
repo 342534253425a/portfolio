@@ -7,16 +7,18 @@ import Contact from "@/components/Contact";
 import SignalLine from "@/components/SignalLine";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollAnimations from "@/components/ScrollAnimations";
+import ContactDialog from "@/components/ContactDialog";
 import Preloader from "@/components/fx/Preloader";
 import Cursor from "@/components/fx/Cursor";
 import FxCanvas from "@/components/fx/FxCanvas";
 import Interactions from "@/components/fx/Interactions";
 import Marquee from "@/components/fx/Marquee";
 import ScrollProgress from "@/components/fx/ScrollProgress";
+import { I18nProvider, type Lang } from "@/lib/i18n";
 
-export default function Home() {
+export default function Site({ lang }: { lang: Lang }) {
   return (
-    <>
+    <I18nProvider lang={lang}>
       <SmoothScroll />
       <Preloader />
       <FxCanvas />
@@ -34,7 +36,8 @@ export default function Home() {
       <ScrollAnimations />
       <Interactions />
       <Cursor />
+      <ContactDialog />
       <div className="grain" aria-hidden />
-    </>
+    </I18nProvider>
   );
 }

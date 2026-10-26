@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { finePointer, gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
+import { useI18n } from "@/lib/i18n";
 
 /** Planet rises into view on scroll, then follows the cursor with a slow, heavy parallax. */
 export function PlanetParallax() {
@@ -42,6 +43,7 @@ export function PlanetParallax() {
 
 /** Giant closing call-to-action: letters rise out of the floor in 3D as the page reaches its end. */
 export function Finale({ email }: { email: string }) {
+  const { t } = useI18n();
   const root = useRef<HTMLAnchorElement>(null);
 
   useGSAP(
@@ -82,18 +84,19 @@ export function Finale({ email }: { email: string }) {
   );
 
   return (
-    <a ref={root} href={`mailto:${email}`} className="finale">
-      <span className="finale__kicker">Готовы к запуску?</span>
-      <span className="finale__word">Поехали!</span>
+    <a ref={root} href={`mailto:${email}`} className="finale" data-contact>
+      <span className="finale__kicker">{t.contact.finaleKicker}</span>
+      <span className="finale__word">{t.contact.finaleWord}</span>
     </a>
   );
 }
 
 export function ReplyNote() {
+  const { t } = useI18n();
   return (
     <p className="clock">
       <span className="clock__dot" />
-      Обычно отвечаю в течение дня
+      {t.contact.reply}
     </p>
   );
 }

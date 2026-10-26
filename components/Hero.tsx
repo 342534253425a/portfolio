@@ -5,8 +5,10 @@ import { useRef } from "react";
 import { finePointer, gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { PRELOADER_DONE } from "./fx/Preloader";
 import { ArrowRight } from "./icons";
+import { useI18n } from "@/lib/i18n";
 
 export default function Hero() {
+  const { t } = useI18n();
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -155,29 +157,23 @@ export default function Hero() {
         <div className="hero__content" id="about">
           <div className="hero__content-inner">
             <p className="label" data-intro data-scramble>
-              <b>01 /</b> <span>Frontend разработчик</span>
+              <b>01 /</b> <span>{t.hero.role}</span>
             </p>
             <h1 className="h1 hero__title" data-intro>
-              Программист,
-              <br />
-              который <span className="accent">проектирует</span>
-              <br />
-              опыт, а не просто
-              <br />
-              пишет код
+              {t.hero.title}
             </h1>
             <p className="lead" data-intro>
-              Создаю веб-продукты с продуманной архитектурой, эстетичным интерфейсом и вниманием к деталям.
+              {t.hero.lead}
             </p>
             <div className="hero__actions" data-intro>
               <a href="#projects" className="lnk">
-                <span className="lnk__text">Смотреть проекты</span>
+                <span className="lnk__text">{t.hero.projects}</span>
                 <span className="lnk__icon">
                   <ArrowRight />
                 </span>
               </a>
-              <a href="#contacts" className="lnk lnk--muted">
-                <span className="lnk__text">Связаться</span>
+              <a href="#contacts" className="lnk lnk--muted" data-contact>
+                <span className="lnk__text">{t.hero.discuss}</span>
                 <span className="lnk__icon">
                   <ArrowRight />
                 </span>
@@ -187,11 +183,11 @@ export default function Hero() {
         </div>
       </div>
 
-      <a href="#stack" className="hero__scroll" data-intro aria-label="Листать вниз">
+      <a href="#stack" className="hero__scroll" data-intro aria-label={t.hero.scrollAria}>
         <span className="hero__scroll-mouse">
           <span className="hero__scroll-wheel" />
         </span>
-        <span>Листайте</span>
+        <span>{t.hero.scroll}</span>
       </a>
 
       <span className="anchor anchor--dot hero__anchor" data-anchor="1" />

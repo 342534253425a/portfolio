@@ -5,18 +5,25 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { LogoGlyphs, logoTimeline } from "./fx/LogoMark";
 import { ArrowRight } from "./icons";
-
-const links = [
-  { href: "#home", label: "Главная" },
-  { href: "#stack", label: "Стек" },
-  { href: "#projects", label: "Проекты" },
-  { href: "#process", label: "Процесс" },
-  { href: "#contacts", label: "Контакты" },
-];
+import { langHref, useI18n } from "@/lib/i18n";
 
 const tracked = ["home", "stack", "projects", "process", "contacts"];
 
+function LangSwitch() {
+  const { lang, t } = useI18n();
+  const other = lang === "en" ? "ru" : "en";
+  return (
+    <a href={langHref(other)} className="lang" hrefLang={other} aria-label={t.header.switchTo}>
+      <span className={lang === "en" ? "is-on" : undefined}>EN</span>
+      <i aria-hidden />
+      <span className={lang === "ru" ? "is-on" : undefined}>RU</span>
+    </a>
+  );
+}
+
 export default function Header() {
+  const { t } = useI18n();
+  const links = tracked.map((id, i) => ({ href: `#${id}`, label: t.nav[i] }));
   const root = useRef<HTMLElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
   const [active, setActive] = useState("home");
@@ -102,13 +109,13 @@ export default function Header() {
             href="#home"
             className="logo lm"
             data-pen-tilt="-27"
-            aria-label="На главную"
+            aria-label={t.header.home}
             onClick={() => setOpen(false)}
             onPointerEnter={playLogo}
           >
             <LogoGlyphs />
           </a>
-          <nav className="nav" aria-label="Основная навигация">
+          <nav className="nav" aria-label={t.header.mainNav}>
             {links.map((l) => (
               <a key={l.href} href={l.href} data-label={l.label} className={active === l.href.slice(1) ? "is-active" : undefined}>
                 <span>{l.label}</span>
@@ -117,8 +124,9 @@ export default function Header() {
             <span ref={bar} className="nav__bar" />
           </nav>
           <div className="header__right">
-            <a href="#contacts" className="lnk lnk--sm header__cta">
-              <span className="lnk__text">Связаться</span>
+            <LangSwitch />
+            <a href="#contacts" className="lnk lnk--sm header__cta" data-contact>
+              <span className="lnk__text">{t.header.contact}</span>
               <span className="lnk__icon">
                 <ArrowRight />
               </span>
@@ -126,7 +134,7 @@ export default function Header() {
             <button
               type="button"
               className={`burger${open ? " is-open" : ""}`}
-              aria-label={open ? "Закрыть меню" : "Открыть меню"}
+              aria-label={open ? t.header.closeMenu : t.header.openMenu}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
             >
@@ -138,7 +146,7 @@ export default function Header() {
       </header>
 
       <div className={`menu${open ? " is-open" : ""}`} aria-hidden={!open}>
-        <nav className="menu__nav" aria-label="Мобильная навигация">
+        <nav className="menu__nav" aria-label={t.header.mobileNav}>
           {links.map((l, i) => (
             <a
               key={l.href}
@@ -153,8 +161,8 @@ export default function Header() {
             </a>
           ))}
         </nav>
-        <a href="#contacts" className="lnk menu__cta" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>
-          <span className="lnk__text">Обсудить проект</span>
+        <a href="#contacts" className="lnk menu__cta" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)} data-contact>
+          <span className="lnk__text">{t.header.discuss}</span>
           <span className="lnk__icon">
             <ArrowRight />
           </span>

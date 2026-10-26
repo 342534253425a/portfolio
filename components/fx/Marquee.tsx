@@ -3,13 +3,13 @@
 import { useRef } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
+import { useI18n } from "@/lib/i18n";
 
-const rows = [
-  ["React", "Next.js", "GSAP", "TypeScript", "Node.js", "Supabase", "PWA", "UI/UX"],
-  ["Анимации", "Интерфейсы", "Архитектура", "Скорость", "Детали", "Опыт", "Система", "Результат"],
-];
+const TECH = ["React", "Next.js", "GSAP", "TypeScript", "Node.js", "Supabase", "PWA", "UI/UX"];
 
 export default function Marquee() {
+  const { t } = useI18n();
+  const rows = [TECH, t.marquee];
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
