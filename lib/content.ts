@@ -1,4 +1,4 @@
-import { GsapIcon, NextIcon, NodeIcon, PwaIcon, ReactIcon, SupabaseIcon, TailwindIcon, TsIcon } from "@/components/icons";
+import { GsapIcon, NextIcon, NodeIcon, PostgresIcon, ReactIcon, StateIcon, TestIcon, TsIcon } from "@/components/icons";
 import type { Dict } from "@/lib/i18n";
 
 /** Language-independent project data; texts and translated titles come from the dictionary. */
@@ -49,8 +49,8 @@ export const PLANETS = [
   { name: "Next.js", Icon: NextIcon, size: 5 },
   { name: "TypeScript", Icon: TsIcon, size: 4.8 },
   { name: "Node.js", Icon: NodeIcon, size: 5.4 },
-  { name: "Supabase", Icon: SupabaseIcon, size: 4.6 },
-  { name: "GSAP", Icon: GsapIcon, size: 5.2 },
-  { name: "Tailwind CSS", Icon: TailwindIcon, size: 4.8 },
-  { name: "PWA", Icon: PwaIcon, size: 5.6, ring: true },
+  { name: "PostgreSQL", Icon: PostgresIcon, size: 4.6 },
+  { name: "Redux", Icon: StateIcon, size: 5.2 },
+  { name: "Testing", Icon: TestIcon, size: 4.8 },
+  { name: "GSAP", Icon: GsapIcon, size: 5.6, ring: true },
 ];

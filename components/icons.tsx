@@ -47,9 +47,13 @@ export const NextIcon = (p: P) => (
   </svg>
 );
 
-export const TailwindIcon = (p: P) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden {...p}>
-    <path d="M12 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.91.23 1.57.89 2.29 1.62C13.67 10.62 15.03 12 18 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.91-.23-1.57-.89-2.29-1.62C16.34 6.18 14.98 4.8 12 4.8zM6 12c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.91.23 1.57.89 2.29 1.62C7.67 17.82 9.03 19.2 12 19.2c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.91-.23-1.57-.89-2.29-1.62C10.34 13.38 8.98 12 6 12z" />
+/** State management: a one-way loop of store → view → action. */
+export const StateIcon = (p: P) => (
+  <svg {...base(24)} strokeWidth={1.5} {...p}>
+    <circle cx="12" cy="4.5" r="2.2" />
+    <circle cx="4.8" cy="17.5" r="2.2" />
+    <circle cx="19.2" cy="17.5" r="2.2" />
+    <path d="M10.6 6.6 6 15.2M7.2 18.6h9.6M18 15.2l-4.6-8.6M14.6 16.4l2.2 2.2-2.2 2.2" />
   </svg>
 );
 
@@ -69,10 +73,11 @@ export const NodeIcon = (p: P) => (
   </svg>
 );
 
-export const SupabaseIcon = (p: P) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden {...p}>
-    <path d="M13.3 22.2c-.5.6-1.6.3-1.6-.5l-.2-8.6h7.8c1.4 0 2.2 1.7 1.3 2.8z" opacity=".7" />
-    <path d="M10.7 1.8c.5-.6 1.6-.3 1.6.5l.1 8.6H4.7c-1.4 0-2.2-1.7-1.3-2.8z" />
+export const PostgresIcon = (p: P) => (
+  <svg {...base(24)} strokeWidth={1.4} {...p}>
+    <path d="M7.5 20c-1-1.8-1.3-4.8-1-7.3C4.2 11.9 3 10 3 7.6 3 4.5 5.6 2.5 8.6 2.5c1.3 0 2.4.3 3.4.8 1-.5 2.2-.8 3.4-.8 3.1 0 5.6 2 5.6 5.1 0 2.4-1.2 4.3-3.5 5.1.1 2.5-.5 5.1-2 6.7" />
+    <path d="M12 3.3c-1.6 1.8-2 4.4-1.3 7 .5 1.9.4 4.6-.4 7.2M15.3 12.9c-1.2.3-2.6 0-3.3-1" />
+    <circle cx="15.2" cy="7.2" r=".6" fill="currentColor" />
   </svg>
 );
 
@@ -83,10 +88,10 @@ export const GsapIcon = (p: P) => (
   </svg>
 );
 
-export const PwaIcon = (p: P) => (
+export const TestIcon = (p: P) => (
   <svg {...base(24)} strokeWidth={1.5} {...p}>
-    <rect x="6" y="2.5" width="12" height="19" rx="2.5" />
-    <path d="M10.5 18.5h3M12 7v6.5M9.5 11l2.5 2.5 2.5-2.5" />
+    <path d="M9 2.5h6M10 2.5v6.2L4.6 18.4A2 2 0 0 0 6.4 21.5h11.2a2 2 0 0 0 1.8-3.1L14 8.7V2.5" />
+    <path d="m9 15.5 2 2 4-4.5" />
   </svg>
 );
 

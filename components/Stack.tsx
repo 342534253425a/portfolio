@@ -458,7 +458,9 @@ export default function Stack() {
       };
 
       const render = (time = 0) => {
-        state.t += (state.target - state.t) * 0.07;
+        // An unlaid-out section (hidden tab, first frame) has zero size and the shot distances divide by it.
+        if (!w || !h) return;
+        state.t +=(state.target - state.t) * 0.07;
         state.e += (state.enter - state.e) * 0.08;
         const T = state.t;
         const i = Math.min(N - 1, Math.floor(T));

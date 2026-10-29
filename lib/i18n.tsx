@@ -30,43 +30,43 @@ const ru = {
   },
   preloader: { loading: "Загрузка опыта", click: "· Кликните, чтобы войти", tap: "Нажмите, чтобы войти" },
   hero: {
-    role: "Frontend разработчик",
+    role: "Дизайнер и разработчик",
     title: (
       <>
-        Программист,
+        Привет, я <span className="accent">Алексей.</span>
         <br />
-        который <span className="accent">проектирует</span>
+        Дизайн.
         <br />
-        опыт, а не просто
+        Фуллстек-разработка.
         <br />
-        пишет код
+        Нейросети.
       </>
     ),
-    lead: "Создаю веб-продукты с продуманной архитектурой, эстетичным интерфейсом и вниманием к деталям.",
+    lead: "Сам делаю дизайн, фронтенд и бэкенд на React, Next.js, TypeScript и Node.js, выкладываю в продакшен и поддерживаю. Встраиваю ИИ в продукты и работаю с ИИ-инструментами — поэтому быстро.",
     projects: "Смотреть проекты",
     discuss: "Расскажете о проекте?",
     scrollAria: "Листать вниз",
     scroll: "Листайте",
   },
   stack: {
-    label: "Мой стек",
+    label: "Стек",
     title: (
       <>
-        Технологии — мои инструменты.
+        Современный стек.
         <br />
-        Система — <span className="accent">мой подход.</span>
+        <span className="accent">Без лишнего.</span>
       </>
     ),
-    lead: "Моя вселенная технологий. Листайте — полетим от планеты к планете.",
+    lead: "Инструменты, на которых держатся современные веб-продукты. Листайте — полетим от планеты к планете.",
     planets: [
-      { text: "Основа почти всех моих проектов: компоненты, хуки и состояние, которое не разваливается при росте.", tags: ["Hooks", "Context", "Router"] },
-      { text: "App Router и SSR: на нём сделаны это портфолио и сайт психолога «Елизавета».", tags: ["App Router", "SSR", "SEO"] },
-      { text: "Строгая типизация как страховка: меньше багов в проде, смелее рефакторинг.", tags: ["Strict", "Generics", "Zod"] },
-      { text: "Свой сервер, когда он нужен: API и админка мастерской, RSS и прокси для агрегатора новостей.", tags: ["Express", "REST", "RSS"] },
-      { text: "Авторизация, база и синхронизация между устройствами в Bloom — без своего сервера.", tags: ["Auth", "Postgres", "Sync"] },
-      { text: "Анимации, которые вы видите на этом сайте: скролл, 3D-карусель, текстовые эффекты.", tags: ["ScrollTrigger", "SplitText", "Draggable"] },
-      { text: "Быстрая вёрстка адаптивных интерфейсов без разрастающегося CSS.", tags: ["Адаптив", "UI-кит", "A11y"] },
-      { text: "Сайт, который ставится на телефон как приложение и работает офлайн — так устроен Bloom.", tags: ["Offline", "Vite", "i18n"] },
+      { text: "Компонентный UI: хуки, композиция, Suspense. Мемоизация — там, где она реально нужна.", tags: ["Hooks", "Suspense", "Tailwind"] },
+      { text: "App Router, серверные компоненты, SSR и SSG — быстрая первая загрузка и страницы, которые находит поиск.", tags: ["App Router", "SSR / SSG", "SEO"] },
+      { text: "Strict mode, generics, discriminated unions и type guards. Ошибки ловятся при сборке, а не у пользователя.", tags: ["Strict", "Generics", "Zod"] },
+      { text: "Серверная часть на JavaScript: REST API, авторизация, валидация и обработка ошибок.", tags: ["Express", "REST", "JWT"] },
+      { text: "Реляционная база: схемы, связи, индексы и запросы. Типизированный доступ через ORM.", tags: ["SQL", "Prisma", "Supabase"] },
+      { text: "Клиентское состояние отдельно от серверного: стор для UI, кеш запросов, инвалидация и оптимистичные обновления.", tags: ["Redux Toolkit", "Zustand", "TanStack Query"] },
+      { text: "Unit- и компонентные тесты, e2e-сценарии и прогон в CI перед каждым релизом.", tags: ["Vitest", "Playwright", "CI/CD"] },
+      { text: "Анимации интерфейса: скролл-сцены, переходы, работа с текстом — плавно и без тормозов на телефоне.", tags: ["ScrollTrigger", "SplitText", "60 fps"] },
     ],
     system: (n: number) => `${n} планет`,
     system0: "Система",
@@ -74,30 +74,30 @@ const ru = {
     au: "а.е.",
   },
   projects: {
-    label: "Мои проекты",
+    label: "Проекты",
     title: (
       <>
-        Реальные проекты. <span className="accent">Реальный результат.</span>
+        Живые проекты. <span className="accent">Любой можно открыть.</span>
       </>
     ),
     items: [
       {
-        role: "Frontend + бэкенд",
-        text: "Платформа тестов личности: MBTI, эннеаграмма и код Голланда с результатом сразу, курсы, личный кабинет и три языка — RU, EN, 中文.",
+        role: "Full-stack",
+        text: "Платформа тестов личности: MBTI, эннеаграмма и код Голланда с мгновенным результатом, курсы, личный кабинет и три языка — RU, EN, 中文.",
       },
       {
-        role: "Frontend + бэкенд",
-        text: "PWA для привычек и спокойного дня: цели, задачи, фокус, настроение и рефлексия в одном приложении, синхронизация телефона и компьютера через Supabase.",
+        role: "Full-stack · PWA",
+        text: "Приложение для целей, задач, фокуса и настроения. Ставится на телефон, работает офлайн и синхронизирует данные между устройствами.",
       },
       {
-        role: "Frontend + бэкенд",
-        text: "Агрегатор мировых новостей из 20 изданий и YouTube в одном спокойном интерфейсе: режим чтения, поиск, каналы и прокси, чтобы сайт открывался там, где источники заблокированы.",
+        role: "Full-stack",
+        text: "Агрегатор новостей из 20 изданий и YouTube: режим чтения, поиск, каналы и серверный прокси для доступа к заблокированным источникам.",
       },
-      { title: "Елизавета", role: "Frontend", text: "Сайт психолога: бережная подача, рассказ о подходе и стоимости, отзывы и онлайн-запись на консультацию." },
+      { title: "Елизавета", role: "Frontend", text: "Сайт психолога: подход и стоимость, отзывы и онлайн-запись на консультацию. SSR и SEO для поиска." },
       {
         title: "Ярослава",
-        role: "Frontend + бэкенд",
-        text: "Сайт мастерской авторского трикотажа и кружева: каталог изделий, видео-уроки, индивидуальные заказы и админка для управления контентом.",
+        role: "Full-stack",
+        text: "Сайт мастерской трикотажа и кружева: каталог, видео-уроки, индивидуальные заказы и админ-панель для управления контентом.",
       },
     ] as { title?: string; role: string; text: string }[],
     seeCase: "Смотреть кейс",
@@ -253,43 +253,43 @@ const en: Dict = {
   },
   preloader: { loading: "Loading experience", click: "· Click to enter", tap: "Tap to enter" },
   hero: {
-    role: "Frontend developer",
+    role: "Designer & developer",
     title: (
       <>
-        A developer
+        Hi, I’m <span className="accent">Alexsey.</span>
         <br />
-        who <span className="accent">designs</span>
+        Design.
         <br />
-        experiences, not just
+        Full-stack development.
         <br />
-        writes code
+        AI.
       </>
     ),
-    lead: "I build web products with thoughtful architecture, a refined interface and attention to detail.",
+    lead: "I design, build the frontend and backend with React, Next.js, TypeScript and Node.js, ship to production and support it. I build AI into products and work with AI tools — so things move fast.",
     projects: "View projects",
     discuss: "Tell me about your project",
     scrollAria: "Scroll down",
     scroll: "Scroll",
   },
   stack: {
-    label: "My stack",
+    label: "Stack",
     title: (
       <>
-        Technologies are my tools.
+        A modern stack.
         <br />
-        The system is <span className="accent">my approach.</span>
+        <span className="accent">Nothing extra.</span>
       </>
     ),
-    lead: "My universe of technologies. Scroll to fly from planet to planet.",
+    lead: "The tools modern web products are built on. Scroll to fly from planet to planet.",
     planets: [
-      { text: "The core of almost all my projects: components, hooks and state that holds up as the app grows.", tags: ["Hooks", "Context", "Router"] },
-      { text: "App Router and SSR: this portfolio and the psychologist site “Elizaveta” are built on it.", tags: ["App Router", "SSR", "SEO"] },
-      { text: "Strict typing as insurance: fewer bugs in production, bolder refactoring.", tags: ["Strict", "Generics", "Zod"] },
-      { text: "My own server when it’s needed: the workshop API and admin panel, RSS and a proxy for the news aggregator.", tags: ["Express", "REST", "RSS"] },
-      { text: "Auth, database and cross-device sync in Bloom — without a server of my own.", tags: ["Auth", "Postgres", "Sync"] },
-      { text: "The animations you see on this site: scroll scenes, the 3D carousel, text effects.", tags: ["ScrollTrigger", "SplitText", "Draggable"] },
-      { text: "Fast, responsive layouts without an ever-growing stylesheet.", tags: ["Responsive", "UI kit", "A11y"] },
-      { text: "A site that installs on your phone like an app and works offline — that’s how Bloom works.", tags: ["Offline", "Vite", "i18n"] },
+      { text: "Component UI: hooks, composition, Suspense. Memoization where it actually pays off.", tags: ["Hooks", "Suspense", "Tailwind"] },
+      { text: "App Router, server components, SSR and SSG — a fast first load and pages that search engines find.", tags: ["App Router", "SSR / SSG", "SEO"] },
+      { text: "Strict mode, generics, discriminated unions and type guards. Errors are caught at build time, not by users.", tags: ["Strict", "Generics", "Zod"] },
+      { text: "The server side in JavaScript: REST APIs, authentication, validation and error handling.", tags: ["Express", "REST", "JWT"] },
+      { text: "A relational database: schemas, relations, indexes and queries. Typed access through an ORM.", tags: ["SQL", "Prisma", "Supabase"] },
+      { text: "Client state kept apart from server state: a store for the UI, a request cache, invalidation and optimistic updates.", tags: ["Redux Toolkit", "Zustand", "TanStack Query"] },
+      { text: "Unit and component tests, end-to-end scenarios and a CI run before every release.", tags: ["Vitest", "Playwright", "CI/CD"] },
+      { text: "Interface animation: scroll scenes, transitions and text effects — smooth, and no lag on phones.", tags: ["ScrollTrigger", "SplitText", "60 fps"] },
     ],
     system: (n: number) => `${n} planets`,
     system0: "System",
@@ -297,30 +297,30 @@ const en: Dict = {
     au: "AU",
   },
   projects: {
-    label: "My projects",
+    label: "Projects",
     title: (
       <>
-        Real projects. <span className="accent">Real results.</span>
+        Live projects. <span className="accent">Open any of them.</span>
       </>
     ),
     items: [
       {
-        role: "Frontend + backend",
+        role: "Full-stack",
         text: "A personality test platform: MBTI, Enneagram and Holland code with instant results, courses, a personal account and three languages — RU, EN, 中文.",
       },
       {
-        role: "Frontend + backend",
-        text: "A PWA for habits and a calmer day: goals, tasks, focus, mood and reflection in one app, with phone and desktop synced through Supabase.",
+        role: "Full-stack · PWA",
+        text: "An app for goals, tasks, focus and mood. Installs on a phone, works offline and syncs data across devices.",
       },
       {
-        role: "Frontend + backend",
-        text: "World news from 20 outlets and YouTube in one calm interface: reader mode, search, channels and a proxy so it opens where sources are blocked.",
+        role: "Full-stack",
+        text: "A news aggregator for 20 outlets and YouTube: reader mode, search, channels and a server-side proxy for blocked sources.",
       },
-      { title: "Elizaveta", role: "Frontend", text: "A psychologist’s website: a gentle tone, her approach and prices, reviews and online booking for a session." },
+      { title: "Elizaveta", role: "Frontend", text: "A psychologist’s website: approach and prices, reviews and online booking. SSR and SEO for search." },
       {
         title: "Yaroslava",
-        role: "Frontend + backend",
-        text: "A site for a knitwear and lace workshop: product catalog, video lessons, custom orders and an admin panel for the content.",
+        role: "Full-stack",
+        text: "A site for a knitwear and lace workshop: catalog, video lessons, custom orders and an admin panel for the content.",
       },
     ],
     seeCase: "View case",
