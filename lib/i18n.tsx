@@ -42,7 +42,7 @@ const ru = {
         Нейросети.
       </>
     ),
-    lead: "Сам делаю дизайн, фронтенд и бэкенд на React, Next.js, TypeScript и Node.js, выкладываю в продакшен и поддерживаю. Встраиваю ИИ в продукты и работаю с ИИ-инструментами — поэтому быстро.",
+    lead: "Сам делаю дизайн, фронтенд и бэкенд на React, Next.js, TypeScript и Node.js, выкладываю в продакшен и поддерживаю. Встраиваю ИИ в продукты и работаю с ИИ-инструментами.",
     projects: "Смотреть проекты",
     discuss: "Расскажете о проекте?",
     scrollAria: "Листать вниз",
@@ -265,7 +265,7 @@ const en: Dict = {
         AI.
       </>
     ),
-    lead: "I design, build the frontend and backend with React, Next.js, TypeScript and Node.js, ship to production and support it. I build AI into products and work with AI tools — so things move fast.",
+    lead: "I design, build the frontend and backend with React, Next.js, TypeScript and Node.js, ship to production and support it. I build AI into products and work with AI tools.",
     projects: "View projects",
     discuss: "Tell me about your project",
     scrollAria: "Scroll down",
