@@ -4,6 +4,7 @@ import "lenis/dist/lenis.css";
 import "@/app/globals.css";
 import "@/app/fx.css";
 import "@/app/contact-dialog.css";
+import "@/app/lite.css";
 import { SITE_URL } from "@/lib/contacts";
 import type { Lang } from "@/lib/i18n";
 
@@ -31,8 +32,10 @@ const META: Record<Lang, { title: string; description: string; locale: string; p
   },
 };
 
-export const siteMetadata = (lang: Lang): Metadata => {
-  const { title, description, locale, path } = META[lang];
+/** "lite" is the effect-free copy at /mobile; search engines are pointed at the full page as the canonical one. */
+export const siteMetadata = (lang: Lang, variant: "full" | "lite" = "full"): Metadata => {
+  const { title: fullTitle, description, locale, path } = META[lang];
+  const title = variant === "lite" ? `${fullTitle} · Lite` : fullTitle;
   return {
     metadataBase: new URL(SITE_URL),
     title,

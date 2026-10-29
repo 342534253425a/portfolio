@@ -5,7 +5,7 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { LogoGlyphs, logoTimeline } from "./fx/LogoMark";
 import { ArrowRight } from "./icons";
-import { langHref, useI18n } from "@/lib/i18n";
+import { langHref, liteHref, useI18n } from "@/lib/i18n";
 
 const tracked = ["home", "stack", "projects", "process", "contacts"];
 
@@ -22,7 +22,7 @@ function LangSwitch() {
 }
 
 export default function Header() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   const links = tracked.map((id, i) => ({ href: `#${id}`, label: t.nav[i] }));
   const root = useRef<HTMLElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
@@ -166,6 +166,9 @@ export default function Header() {
           <span className="lnk__icon">
             <ArrowRight />
           </span>
+        </a>
+        <a href={liteHref(lang)} className="menu__lite" tabIndex={open ? 0 : -1}>
+          {t.lite.offer}
         </a>
       </div>
     </>

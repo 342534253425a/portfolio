@@ -6,10 +6,10 @@ import HoloCard from "./fx/HoloCard";
 import { Finale, PlanetParallax, ReplyNote } from "./fx/ContactFX";
 import { ArrowRight } from "./icons";
 import { EMAIL, SOCIALS } from "@/lib/contacts";
-import { useI18n } from "@/lib/i18n";
+import { liteHref, useI18n } from "@/lib/i18n";
 
 export default function Contact() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   return (
     <section id="contacts" className="section contact">
       <div className="contact__bg" aria-hidden>
@@ -60,6 +60,9 @@ export default function Contact() {
 
       <footer className="footer container">
         <span>© 2026 {t.contact.footer}</span>
+        <a href={liteHref(lang)}>
+          <span>{t.lite.footer}</span>
+        </a>
         <a href="#home">
           <span>{t.contact.top}</span>
         </a>

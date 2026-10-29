@@ -6,46 +6,9 @@ import { Draggable, finePointer, gsap, ScrollTrigger, SplitText, useGSAP } from 
 import { getLenis } from "@/lib/lenis";
 import { ArrowLeft, ArrowRight } from "./icons";
 import { useI18n } from "@/lib/i18n";
+import { localizedProjects, PROJECTS } from "@/lib/content";
 
-const BASE = [
-  {
-    title: "Psyches Strings",
-    tags: ["React", "Vite", "Node.js"],
-    image: "/images/projects/psyches-strings.jpg",
-    url: "https://psyches-strings.vercel.app",
-    pos: "30% 50%",
-  },
-  {
-    title: "Bloom",
-    tags: ["React", "Supabase", "PWA"],
-    image: "/images/projects/bloom.webp",
-    url: "https://bloom-love.online",
-    pos: "25% 50%",
-  },
-  {
-    title: "Tideline",
-    tags: ["Node.js", "RSS", "YouTube API"],
-    image: "/images/projects/tideline.jpg",
-    url: "https://world-news-snowy.vercel.app",
-    pos: "50% 50%",
-  },
-  {
-    title: "Елизавета",
-    tags: ["Next.js", "GSAP", "Tailwind"],
-    image: "/images/projects/elizaveta.webp",
-    url: "https://elizaveta-pi.vercel.app",
-    pos: "30% 50%",
-  },
-  {
-    title: "Ярослава",
-    tags: ["Node.js", "Express", "GSAP"],
-    image: "/images/projects/yaroslava.jpg",
-    url: "https://yaroslava-knit.vercel.app",
-    pos: "40% 50%",
-  },
-];
-
-const N = BASE.length;
+const N = PROJECTS.length;
 const STEP = 360 / N;
 const PER_CARD = 0.75;
 const TILT = -10;
@@ -53,7 +16,7 @@ const wrap = (i: number) => ((i % N) + N) % N;
 
 export default function Projects() {
   const { t } = useI18n();
-  const projects = BASE.map((p, i) => ({ ...p, ...t.projects.items[i], title: t.projects.items[i].title ?? p.title }));
+  const projects = localizedProjects(t);
   const root = useRef<HTMLElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);

@@ -5,9 +5,19 @@ import { createContext, useContext, type ReactNode } from "react";
 export type Lang = "en" | "ru";
 export const LANGS: Lang[] = ["en", "ru"];
 export const langHref = (lang: Lang) => (lang === "en" ? "/" : "/ru");
+/** The light, effect-free version of the site for slow phones. */
+export const liteHref = (lang: Lang) => (lang === "en" ? "/mobile" : "/ru/mobile");
 
 const ru = {
   nav: ["Главная", "Стек", "Проекты", "Процесс", "Контакты"],
+  lite: {
+    badge: "Лёгкая версия",
+    full: "Полная версия",
+    fullHint: "с 3D и анимациями",
+    offer: "Тормозит? Лёгкая версия →",
+    footer: "Лёгкая версия сайта",
+    discuss: "Обсудить проект",
+  },
   header: {
     home: "На главную",
     mainNav: "Основная навигация",
@@ -223,6 +233,14 @@ export type Dict = typeof ru;
 
 const en: Dict = {
   nav: ["Home", "Stack", "Projects", "Process", "Contact"],
+  lite: {
+    badge: "Lite version",
+    full: "Full version",
+    fullHint: "with 3D and animations",
+    offer: "Laggy? Lite version →",
+    footer: "Lite version of the site",
+    discuss: "Discuss a project",
+  },
   header: {
     home: "Back to top",
     mainNav: "Main navigation",

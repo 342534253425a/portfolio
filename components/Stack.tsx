@@ -2,53 +2,10 @@
 
 import { useRef, useState } from "react";
 import { finePointer, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { GsapIcon, NextIcon, NodeIcon, PwaIcon, ReactIcon, SupabaseIcon, TailwindIcon, TsIcon } from "./icons";
+import { PLANETS } from "@/lib/content";
 import { useI18n } from "@/lib/i18n";
 
-const planets = [
-  {
-    name: "React",
-    Icon: ReactIcon,
-    size: 5.6,
-    ring: true,
-  },
-  {
-    name: "Next.js",
-    Icon: NextIcon,
-    size: 5,
-  },
-  {
-    name: "TypeScript",
-    Icon: TsIcon,
-    size: 4.8,
-  },
-  {
-    name: "Node.js",
-    Icon: NodeIcon,
-    size: 5.4,
-  },
-  {
-    name: "Supabase",
-    Icon: SupabaseIcon,
-    size: 4.6,
-  },
-  {
-    name: "GSAP",
-    Icon: GsapIcon,
-    size: 5.2,
-  },
-  {
-    name: "Tailwind CSS",
-    Icon: TailwindIcon,
-    size: 4.8,
-  },
-  {
-    name: "PWA",
-    Icon: PwaIcon,
-    size: 5.6,
-    ring: true,
-  },
-];
+const planets = PLANETS;
 
 type V3 = [number, number, number];
 

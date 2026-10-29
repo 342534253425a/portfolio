@@ -1425,9 +1425,9 @@ html.has-cursor * {
 }
 
 @media (max-width: 600px) {
+  /* Same 16:10 shape as the screenshots, so nothing gets cropped off the sides. */
   .card {
-    width: 60vw;
-    aspect-ratio: 3 / 4;
+    width: 86vw;
   }
 
   .card__num {
@@ -1451,6 +1451,7 @@ html.has-cursor * {
   }
 
   .projects__hud {
+    right: 0;
     bottom: 4rem;
     flex-direction: column;
     align-items: stretch;
@@ -1462,8 +1463,14 @@ html.has-cursor * {
     font-size: 3.2rem;
   }
 
+  /* Leave the bottom-right corner to the scroll-progress button. */
   .hud__controls {
     gap: 1.2rem;
+    padding-right: 7.4rem;
+  }
+
+  .hud__open .lnk__icon {
+    display: none;
   }
 
   .projects__meta,

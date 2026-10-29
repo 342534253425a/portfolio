@@ -5,12 +5,12 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { whenIdle } from "@/lib/idle";
 import LogoLab from "./LogoLab";
-import { useI18n } from "@/lib/i18n";
+import { liteHref, useI18n } from "@/lib/i18n";
 
 export const PRELOADER_DONE = "preloader:done";
 
 export default function Preloader() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -77,13 +77,16 @@ export default function Preloader() {
   );
 
   return (
-    <div ref={root} className="preloader" aria-hidden>
-      <div className="preloader__panels">
+    <div ref={root} className="preloader">
+      <a href={liteHref(lang)} className="lite-offer" onClick={(e) => e.stopPropagation()}>
+        {t.lite.offer}
+      </a>
+      <div className="preloader__panels" aria-hidden>
         {Array.from({ length: 6 }, (_, i) => (
           <span key={i} className="preloader__panel" />
         ))}
       </div>
-      <div className="preloader__center">
+      <div className="preloader__center" aria-hidden>
         <LogoLab />
         <div className="preloader__meta">
           <span className="preloader__num">000</span>
