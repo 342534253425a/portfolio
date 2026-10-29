@@ -117,7 +117,8 @@ export default function ContactDialog() {
   const [status, setStatus] = useState<"idle" | "sending" | "fail">("idle");
   const [retrying, setRetrying] = useState(false);
   const [done, setDone] = useState<{ kind: "request" | "call"; summary?: string }>({ kind: "request" });
-  const [copied, setCopied] = useState(false);
+  /** Which contact was just copied, to flip its button to "Copied" for a moment. */
+  const [copied, setCopied] = useState<string | null>(null);
 
   const root = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -346,13 +347,24 @@ export default function ContactDialog() {
     }
   };
 
-  const copyEmail = async () => {
+  const copy = async (value: string) => {
     try {
-      await navigator.clipboard.writeText(EMAIL);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
+      await navigator.clipboard.writeText(value);
+      setCopied(value);
+      setTimeout(() => setCopied((c) => (c === value ? null : c)), 1800);
     } catch {}
   };
+
+  const copyPill = (value: string) => (
+    <button
+      type="button"
+      className={`cd__pill cd__pill--copy${copied === value ? " is-copied" : ""}`}
+      onClick={() => copy(value)}
+      aria-label={`${t.contact.copy}: ${value}`}
+    >
+      <CopyIcon /> <span>{copied === value ? t.contact.copied : t.contact.copy}</span>
+    </button>
+  );
 
   const spot = (e: React.PointerEvent<HTMLElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -618,7 +630,7 @@ export default function ContactDialog() {
             <>
               <p className="cd__lead cd__in">{d.options.direct.text}</p>
               <div className="cd__direct">
-                <a className="cd__dm cd__in" href={TELEGRAM} target="_blank" rel="noreferrer" onPointerMove={spot}>
+                <div className="cd__dm cd__in" onPointerMove={spot}>
                   <span className="cd__opt-icon">
                     <TelegramIcon />
                   </span>
@@ -628,10 +640,13 @@ export default function ContactDialog() {
                       @{handleOf(TELEGRAM)} · {d.direct.telegram.text}
                     </span>
                   </span>
-                  <span className="cd__pill cd__pill--red">
-                    {d.direct.telegram.action} <ArrowRight />
+                  <span className="cd__dm-actions">
+                    {copyPill(`@${handleOf(TELEGRAM)}`)}
+                    <a className="cd__pill cd__pill--red" href={TELEGRAM} target="_blank" rel="noreferrer">
+                      {d.direct.telegram.action} <ArrowRight />
+                    </a>
                   </span>
-                </a>
+                </div>
                 <div className="cd__dm cd__in" onPointerMove={spot}>
                   <span className="cd__opt-icon">
                     <PhoneIcon />
@@ -643,6 +658,7 @@ export default function ContactDialog() {
                     </span>
                   </span>
                   <span className="cd__dm-actions">
+                    {copyPill(PHONE)}
                     <a className="cd__pill" href={`tel:${PHONE}`}>
                       <PhoneIcon /> {d.direct.phone.call}
                     </a>
@@ -662,9 +678,7 @@ export default function ContactDialog() {
                     </span>
                   </span>
                   <span className="cd__dm-actions">
-                    <button type="button" className="cd__pill" onClick={copyEmail}>
-                      <CopyIcon /> {copied ? t.contact.copied : t.contact.copy}
-                    </button>
+                    {copyPill(EMAIL)}
                     <a className="cd__pill cd__pill--red" href={emailHref} target="_blank" rel="noreferrer">
                       {mobile ? d.direct.email.actionMobile : d.direct.email.action} <ArrowRight />
                     </a>

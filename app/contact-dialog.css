@@ -799,6 +799,11 @@ textarea.cd__input {
   background: rgba(255, 43, 61, 0.14);
 }
 
+.cd__pill--copy.is-copied {
+  border-color: var(--red);
+  color: var(--red-soft);
+}
+
 .cd__pill--red,
 .cd__pill--red:hover,
 .cd__dm:hover > .cd__pill--red {
@@ -1058,6 +1063,17 @@ textarea.cd__input {
   .cd__dm-actions .cd__pill {
     flex: 1;
     justify-content: center;
+  }
+
+  /* Three buttons don't fit a phone row with labels: copy shrinks to its icon. */
+  .cd__dm-actions .cd__pill--copy {
+    flex: none;
+    width: 4.4rem;
+    padding: 0;
+  }
+
+  .cd__pill--copy span {
+    display: none;
   }
 
   .cd__dm:hover {
