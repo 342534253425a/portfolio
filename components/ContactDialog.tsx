@@ -12,7 +12,8 @@ type Method = "telegram" | "email" | "phone" | "whatsapp";
 
 const METHODS: Method[] = ["telegram", "email", "phone", "whatsapp"];
 const VIEWS: View[] = ["choose", "request", "call", "direct"];
-const ENDPOINT = `https://formsubmit.co/ajax/${EMAIL}`;
+/** The site's own Telegram delivery first; FormSubmit to email if it is down or not configured. */
+const ENDPOINTS = ["/api/contact", `https://formsubmit.co/ajax/${EMAIL}`];
 const TELEGRAM = SOCIALS.find((s) => s.label === "Telegram")!.href;
 const handleOf = (href: string) => href.replace(/^https?:\/\/t\.me\//, "");
 
@@ -24,19 +25,36 @@ const DAYS = 10;
 
 type Day = { key: string; noon: Date; slots: number[] };
 
-/** FormSubmit now and then answers 5xx or hangs, so each attempt is time-boxed and server-side failures are retried. */
-const ATTEMPTS = 3;
+/** Delivery can answer 5xx or hang, so each attempt is time-boxed and server-side failures are retried. */
+const ATTEMPTS = 2;
 const ATTEMPT_TIMEOUT = 12_000;
-const RETRY_DELAYS = [1500, 3000];
+const RETRY_DELAY = 1500;
 
 class FinalError extends Error {}
+/** The endpoint isn't set up on this deployment; move on without retrying. */
+class SkipError extends Error {}
 
+/** Tries each endpoint in turn; only a request the server rejects as malformed stops the chain. */
 async function postForm(payload: Record<string, string>, onRetry: () => void) {
+  let last: unknown;
+  for (const url of ENDPOINTS) {
+    if (last && !(last instanceof SkipError)) onRetry();
+    try {
+      return await postTo(url, payload, onRetry);
+    } catch (err) {
+      if (err instanceof FinalError) throw err;
+      last = err;
+    }
+  }
+  throw last;
+}
+
+async function postTo(url: string, payload: Record<string, string>, onRetry: () => void) {
   for (let attempt = 0; ; attempt++) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), ATTEMPT_TIMEOUT);
     try {
-      const res = await fetch(ENDPOINT, {
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(payload),
@@ -44,13 +62,15 @@ async function postForm(payload: Record<string, string>, onRetry: () => void) {
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && String(json.success) === "true") return;
+      // Not set up here: no point retrying, go to the next endpoint.
+      if (res.status === 503) throw new SkipError(json.message || res.statusText);
       // A 4xx or an explicit refusal won't change on a retry.
       if (res.status < 500 && res.status !== 429) throw new FinalError(json.message || res.statusText);
       throw new Error(json.message || res.statusText);
     } catch (err) {
-      if (err instanceof FinalError || attempt >= ATTEMPTS - 1) throw err;
+      if (err instanceof FinalError || err instanceof SkipError || attempt >= ATTEMPTS - 1) throw err;
       onRetry();
-      await new Promise((r) => setTimeout(r, RETRY_DELAYS[attempt]));
+      await new Promise((r) => setTimeout(r, RETRY_DELAY));
     } finally {
       clearTimeout(timer);
     }
